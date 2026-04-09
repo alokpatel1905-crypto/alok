@@ -1,0 +1,138 @@
+import { PrismaService } from '../prisma/prisma.service';
+export declare class PagesService {
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    create(data: {
+        title: string;
+        slug: string;
+        content?: string;
+        image?: string;
+        status?: 'DRAFT' | 'PUBLISHED';
+    }): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+    findAll(): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }[]>;
+    findPublished(): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }[]>;
+    findPublishedBySlug(slug: string): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+    findBySlug(slug: string): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+    update(id: string, data: {
+        title?: string;
+        slug?: string;
+        content?: string;
+        image?: string;
+        status?: 'DRAFT' | 'PUBLISHED';
+        isActive?: boolean;
+    }): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+    findById(id: string): Promise<{
+        id: string;
+        title: string;
+        slug: string;
+        image: string | null;
+        status: import("@prisma/client").$Enums.PageStatus;
+        isActive: boolean;
+        views: number;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        schemaMarkup: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string | null;
+    }>;
+}

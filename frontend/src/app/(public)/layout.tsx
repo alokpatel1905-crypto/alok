@@ -7,17 +7,7 @@ import {
   ShieldCheck, 
   Menu, 
   X, 
-  Search, 
-  Mail, 
   MapPin, 
-  Phone,
-  ArrowRight,
-  ChevronRight,
-  Globe,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Facebook
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
