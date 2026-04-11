@@ -64,6 +64,9 @@ let PagesController = class PagesController {
     findById(id) {
         return this.pagesService.findById(id);
     }
+    getHistory(id) {
+        return this.pagesService.getHistory(id);
+    }
 };
 exports.PagesController = PagesController;
 __decorate([
@@ -158,6 +161,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], PagesController.prototype, "findById", null);
+__decorate([
+    (0, common_1.Get)(':id/history'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PagesController.prototype, "getHistory", null);
 exports.PagesController = PagesController = __decorate([
     (0, common_1.Controller)('pages'),
     __metadata("design:paramtypes", [pages_service_1.PagesService])

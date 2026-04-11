@@ -11,12 +11,12 @@ export declare class AdminService {
             totalInstitutions: number;
             recentInstitutions: {
                 id: string;
-                description: string | null;
+                name: string;
+                email: string | null;
                 isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                email: string | null;
+                description: string | null;
                 type: import("@prisma/client").$Enums.InstitutionType;
                 phone: string | null;
                 address: string | null;
@@ -54,13 +54,13 @@ export declare class AdminService {
             upcomingCount: number;
             upcoming: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 title: string;
                 description: string | null;
                 image: string | null;
                 status: import("@prisma/client").$Enums.EventStatus;
                 views: number;
-                createdAt: Date;
-                updatedAt: Date;
                 institutionId: string | null;
                 startDate: Date;
                 endDate: Date | null;
@@ -82,9 +82,9 @@ export declare class AdminService {
             unreadCount: number;
             recent: {
                 id: string;
-                title: string;
                 createdAt: Date;
                 updatedAt: Date;
+                title: string;
                 type: import("@prisma/client").$Enums.NotificationType;
                 isRead: boolean;
                 message: string;

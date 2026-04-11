@@ -6,10 +6,10 @@ export declare class AccreditationsService {
     constructor(prisma: PrismaService);
     create(dto: CreateAccreditationDto): Promise<{
         id: string;
-        title: string;
-        status: import("@prisma/client").$Enums.AccreditationStatus;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        status: import("@prisma/client").$Enums.AccreditationStatus;
         institutionId: string;
         expiryDate: Date | null;
         certificateUrl: string | null;
@@ -23,10 +23,10 @@ export declare class AccreditationsService {
             };
         } & {
             id: string;
-            title: string;
-            status: import("@prisma/client").$Enums.AccreditationStatus;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
+            status: import("@prisma/client").$Enums.AccreditationStatus;
             institutionId: string;
             expiryDate: Date | null;
             certificateUrl: string | null;
@@ -38,12 +38,12 @@ export declare class AccreditationsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -56,30 +56,30 @@ export declare class AccreditationsService {
         };
     } & {
         id: string;
-        title: string;
-        status: import("@prisma/client").$Enums.AccreditationStatus;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        status: import("@prisma/client").$Enums.AccreditationStatus;
         institutionId: string;
         expiryDate: Date | null;
         certificateUrl: string | null;
     }>;
     update(id: string, dto: UpdateAccreditationDto): Promise<{
         id: string;
-        title: string;
-        status: import("@prisma/client").$Enums.AccreditationStatus;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        status: import("@prisma/client").$Enums.AccreditationStatus;
         institutionId: string;
         expiryDate: Date | null;
         certificateUrl: string | null;
     }>;
     remove(id: string): Promise<{
         id: string;
-        title: string;
-        status: import("@prisma/client").$Enums.AccreditationStatus;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        status: import("@prisma/client").$Enums.AccreditationStatus;
         institutionId: string;
         expiryDate: Date | null;
         certificateUrl: string | null;

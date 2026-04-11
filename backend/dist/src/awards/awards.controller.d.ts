@@ -6,13 +6,13 @@ export declare class AwardsController {
     constructor(awardsService: AwardsService);
     create(createAwardDto: CreateAwardDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.AwardStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        year: number;
         category: string;
         institutionId: string;
     }>;
@@ -24,13 +24,13 @@ export declare class AwardsController {
             };
         } & {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            year: number;
             title: string;
             description: string | null;
             image: string | null;
             status: import("@prisma/client").$Enums.AwardStatus;
-            createdAt: Date;
-            updatedAt: Date;
-            year: number;
             category: string;
             institutionId: string;
         })[];
@@ -40,9 +40,9 @@ export declare class AwardsController {
     }>;
     createNomination(body: any): Promise<{
         id: string;
-        status: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         category: string;
         institutionId: string | null;
         awardTitle: string;
@@ -57,9 +57,9 @@ export declare class AwardsController {
             } | null;
         } & {
             id: string;
-            status: string;
             createdAt: Date;
             updatedAt: Date;
+            status: string;
             category: string;
             institutionId: string | null;
             awardTitle: string;
@@ -71,9 +71,9 @@ export declare class AwardsController {
     }>;
     updateNomStatus(id: string, status: string): Promise<{
         id: string;
-        status: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         category: string;
         institutionId: string | null;
         awardTitle: string;
@@ -83,25 +83,25 @@ export declare class AwardsController {
     }>;
     toggleArchive(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.AwardStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        year: number;
         category: string;
         institutionId: string;
     }>;
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -114,37 +114,37 @@ export declare class AwardsController {
         };
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.AwardStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        year: number;
         category: string;
         institutionId: string;
     }>;
     update(id: string, updateAwardDto: UpdateAwardDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.AwardStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        year: number;
         category: string;
         institutionId: string;
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.AwardStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        year: number;
         category: string;
         institutionId: string;
     }>;

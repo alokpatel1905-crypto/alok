@@ -8,12 +8,12 @@ export declare class AuthController {
         message: string;
         user: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
             role: import("@prisma/client").$Enums.Role;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     login(dto: LoginDto): Promise<{
@@ -22,23 +22,23 @@ export declare class AuthController {
         refreshToken: string;
         user: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
             role: import("@prisma/client").$Enums.Role;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     getMe(user: any): Promise<{
         user: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
             role: import("@prisma/client").$Enums.Role;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         } | null;
     }>;
     refresh(body: {

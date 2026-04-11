@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { apiFetch } from '@/lib/api';
+
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState<'website' | 'rankings' | 'participation'>('website');
   const [data, setData] = useState<any>(null);
@@ -13,27 +15,17 @@ export default function AnalyticsPage() {
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem('token');
-    const endpoint = `analytics/${activeTab}`;
+    const endpoint = `/analytics/${activeTab}`;
 
     try {
-      const res = await fetch(`http://127.0.0.1:4000/${endpoint}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.status === 401) {
-        router.push('/login');
-        return;
-      }
-
-      if (!res.ok) {
-        throw new Error(`Failed to fetch ${activeTab} analytics`);
-      }
-
-      const result = await res.json();
+      const result = await apiFetch(endpoint);
       setData(result);
     } catch (err: any) {
       console.error(err);
+      if (err.message === 'API Error' || err.message === 'Unauthorized') {
+        router.push('/login');
+        return;
+      }
       setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);

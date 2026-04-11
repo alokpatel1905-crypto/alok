@@ -16,6 +16,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api';
 
 const ROLES = [
   { id: 'SUPER_ADMIN', label: 'Super Admin', color: 'text-purple-600 bg-purple-50' },
@@ -30,18 +31,16 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const fetchUsers = () => {
+  const fetchUsers = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    fetch('http://127.0.0.1:4000/users', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setUsers(Array.isArray(res) ? res : []);
-        setLoading(false);
-      })
-      .catch(console.error);
+    try {
+      const data = await apiFetch('/users');
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -49,39 +48,39 @@ export default function UsersPage() {
   }, []);
 
   const handleRoleChange = async (id: string, newRole: string) => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/users/${id}`, {
-      method: 'PATCH',
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` 
-      },
-      body: JSON.stringify({ role: newRole }),
-    });
-    if (res.ok) fetchUsers();
+    try {
+      await apiFetch(`/users/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ role: newRole }),
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const toggleActive = async (user: any) => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/users/${user.id}`, {
-      method: 'PATCH',
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` 
-      },
-      body: JSON.stringify({ isActive: !user.isActive }),
-    });
-    if (res.ok) fetchUsers();
+    try {
+      await apiFetch(`/users/${user.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isActive: !user.isActive }),
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Permanently delete this user? This action cannot be undone.')) return;
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/users/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) fetchUsers();
+    try {
+      await apiFetch(`/users/${id}`, {
+        method: 'DELETE',
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const filteredUsers = users.filter(user => 

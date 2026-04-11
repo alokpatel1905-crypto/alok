@@ -6,13 +6,13 @@ export declare class EventsService {
     constructor(prisma: PrismaService);
     create(dto: CreateEventDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.EventStatus;
         views: number;
-        createdAt: Date;
-        updatedAt: Date;
         institutionId: string | null;
         startDate: Date;
         endDate: Date | null;
@@ -26,13 +26,13 @@ export declare class EventsService {
             } | null;
         } & {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             description: string | null;
             image: string | null;
             status: import("@prisma/client").$Enums.EventStatus;
             views: number;
-            createdAt: Date;
-            updatedAt: Date;
             institutionId: string | null;
             startDate: Date;
             endDate: Date | null;
@@ -46,12 +46,12 @@ export declare class EventsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -64,33 +64,33 @@ export declare class EventsService {
         } | null;
         speakers: {
             id: string;
-            image: string | null;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             role: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            image: string | null;
             bio: string | null;
             eventId: string;
         }[];
         registrations: {
             id: string;
-            status: string;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
             phone: string | null;
             eventId: string;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.EventStatus;
         views: number;
-        createdAt: Date;
-        updatedAt: Date;
         institutionId: string | null;
         startDate: Date;
         endDate: Date | null;
@@ -99,53 +99,53 @@ export declare class EventsService {
     }>;
     addSpeaker(eventId: string, data: any): Promise<{
         id: string;
-        image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         role: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        image: string | null;
         bio: string | null;
         eventId: string;
     }>;
     removeSpeaker(speakerId: string): Promise<{
         id: string;
-        image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         role: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        image: string | null;
         bio: string | null;
         eventId: string;
     }>;
     registerForEvent(eventId: string, data: any): Promise<{
         id: string;
-        status: string;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         email: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         phone: string | null;
         eventId: string;
     }>;
     updateRegistrationStatus(regId: string, status: string): Promise<{
         id: string;
-        status: string;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         email: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         phone: string | null;
         eventId: string;
     }>;
     update(id: string, dto: UpdateEventDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.EventStatus;
         views: number;
-        createdAt: Date;
-        updatedAt: Date;
         institutionId: string | null;
         startDate: Date;
         endDate: Date | null;
@@ -154,13 +154,13 @@ export declare class EventsService {
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         description: string | null;
         image: string | null;
         status: import("@prisma/client").$Enums.EventStatus;
         views: number;
-        createdAt: Date;
-        updatedAt: Date;
         institutionId: string | null;
         startDate: Date;
         endDate: Date | null;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function CreateRankingPage() {
   const router = useRouter();
@@ -16,13 +17,7 @@ export default function CreateRankingPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://localhost:4000/institutions', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
+    apiFetch('/institutions')
       .then((res) => {
         setInstitutions(res.data || []);
         setLoading(false);
@@ -32,26 +27,19 @@ export default function CreateRankingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
 
-    const res = await fetch('http://localhost:4000/rankings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        rank: +form.rank,
-        year: +form.year,
-        score: form.score ? +form.score : undefined,
-      }),
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch('/rankings', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...form,
+          rank: +form.rank,
+          year: +form.year,
+          score: form.score ? +form.score : undefined,
+        }),
+      });
       router.push('/rankings');
-    } else {
-      const err = await res.json();
+    } catch (err: any) {
       alert(err.message || 'Failed to create ranking');
     }
   };

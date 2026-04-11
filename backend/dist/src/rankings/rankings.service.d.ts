@@ -38,12 +38,12 @@ export declare class RankingsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -100,11 +100,11 @@ export declare class RankingsService {
     })[]>;
     createSubmission(data: any): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;
@@ -117,11 +117,11 @@ export declare class RankingsService {
         };
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;
@@ -130,11 +130,11 @@ export declare class RankingsService {
     })[]>;
     evaluateSubmission(id: string, reviewerId: string, reviewerNote: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;

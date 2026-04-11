@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { apiFetch } from '@/lib/api';
+
 export default function AccreditationsPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -15,26 +17,14 @@ export default function AccreditationsPage() {
       try {
         setLoading(true);
         setError(null);
-        const token = localStorage.getItem('token');
-        const res = await fetch('http://127.0.0.1:4000/accreditations', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (res.status === 401) {
-          router.push('/login');
-          return;
-        }
-
-        if (!res.ok) {
-          throw new Error('Failed to fetch accreditations');
-        }
-
-        const result = await res.json();
+        const result = await apiFetch('/accreditations');
         setData(result);
       } catch (err: any) {
         console.error(err);
+        if (err.message === 'API Error' || err.message === 'Unauthorized') {
+          router.push('/login');
+          return;
+        }
         setError(err.message || 'An unexpected error occurred');
       } finally {
         setLoading(false);

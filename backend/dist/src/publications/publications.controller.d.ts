@@ -4,11 +4,11 @@ export declare class PublicationsController {
     constructor(publicationsService: PublicationsService);
     createPublication(body: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -17,11 +17,11 @@ export declare class PublicationsController {
     findAllPublications(page?: string, limit?: string, type?: string): Promise<{
         data: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             image: string | null;
             status: string;
-            createdAt: Date;
-            updatedAt: Date;
             type: import("@prisma/client").$Enums.PublicationType;
             content: string | null;
             fileUrl: string | null;
@@ -33,11 +33,11 @@ export declare class PublicationsController {
     }>;
     updatePublication(id: string, body: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -45,11 +45,11 @@ export declare class PublicationsController {
     }>;
     removePublication(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -57,22 +57,22 @@ export declare class PublicationsController {
     }>;
     createPressRelease(body: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;
     findAllPressReleases(page?: string, limit?: string): Promise<{
         data: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             image: string | null;
             status: string;
-            createdAt: Date;
-            updatedAt: Date;
             content: string;
             date: Date;
         }[];
@@ -82,21 +82,21 @@ export declare class PublicationsController {
     }>;
     updatePressRelease(id: string, body: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;
     removePressRelease(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;

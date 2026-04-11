@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 type Ranking = {
   id: string;
@@ -18,37 +19,20 @@ export default function RankingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRankings = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
+  const fetchRankings = async () => {
+    try {
+      const res = await apiFetch('/rankings');
+      setData(res);
+      setLoading(false);
+    } catch (err: any) {
+      console.error('Fetch error:', err);
+      if (err.message === 'Unauthorized') {
+        window.location.href = '/login';
+        return;
+      }
+      setError(err.message);
+      setLoading(false);
     }
-
-    fetch('http://127.0.0.1:4000/rankings', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-          return;
-        }
-        if (!res.ok) {
-          console.error(`Fetch failed with status: ${res.status}`);
-          throw new Error(`Failed to fetch rankings: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Fetch error:', err);
-        setError(err.message);
-        setLoading(false);
-      });
   };
 
   useEffect(() => {
@@ -57,14 +41,11 @@ export default function RankingsPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Are you sure you want to delete this ranking?')) return;
-    const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://127.0.0.1:4000/rankings/${id}`, {
+      await apiFetch(`/rankings/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) fetchRankings();
-      else alert('Failed to delete ranking');
+      fetchRankings();
     } catch (err) {
       console.error(err);
       alert('Error deleting ranking');

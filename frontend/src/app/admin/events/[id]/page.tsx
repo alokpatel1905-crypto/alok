@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function EventDetailPage() {
   const { id } = useParams();
@@ -12,27 +13,20 @@ export default function EventDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'details' | 'speakers' | 'registrations'>('details');
 
-  const fetchEvent = () => {
-    const token = localStorage.getItem('token');
-    fetch(`http://127.0.0.1:4000/events/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          router.push('/login');
-          return;
-        }
-        if (!res.ok) throw new Error('Failed to fetch event');
-        return res.json();
-      })
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+  const fetchEvent = async () => {
+    try {
+      const res = await apiFetch(`/events/${id}`);
+      setData(res);
+      setLoading(false);
+    } catch (err: any) {
+      console.error(err);
+      if (err.message === 'Unauthorized') {
+        router.push('/login');
+        return;
+      }
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -40,26 +34,27 @@ export default function EventDetailPage() {
   }, [id]);
 
   const updateRegStatus = async (regId: string, status: string) => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/events/registrations/${regId}/status`, {
-      method: 'PATCH',
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` 
-      },
-      body: JSON.stringify({ status }),
-    });
-    if (res.ok) fetchEvent();
+    try {
+      await apiFetch(`/events/registrations/${regId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      fetchEvent();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const removeSpeaker = async (speakerId: string) => {
     if (!confirm('Remove this speaker?')) return;
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/events/speakers/${speakerId}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) fetchEvent();
+    try {
+      await apiFetch(`/events/speakers/${speakerId}`, {
+        method: 'DELETE',
+      });
+      fetchEvent();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) return <div style={{ padding: 40 }}>Loading event...</div>;

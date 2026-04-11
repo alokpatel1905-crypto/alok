@@ -1,23 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { apiFetch } from '@/lib/api';
 
 export default function MediaPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  const fetchMedia = () => {
-    const token = localStorage.getItem('token');
-    fetch('http://127.0.0.1:4000/upload', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(console.error);
+  const fetchMedia = async () => {
+    try {
+      const res = await apiFetch('/upload');
+      setData(res);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching media:', error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -28,35 +27,34 @@ export default function MediaPage() {
     if (!e.target.files?.[0]) return;
     
     setUploading(true);
-    const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append('file', e.target.files[0]);
 
-    const res = await fetch('http://127.0.0.1:4000/upload', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch('/upload', {
+        method: 'POST',
+        body: formData,
+      });
       fetchMedia();
-    } else {
+    } catch (error) {
+      console.error('Upload failed:', error);
       alert('Upload failed');
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this file?')) return;
     
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:4000/upload/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch(`/upload/${id}`, {
+        method: 'DELETE',
+      });
       fetchMedia();
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Delete failed');
     }
   };
 

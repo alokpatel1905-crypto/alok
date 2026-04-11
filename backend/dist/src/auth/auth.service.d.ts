@@ -10,12 +10,12 @@ export declare class AuthService {
         message: string;
         user: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
             role: import("@prisma/client").$Enums.Role;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     login(dto: LoginDto): Promise<{
@@ -24,12 +24,12 @@ export declare class AuthService {
         refreshToken: string;
         user: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             email: string;
             role: import("@prisma/client").$Enums.Role;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     refresh(refreshToken: string): Promise<{
@@ -37,12 +37,12 @@ export declare class AuthService {
     }>;
     getMe(userId: string): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         email: string;
         role: import("@prisma/client").$Enums.Role;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
     } | null>;
     logout(userId: string): Promise<{
         message: string;

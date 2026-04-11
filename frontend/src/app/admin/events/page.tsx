@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 type Event = {
   id: string;
@@ -22,28 +23,16 @@ export default function EventsPage() {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
-
-      const res = await fetch('http://127.0.0.1:4000/events', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.status === 401) {
+      
+      const result = await apiFetch('/events');
+      setData(result);
+    } catch (err: any) {
+      console.error(err);
+      if (err.message === 'Unauthorized') {
         localStorage.removeItem('token');
         window.location.href = '/login';
         return;
       }
-
-      if (!res.ok) throw new Error('Failed to fetch events');
-      
-      const result = await res.json();
-      setData(result);
-    } catch (err: any) {
-      console.error(err);
       setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -56,14 +45,11 @@ export default function EventsPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Are you sure you want to delete this event?')) return;
-    const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://127.0.0.1:4000/events/${id}`, {
+      await apiFetch(`/events/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) fetchEvents();
-      else alert('Failed to delete event');
+      fetchEvents();
     } catch (err) {
       console.error(err);
       alert('Error deleting event');
@@ -71,19 +57,13 @@ export default function EventsPage() {
   }
 
   async function toggleCancel(event: Event) {
-    const token = localStorage.getItem('token');
     const newStatus = event.status === 'CANCELLED' ? 'UPCOMING' : 'CANCELLED';
     try {
-      const res = await fetch(`http://127.0.0.1:4000/events/${event.id}`, {
+      await apiFetch(`/events/${event.id}`, {
         method: 'PATCH',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ status: newStatus })
       });
-      if (res.ok) fetchEvents();
-      else alert('Failed to update event status');
+      fetchEvents();
     } catch (err) {
       console.error(err);
       alert('Error updating status');

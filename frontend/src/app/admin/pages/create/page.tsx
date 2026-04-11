@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function CreatePagePage() {
   const [title, setTitle] = useState('');
@@ -13,39 +14,29 @@ export default function CreatePagePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
+    try {
+      const data = await apiFetch('/pages', {
+        method: 'POST',
+        body: JSON.stringify({
+          title,
+          slug,
+          content,
+          status,
+        }),
+      });
 
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
+      setResult(data);
 
-    const res = await fetch('http://localhost:4000/pages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        title,
-        slug,
-        content,
-        status,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (res.status === 401) {
-        localStorage.removeItem('token');
+      if (data.id) {
+        window.location.href = '/programs';
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.message === 'Unauthorized') {
         window.location.href = '/login';
         return;
-    }
-
-    setResult(data);
-
-    if (data.id) {
-        window.location.href = '/programs';
+      }
+      setResult({ error: err.message });
     }
   }
 

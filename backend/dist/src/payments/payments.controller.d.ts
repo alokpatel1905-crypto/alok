@@ -6,10 +6,10 @@ export declare class PaymentsController {
     constructor(paymentsService: PaymentsService);
     create(createPaymentDto: CreatePaymentDto): Promise<{
         id: string;
-        description: string | null;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         createdAt: Date;
         updatedAt: Date;
+        description: string | null;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         institutionId: string;
         amount: number;
         currency: string;
@@ -23,10 +23,10 @@ export declare class PaymentsController {
             };
         } & {
             id: string;
-            description: string | null;
-            status: import("@prisma/client").$Enums.PaymentStatus;
             createdAt: Date;
             updatedAt: Date;
+            description: string | null;
+            status: import("@prisma/client").$Enums.PaymentStatus;
             institutionId: string;
             amount: number;
             currency: string;
@@ -46,12 +46,12 @@ export declare class PaymentsController {
         date: Date;
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -75,12 +75,12 @@ export declare class PaymentsController {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -93,10 +93,10 @@ export declare class PaymentsController {
         };
     } & {
         id: string;
-        description: string | null;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         createdAt: Date;
         updatedAt: Date;
+        description: string | null;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         institutionId: string;
         amount: number;
         currency: string;
@@ -105,10 +105,10 @@ export declare class PaymentsController {
     }>;
     update(id: string, updatePaymentDto: UpdatePaymentDto): Promise<{
         id: string;
-        description: string | null;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         createdAt: Date;
         updatedAt: Date;
+        description: string | null;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         institutionId: string;
         amount: number;
         currency: string;
@@ -117,10 +117,10 @@ export declare class PaymentsController {
     }>;
     remove(id: string): Promise<{
         id: string;
-        description: string | null;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         createdAt: Date;
         updatedAt: Date;
+        description: string | null;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         institutionId: string;
         amount: number;
         currency: string;

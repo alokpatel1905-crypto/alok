@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
+import { apiFetch } from '@/lib/api';
+
 export default function AccreditationDetailsPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -10,35 +12,26 @@ export default function AccreditationDetailsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch(`http://localhost:4000/accreditations/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
+    apiFetch(`/accreditations/${id}`)
       .then((res) => {
         setData(res);
         setLoading(false);
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, [id]);
 
   const updateStatus = async (status: string) => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:4000/accreditations/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    if (res.ok) {
-      const updated = await res.json();
+    try {
+      const updated = await apiFetch(`/accreditations/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
       setData(updated);
-    } else {
+    } catch (err) {
+      console.error(err);
       alert('Failed to update status');
     }
   };

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function UploadDocumentPage() {
   const router = useRouter();
@@ -16,60 +17,53 @@ export default function UploadDocumentPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://localhost:4000/institutions', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
+    const fetchInstitutions = async () => {
+      try {
+        const res = await apiFetch('/institutions');
         setInstitutions(res.data || []);
+      } catch (error) {
+        console.error('Error fetching institutions:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch(console.error);
+      }
+    };
+    fetchInstitutions();
   }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
     
     setUploading(true);
-    const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append('file', e.target.files[0]);
 
-    const res = await fetch('http://localhost:4000/upload', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    if (res.ok) {
-      const data = await res.json();
+    try {
+      const data = await apiFetch('/upload', {
+        method: 'POST',
+        body: formData,
+      });
       setForm({ ...form, fileUrl: data.url });
       alert('File uploaded successfully!');
-    } else {
+    } catch (error) {
+      console.error('Upload failed:', error);
       alert('Upload failed');
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.fileUrl) return alert('Please upload a file first');
 
-    const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:4000/documents', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch('/documents', {
+        method: 'POST',
+        body: JSON.stringify(form),
+      });
       router.push('/documents');
-    } else {
-      const err = await res.json();
+    } catch (err: any) {
+      console.error(err);
       alert(err.message || 'Failed to save document');
     }
   };

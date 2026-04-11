@@ -2,26 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function PublicationsPage() {
   const [activeTab, setActiveTab] = useState<'press' | 'research'>('press');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
     const endpoint = activeTab === 'press' ? 'publications/press-releases' : 'publications';
     
-    fetch(`http://127.0.0.1:4000/${endpoint}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(console.error);
+    try {
+      const res = await apiFetch(`/${endpoint}`);
+      setData(res);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -30,14 +29,16 @@ export default function PublicationsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this record?')) return;
-    const token = localStorage.getItem('token');
     const endpoint = activeTab === 'press' ? `publications/press-releases/${id}` : `publications/${id}`;
     
-    const res = await fetch(`http://127.0.0.1:4000/${endpoint}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) fetchData();
+    try {
+      await apiFetch(`/${endpoint}`, {
+        method: 'DELETE',
+      });
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) return <div style={{ padding: 40 }}>Loading media & publications...</div>;

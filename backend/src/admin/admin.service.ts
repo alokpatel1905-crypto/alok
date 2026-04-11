@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProgramsService } from '../programs/programs.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class AdminService {
@@ -10,45 +11,36 @@ export class AdminService {
   ) {}
 
   async getDashboardStats() {
-    const [
-      totalUsers,
-      activeUsers,
-      totalInstitutions,
-      recentInstitutions,
-      totalAccreditations,
-      approvedAccreditations,
-      totalRankings,
-      recentRankings,
-      totalEvents,
-      upcomingEvents,
-      recentEvents,
-      totalAwards,
-      totalDocuments,
-      totalPayments,
-      totalRevenue,
-      unreadNotifications,
-      recentAlerts,
-      programCounts,
-    ] = await Promise.all([
-      this.prisma.user.count(),
-      this.prisma.user.count({ where: { isActive: true } }),
-      this.prisma.institution.count(),
-      this.prisma.institution.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-      this.prisma.accreditation.count(),
-      this.prisma.accreditation.count({ where: { status: 'APPROVED' } }),
-      this.prisma.ranking.count(),
-      this.prisma.ranking.findMany({ take: 5, orderBy: { createdAt: 'desc' }, include: { institution: { select: { name: true } } } }),
-      this.prisma.event.count(),
-      this.prisma.event.count({ where: { status: 'UPCOMING' } }),
-      this.prisma.event.findMany({ where: { status: 'UPCOMING' }, take: 5, orderBy: { startDate: 'asc' } }),
-      this.prisma.award.count(),
-      this.prisma.document.count(),
-      this.prisma.payment.count(),
-      this.prisma.payment.aggregate({ where: { status: 'COMPLETED' }, _sum: { amount: true } }),
-      this.prisma.notification.count({ where: { isRead: false } }),
-      this.prisma.notification.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-      this.programsService.getCounts(),
-    ]);
+    try {
+      const totalUsers = await this.prisma.user.count();
+      const activeUsers = await this.prisma.user.count({ where: { isActive: true } });
+      const totalInstitutions = await this.prisma.institution.count();
+      const recentInstitutions = await this.prisma.institution.findMany({ take: 5, orderBy: { createdAt: 'desc' } });
+      const totalAccreditations = await this.prisma.accreditation.count();
+      const approvedAccreditations = await this.prisma.accreditation.count({ where: { status: 'APPROVED' } });
+      const totalRankings = await this.prisma.ranking.count();
+      const recentRankings = await this.prisma.ranking.findMany({ 
+        take: 5, 
+        orderBy: { createdAt: 'desc' }, 
+        include: { institution: { select: { name: true } } } 
+      });
+      const totalEvents = await this.prisma.event.count();
+      const upcomingEvents = await this.prisma.event.count({ where: { status: 'UPCOMING' } });
+      const recentEvents = await this.prisma.event.findMany({ 
+        where: { status: 'UPCOMING' }, 
+        take: 5, 
+        orderBy: { startDate: 'asc' } 
+      });
+      const totalAwards = await this.prisma.award.count();
+      const totalDocuments = await this.prisma.document.count();
+      const totalPayments = await this.prisma.payment.count();
+      const totalRevenue = await this.prisma.payment.aggregate({ 
+        where: { status: 'COMPLETED' }, 
+        _sum: { amount: true } 
+      });
+      const unreadNotifications = await this.prisma.notification.count({ where: { isRead: false } });
+      const recentAlerts = await this.prisma.notification.findMany({ take: 5, orderBy: { createdAt: 'desc' } });
+      const programCounts = await this.programsService.getCounts();
 
     return {
       overview: {
@@ -82,5 +74,9 @@ export class AdminService {
       },
       programs: programCounts,
     };
+    } catch (error: any) {
+      fs.appendFileSync('error.log', `${new Date().toISOString()} ERROR: ${error.message}\n${error.stack}\n`);
+      throw error;
+    }
   }
 }

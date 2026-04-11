@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function SeoPage() {
   const [activeTab, setActiveTab] = useState<'pages' | 'programs' | 'sitemap'>('pages');
@@ -14,16 +15,11 @@ export default function SeoPage() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/seo/stats', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.status === 401) { router.push('/login'); return; }
-      if (!res.ok) throw new Error('Failed to load SEO stats');
-      const data = await res.json();
+      const data = await apiFetch('/seo/stats');
       setStats(data);
     } catch (err: any) {
       console.error(err);
+      if (err.message === 'Unauthorized') router.push('/login');
       setError(err.message);
     }
   };
@@ -31,19 +27,14 @@ export default function SeoPage() {
   const fetchContent = async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem('token');
     const endpoint = activeTab === 'pages' ? 'pages' : 'programs';
     
     try {
-      const res = await fetch(`http://127.0.0.1:4000/${endpoint}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.status === 401) { router.push('/login'); return; }
-      if (!res.ok) throw new Error(`Failed to load ${activeTab}`);
-      const data = await res.json();
+      const data = await apiFetch(`/${endpoint}`);
       setList(activeTab === 'pages' ? data : data.data);
     } catch (err: any) {
       console.error(err);
+      if (err.message === 'Unauthorized') router.push('/login');
       setError(err.message);
     } finally {
       setLoading(false);
@@ -54,9 +45,7 @@ export default function SeoPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://127.0.0.1:4000/seo/sitemap');
-      if (!res.ok) throw new Error('Failed to load sitemap');
-      const data = await res.json();
+      const data = await apiFetch('/seo/sitemap', { skipToken: true });
       setSitemap(data);
     } catch (err: any) {
       console.error(err);

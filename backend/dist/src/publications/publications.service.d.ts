@@ -4,11 +4,11 @@ export declare class PublicationsService {
     constructor(prisma: PrismaService);
     createPublication(data: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -17,11 +17,11 @@ export declare class PublicationsService {
     findAllPublications(page?: number, limit?: number, type?: any): Promise<{
         data: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             image: string | null;
             status: string;
-            createdAt: Date;
-            updatedAt: Date;
             type: import("@prisma/client").$Enums.PublicationType;
             content: string | null;
             fileUrl: string | null;
@@ -33,11 +33,11 @@ export declare class PublicationsService {
     }>;
     updatePublication(id: string, data: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -45,11 +45,11 @@ export declare class PublicationsService {
     }>;
     removePublication(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
@@ -57,22 +57,22 @@ export declare class PublicationsService {
     }>;
     createPressRelease(data: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;
     findAllPressReleases(page?: number, limit?: number): Promise<{
         data: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             image: string | null;
             status: string;
-            createdAt: Date;
-            updatedAt: Date;
             content: string;
             date: Date;
         }[];
@@ -82,21 +82,21 @@ export declare class PublicationsService {
     }>;
     updatePressRelease(id: string, data: any): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;
     removePressRelease(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        createdAt: Date;
-        updatedAt: Date;
         content: string;
         date: Date;
     }>;

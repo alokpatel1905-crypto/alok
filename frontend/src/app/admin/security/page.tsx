@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function SecurityPage() {
   const [activeTab, setActiveTab] = useState<'audit' | 'login'>('audit');
@@ -12,27 +13,19 @@ export default function SecurityPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
     const endpoint = activeTab === 'audit' ? 'security/audit-logs' : 'security/login-history';
 
     try {
-      const [logsRes, alertsRes] = await Promise.all([
-        fetch(`http://127.0.0.1:4000/${endpoint}`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`http://127.0.0.1:4000/security/alerts`, { headers: { Authorization: `Bearer ${token}` } })
+      const [logs, alertsData] = await Promise.all([
+        apiFetch(`/${endpoint}`),
+        apiFetch(`/security/alerts`)
       ]);
 
-      if (logsRes.status === 401) {
-        router.push('/login');
-        return;
-      }
-
-      const logs = await logsRes.json();
-      const alertsData = await alertsRes.json();
-      
       setData(logs);
       setAlerts(alertsData);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      if (err.message === 'Unauthorized') router.push('/login');
     } finally {
       setLoading(false);
     }

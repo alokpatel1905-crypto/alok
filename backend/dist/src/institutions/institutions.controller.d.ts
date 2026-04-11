@@ -6,12 +6,12 @@ export declare class InstitutionsController {
     constructor(institutionsService: InstitutionsService);
     create(createInstitutionDto: CreateInstitutionDto, user: any): Promise<{
         id: string;
-        description: string | null;
+        name: string;
+        email: string | null;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        email: string | null;
+        description: string | null;
         type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
@@ -31,12 +31,12 @@ export declare class InstitutionsController {
             };
         } & {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -59,10 +59,10 @@ export declare class InstitutionsController {
         };
         accreditations: {
             id: string;
-            title: string;
-            status: import("@prisma/client").$Enums.AccreditationStatus;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
+            status: import("@prisma/client").$Enums.AccreditationStatus;
             institutionId: string;
             expiryDate: Date | null;
             certificateUrl: string | null;
@@ -79,13 +79,13 @@ export declare class InstitutionsController {
         }[];
         events: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
             description: string | null;
             image: string | null;
             status: import("@prisma/client").$Enums.EventStatus;
             views: number;
-            createdAt: Date;
-            updatedAt: Date;
             institutionId: string | null;
             startDate: Date;
             endDate: Date | null;
@@ -94,9 +94,9 @@ export declare class InstitutionsController {
         }[];
         documents: {
             id: string;
-            title: string;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
             category: import("@prisma/client").$Enums.DocumentCategory;
             institutionId: string;
             fileUrl: string;
@@ -105,12 +105,12 @@ export declare class InstitutionsController {
         }[];
     } & {
         id: string;
-        description: string | null;
+        name: string;
+        email: string | null;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        email: string | null;
+        description: string | null;
         type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
@@ -123,12 +123,12 @@ export declare class InstitutionsController {
     }>;
     update(id: string, updateInstitutionDto: UpdateInstitutionDto): Promise<{
         id: string;
-        description: string | null;
+        name: string;
+        email: string | null;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        email: string | null;
+        description: string | null;
         type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
@@ -141,12 +141,12 @@ export declare class InstitutionsController {
     }>;
     remove(id: string): Promise<{
         id: string;
-        description: string | null;
+        name: string;
+        email: string | null;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        email: string | null;
+        description: string | null;
         type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;

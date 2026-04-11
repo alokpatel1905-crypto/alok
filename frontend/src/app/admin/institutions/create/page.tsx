@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function CreateInstitutionPage() {
   const router = useRouter();
@@ -21,21 +22,15 @@ export default function CreateInstitutionPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
 
-    const res = await fetch('http://127.0.0.1:4000/institutions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch('/institutions', {
+        method: 'POST',
+        body: JSON.stringify(form),
+      });
       router.push('/institutions');
-    } else {
-      const err = await res.json();
+    } catch (err: any) {
+      console.error(err);
       alert(err.message || 'Failed to create institution');
     }
   };

@@ -6,9 +6,9 @@ export declare class DocumentsService {
     constructor(prisma: PrismaService);
     create(dto: CreateDocumentDto): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         category: import("@prisma/client").$Enums.DocumentCategory;
         institutionId: string;
         fileUrl: string;
@@ -29,9 +29,9 @@ export declare class DocumentsService {
             } | null;
         } & {
             id: string;
-            title: string;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
             category: import("@prisma/client").$Enums.DocumentCategory;
             institutionId: string;
             fileUrl: string;
@@ -45,12 +45,12 @@ export declare class DocumentsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
@@ -63,10 +63,10 @@ export declare class DocumentsService {
         };
         accreditation: {
             id: string;
-            title: string;
-            status: import("@prisma/client").$Enums.AccreditationStatus;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
+            status: import("@prisma/client").$Enums.AccreditationStatus;
             institutionId: string;
             expiryDate: Date | null;
             certificateUrl: string | null;
@@ -83,9 +83,9 @@ export declare class DocumentsService {
         } | null;
     } & {
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         category: import("@prisma/client").$Enums.DocumentCategory;
         institutionId: string;
         fileUrl: string;
@@ -94,9 +94,9 @@ export declare class DocumentsService {
     }>;
     update(id: string, dto: UpdateDocumentDto): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         category: import("@prisma/client").$Enums.DocumentCategory;
         institutionId: string;
         fileUrl: string;
@@ -105,9 +105,9 @@ export declare class DocumentsService {
     }>;
     remove(id: string): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         category: import("@prisma/client").$Enums.DocumentCategory;
         institutionId: string;
         fileUrl: string;

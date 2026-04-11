@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { apiFetch } from '@/lib/api';
+
 export default function RequestAccreditationPage() {
   const router = useRouter();
   const [institutions, setInstitutions] = useState<any[]>([]);
@@ -13,37 +15,28 @@ export default function RequestAccreditationPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://127.0.0.1:4000/institutions', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
+    apiFetch('/institutions')
       .then((res) => {
         setInstitutions(res.data || []);
         setLoading(false);
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
 
-    const res = await fetch('http://127.0.0.1:4000/accreditations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
-      router.push('/accreditations');
-    } else {
-      const err = await res.json();
+    try {
+      await apiFetch('/accreditations', {
+        method: 'POST',
+        body: JSON.stringify(form),
+      });
+      router.push('/admin/accreditations');
+    } catch (err: any) {
+      console.error(err);
       alert(err.message || 'Failed to request accreditation');
     }
   };

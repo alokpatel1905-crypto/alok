@@ -1,0 +1,12 @@
+node_modules
+dist
+test
+uploads
+*.log
+.git
+.gitignore
+.prettierrc
+eslint.config.mjs
+nest-cli.json
+tsconfig.build.json
+README.md

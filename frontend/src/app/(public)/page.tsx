@@ -1,340 +1,183 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { 
-  ArrowRight, 
-  ShieldCheck, 
-  Globe, 
-  Users, 
-  School, 
-  BookOpen, 
-  Star, 
-  CheckCircle2, 
-  ChevronRight,
-  Target,
-  Lightbulb,
-  Zap,
-  Quote
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { ArrowRight, Globe, GraduationCap, Users, ChevronRight, BookOpen, Building, Target, Network } from 'lucide-react';
 
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 }
-};
+const ECOSYSTEM_PROGRAMS = [
+  { title: 'Programs', items: ['Green School', 'Green University', 'Green Teacher', 'Green Graduate', 'Green Fellowship'] },
+  { title: 'Rankings', items: ['Global Green School Ranking', 'Global Green University Ranking', 'National Green University Ranking'] },
+  { title: 'Events', items: ['NYC Green School Conference', 'NYC Children\'s Climate Conference', 'World Education Forum – Davos', 'Global Green Mentors Conference'] },
+  { title: 'Networks', items: ['Global Green Teacher Network', 'Global Green Schools Network', 'Global Green University Network', 'Global Green Graduates Network', 'Global Green Innovator Network'] }
+];
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+const IMPACT_STATS = [
+  { value: "8,000+", label: "Schools & Universities", icon: <Building className="text-emerald-700 mb-5" size={40} strokeWidth={1.2} /> },
+  { value: "50,000+", label: "Educators Trained", icon: <BookOpen className="text-teal-600 mb-5" size={40} strokeWidth={1.2} /> },
+  { value: "10 Million", label: "Students Empowered", icon: <Users className="text-sky-600 mb-5" size={40} strokeWidth={1.2} /> },
+  { value: "45", label: "Countries Reached", icon: <Globe className="text-emerald-500 mb-5" size={40} strokeWidth={1.2} /> }
+];
 
-export default function PublicHomePage() {
-  return (
-    <div className="overflow-x-hidden">
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 pb-32">
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-50 via-white to-blue-50 -z-10" />
-        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-emerald-200/30 blur-[120px] rounded-full -z-10 animate-pulse" />
-        <div className="absolute bottom-0 left-[-5%] w-[30%] h-[30%] bg-blue-200/20 blur-[100px] rounded-full -z-10" />
+const MEGA_CATEGORIES = [
+  { title: "K-12 School", links: ["Accreditation", "Global Ranking", "Green Class"] },
+  { title: "University", links: ["Accreditation", "Global Ranking", "Green Graduate", "Green Fellowship"] },
+  { title: "Teacher", links: ["Green Teacher Accreditation", "Green Educator Program"] },
+  { title: "Students", links: ["Climate Olympiad", "Green Fellowship", "Green Internship", "Green Jobs"] },
+  { title: "Event", links: ["NYC Green School Conference", "NYC Children's Climate Conference", "World Education Forum – Davos", "Global Green Mentors Conference"] },
+  { title: "Awards", links: ["Green University", "Green School", "Green Mentor", "Green Teacher", "Green Graduate"] },
+  { title: "Network", links: ["Global Green Teacher Network", "Global Green Schools Network", "Global Green University Network", "Global Green Graduates Network", "Global Green Innovator Network"] },
+  { title: "Support Us", links: ["Green Graduate Accreditation", "Green Teacher Accreditation", "Green School Accreditation", "Green University Accreditation"] }
+];
 
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div 
-            initial="initial"
-            animate="animate"
-            variants={staggerContainer}
-            className="space-y-8"
-          >
-            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 bg-emerald-100/80 backdrop-blur-sm border border-emerald-200 text-emerald-700 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">
-              <ShieldCheck size={14} />
-              UN ECOSOC Special Consultative Status
-            </motion.div>
-            
-            <motion.h1 variants={fadeIn} className="text-6xl lg:text-7xl font-black text-slate-900 leading-[1.05] tracking-tight">
-              Empowering <span className="text-emerald-600">Students</span> for a Better <span className="text-sky-500 text-glow-blue">Future</span>
-            </motion.h1>
-            
-            <motion.p variants={fadeIn} className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-xl font-medium">
-              Join the global force in greening education. We provide career guidance, institutional rankings, and sustainability insights to climatize global learning.
-            </motion.p>
-            
-            <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link 
-                href="/programs" 
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 group transition-all hover:scale-105 active:scale-95"
-              >
-                Explore Programs
-                <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link 
-                href="/about" 
-                className="bg-white border-2 border-slate-100 hover:border-emerald-600/20 hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center hover:scale-105 active:scale-95 shadow-sm"
-              >
-                Get Started
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative"
-          >
-            <div className="relative z-10 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
-              <img 
-                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" 
-                alt="Students Collaboration" 
-                className="w-full h-full object-cover aspect-[4/5]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent" />
-            </div>
-            {/* Floating Card */}
-            <motion.div 
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-10 -left-10 bg-white p-6 rounded-3xl shadow-2xl z-20 border border-slate-50 hidden sm:block"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
-                  <Star fill="currentColor" />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-slate-900">4.9/5</div>
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Student Satisfaction</div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+const HeroSection = () => (
+  <section id="home" className="relative py-24 lg:py-32 px-8 flex items-center min-h-[90vh] bg-white overflow-hidden scroll-mt-32">
+    <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/30 to-white -z-20" />
+    <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10">
+      <div className="flex flex-col items-start z-10 lg:pr-8">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-slate-50 border border-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-widest mb-10">
+          <Target size={14} className="text-emerald-600" />
+          Global Greening Education Initiative
         </div>
-      </section>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 tracking-tight leading-[1.15] mb-8">
+          Transforming Education <br className="hidden lg:block"/> for a <span className="text-emerald-700 font-black">Sustainable Future</span>
+        </h2>
+        <p className="text-[17px] md:text-lg text-slate-500 mb-12 max-w-xl font-medium leading-[1.8]">
+          Green Mentors empowers schools, universities, teachers, graduates, and education ecosystems through accreditation, rankings, events, awards, global networks, and sustainability-led collaboration.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
+          <a href="#programs" className="w-full sm:w-auto bg-emerald-800 text-white px-8 py-4 flex items-center justify-center gap-3 rounded-xl font-semibold shadow-lg shadow-emerald-900/10 hover:bg-emerald-900 hover:-translate-y-0.5 transition-all duration-300">
+            Explore Programs <ArrowRight size={18} />
+          </a>
+          <a href="#support" className="w-full sm:w-auto bg-white text-slate-700 border border-slate-200 px-8 py-4 flex items-center justify-center gap-3 rounded-xl font-semibold shadow-sm hover:border-emerald-200 hover:text-emerald-800 hover:bg-emerald-50/50 hover:-translate-y-0.5 transition-all duration-300">
+            Join the Movement
+          </a>
+        </div>
+        <div className="mt-12">
+          <a href="#impact" className="inline-flex items-center gap-2 text-[12px] font-bold text-slate-400 hover:text-emerald-700 transition-colors uppercase tracking-widest group">
+            View Global Impact <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+        </div>
+      </div>
 
-      {/* 2. FEATURES SECTION */}
-      <section className="py-32 bg-white relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <h2 className="text-emerald-600 font-black text-sm uppercase tracking-[0.3em]">Core Features</h2>
-            <h3 className="text-4xl lg:text-5xl font-black text-slate-900 leading-tight">Everything you need to lead the sustainable transition.</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard 
-              icon={Target} 
-              title="Career Guidance" 
-              description="Personalized pathways for students to align their careers with global sustainability goals."
-              color="emerald"
-            />
-            <FeatureCard 
-              icon={Zap} 
-              title="Institution Rankings" 
-              description="Independent, data-driven rankings of the world's greenest schools and universities."
-              color="sky"
-            />
-            <FeatureCard 
-              icon={Users} 
-              title="Events & Webinars" 
-              description="Access to global conferences like NYC Green School and World Education Forum."
-              color="indigo"
-            />
-            <FeatureCard 
-              icon={Lightbulb} 
-              title="Certifications" 
-              description="Earn globally recognized credentials in Green Teaching and Sustainability Leadership."
-              color="amber"
-            />
+      <div className="relative hidden lg:flex items-center justify-center h-[600px] w-full">
+        <div className="absolute w-[500px] h-[500px] border-[0.5px] border-emerald-100 rounded-full" />
+        <div className="absolute w-[360px] h-[360px] border-[1px] border-dashed border-slate-200 rounded-full animate-[spin_100s_linear_infinite]" />
+        <div className="absolute w-[220px] h-[220px] bg-white border border-slate-100 rounded-full shadow-2xl shadow-slate-200/50 flex items-center justify-center z-10 hover:scale-105 transition-transform duration-700 cursor-default">
+          <Globe className="w-28 h-28 text-emerald-800/[0.08]" strokeWidth={1} />
+        </div>
+        <div className="absolute top-12 right-6 bg-white py-3 px-5 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 flex items-center gap-4 z-20 animate-[bounce_8s_infinite] hover:-translate-y-1 transition-transform cursor-default">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center"><Network className="text-emerald-600 w-6 h-6" strokeWidth={1.5} /></div>
+          <div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Global Network</div>
+            <div className="text-lg font-black text-slate-700">45 Countries</div>
           </div>
         </div>
-      </section>
-
-      {/* 3. STATISTICS SECTION */}
-      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
-            <div className="space-y-2">
-              <div className="text-6xl lg:text-7xl font-black text-emerald-400 tracking-tighter">10,000+</div>
-              <div className="text-slate-400 font-bold uppercase tracking-[0.2em] text-sm">Empowered Students</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-6xl lg:text-7xl font-black text-sky-400 tracking-tighter">500+</div>
-              <div className="text-slate-400 font-bold uppercase tracking-[0.2em] text-sm">Partner Institutions</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-6xl lg:text-7xl font-black text-teal-400 tracking-tighter">200+</div>
-              <div className="text-slate-400 font-bold uppercase tracking-[0.2em] text-sm">Global Programs</div>
-            </div>
+        <div className="absolute bottom-20 left-4 bg-white py-3 px-5 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 flex items-center gap-4 z-20 animate-[bounce_10s_infinite_reverse] hover:-translate-y-1 transition-transform cursor-default">
+          <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center"><GraduationCap className="text-teal-600 w-6 h-6" strokeWidth={1.5} /></div>
+          <div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Community</div>
+            <div className="text-lg font-black text-slate-700">10M Students</div>
           </div>
         </div>
-      </section>
-
-      {/* 4. TOP INSTITUTIONS GRID */}
-      <section className="py-32 bg-[#F9FAFB]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div className="max-w-xl">
-              <h2 className="text-emerald-600 font-black text-sm uppercase tracking-[0.3em] mb-4">Our Network</h2>
-              <h3 className="text-4xl font-black text-slate-900 leading-tight">Trusted by Leading Global Institutions</h3>
-            </div>
-            <Link href="/institutions" className="group flex items-center gap-2 text-emerald-600 font-bold hover:gap-4 transition-all">
-              View All Partners <ChevronRight size={20} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
-             {/* Mock Logos */}
-             {[1,2,3,4,5,6].map(i => (
-               <div key={i} className="h-20 bg-white rounded-2xl flex items-center justify-center p-6 shadow-sm border border-slate-100 font-black text-slate-300 text-xl tracking-tighter italic">
-                 INSTITUTE {i}
-               </div>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. TESTIMONIALS */}
-      <section className="py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8">
-              <Quote size={60} className="text-emerald-100 fill-emerald-100" />
-              <h3 className="text-5xl font-black text-slate-900 tracking-tight">Hear it from our <span className="text-emerald-600">Sustainability</span> Leaders.</h3>
-              <p className="text-lg text-slate-500 leading-relaxed font-medium">
-                Our students and partner institutions are at the forefront of the ecological revolution in global education.
-              </p>
-              <div className="flex gap-4">
-                <button className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all"><ArrowRight className="rotate-180" size={20}/></button>
-                <button className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all"><ArrowRight size={20}/></button>
-              </div>
-            </div>
-
-            <div className="bg-emerald-600 rounded-[40px] p-12 text-white relative shadow-2xl shadow-emerald-600/20 overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full translate-x-20 -translate-y-20 blur-3xl" />
-              <div className="space-y-8 relative z-10">
-                <div className="flex gap-1 text-amber-300">
-                  <Star fill="currentColor" size={18}/>
-                  <Star fill="currentColor" size={18}/>
-                  <Star fill="currentColor" size={18}/>
-                  <Star fill="currentColor" size={18}/>
-                  <Star fill="currentColor" size={18}/>
-                </div>
-                <p className="text-2xl font-bold leading-relaxed italic">
-                  "Green Mentors transformed our curriculum into a powerful tool for climate action. Our students are now not just learners, but ecological stewards."
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl" />
-                  <div>
-                    <div className="font-black text-lg">Dr. Sarah Jenkins</div>
-                    <div className="text-emerald-100 text-sm font-bold uppercase tracking-widest">Director, Eco-University</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. LATEST NEWS / BLOG PREVIEW */}
-      <section className="py-32 bg-[#F9FAFB]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20 space-y-4">
-            <h2 className="text-emerald-600 font-black text-sm uppercase tracking-[0.3em]">Insights</h2>
-            <h3 className="text-4xl font-black text-slate-900 tracking-tight">Stay Updated with Global Education News</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <BlogCard 
-              image="https://images.unsplash.com/photo-1544650039-202c5d259295?auto=format&fit=crop&q=80&w=600"
-              category="Climate News"
-              title="Green School Conference NYC: Key Takeaways for 2026"
-              date="April 12, 2026"
-            />
-            <BlogCard 
-              image="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
-              category="Career Tips"
-              title="How to Build a Career in the Green Economy"
-              date="April 08, 2026"
-            />
-            <BlogCard 
-              image="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600"
-              category="Research"
-              title="The Impact of Nature-Based Learning on Student Wellbeing"
-              date="April 05, 2026"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* 7. CTA SECTION */}
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto bg-gradient-to-r from-emerald-600 to-sky-600 rounded-[48px] p-16 lg:p-24 text-center text-white relative overflow-hidden shadow-2xl shadow-emerald-600/30">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-10 relative z-10"
-          >
-            <h2 className="text-5xl lg:text-7xl font-black tracking-tight leading-tight">Start Your Journey <br />Towards a Sustainable Today.</h2>
-            <p className="text-xl text-emerald-50 max-w-2xl mx-auto font-medium leading-relaxed">
-              Join thousands of students and institutions in creating an ecologically neutral world through responsible education.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
-              <button className="bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-xl shadow-2xl shadow-black/10 hover:scale-105 active:scale-95 transition-all">Join the Force</button>
-              <button className="bg-transparent border-2 border-white/30 backdrop-blur-md text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-white/10 hover:border-white transition-all">Contact Us</button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-br from-emerald-50/80 to-sky-50/50 rounded-full blur-[60px] -z-10" />
+      </div>
     </div>
-  );
-}
+  </section>
+);
 
-function FeatureCard({ icon: Icon, title, description, color }: any) {
-  const colors: any = {
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100 shadow-emerald-600/5",
-    sky: "bg-sky-50 text-sky-600 border-sky-100 shadow-sky-600/5",
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100 shadow-indigo-600/5",
-    amber: "bg-amber-50 text-amber-600 border-amber-100 shadow-amber-600/5",
-  };
+const EcosystemLinksSection = () => (
+  <section id="programs" className="py-32 px-8 bg-slate-50 relative border-y border-slate-100 scroll-mt-24">
+    <div className="max-w-7xl mx-auto">
+      <div className="text-center md:text-left mb-20 max-w-2xl">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight mb-5">Explore the Green Mentors Ecosystem</h2>
+        <p className="text-slate-500 font-medium text-[17px] leading-relaxed">
+          Discover accreditation pathways, global rankings, international events, and sustainability networks structured for worldwide institutional growth.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {ECOSYSTEM_PROGRAMS.map((category, idx) => (
+          <div key={idx} className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+            <h4 className="text-[13px] font-bold text-slate-800 mb-8 uppercase tracking-widest border-b border-emerald-50 pb-5 inline-flex items-center gap-4 w-full">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              {category.title}
+            </h4>
+            <ul className="flex flex-col gap-3">
+              {category.items.map((item, i) => (
+                <li key={i}>
+                  <a href={`/accreditation#${item.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`} className="group inline-flex items-center justify-between w-full px-5 py-3.5 rounded-2xl bg-slate-50 text-[13px] font-semibold text-slate-600 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 transition-all duration-200">
+                    <span className="truncate pr-4 leading-relaxed">{item}</span>
+                    <ChevronRight size={14} className="text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-1 shrink-0 transition-transform" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
 
+const ImpactSection = () => (
+  <section id="impact" className="py-32 px-8 bg-white relative scroll-mt-24">
+    <div className="max-w-7xl mx-auto">
+      <div className="text-center mb-24 max-w-3xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight mb-6">Global Impact in Motion</h2>
+        <p className="text-slate-500 font-medium text-[17px] leading-relaxed">
+          Our global education transformation mission spans continents, tangibly equipping institutions and communities with the blueprints for a zero-carbon future.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        {IMPACT_STATS.map((stat, idx) => (
+          <div key={idx} className="bg-slate-50/50 border border-slate-100 rounded-[32px] p-10 flex flex-col items-center text-center hover:bg-white hover:border-emerald-100 hover:shadow-2xl hover:shadow-emerald-900/5 transition-all duration-500 hover:-translate-y-2 group">
+            <div className="group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-500 ease-out">{stat.icon}</div>
+            <h4 className="text-4xl lg:text-[42px] font-black text-slate-800 mb-3 tracking-tight">{stat.value}</h4>
+            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.15em]">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const MegaNavSection = () => (
+  <section id="networks" className="bg-slate-900 py-32 px-8 text-slate-300 scroll-mt-24">
+    <nav className="max-w-7xl mx-auto" aria-label="Ecosystem Navigator">
+      <div className="mb-24 flex flex-col items-center md:items-start border-b border-slate-800 pb-16">
+        <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-6 text-center md:text-left">Ecosystem Navigator</h2>
+        <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-3xl text-center md:text-left">
+          Discover the complete foundation of our specialized pathways, professional networks, global recognitions, and environmental support paradigms.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16 lg:gap-y-20">
+        {MEGA_CATEGORIES.map((category, idx) => (
+          <div key={idx} className="group flex flex-col items-center sm:items-start text-center sm:text-left">
+            <h4 className="text-white font-bold text-[13px] uppercase tracking-[0.15em] mb-8 flex flex-col sm:flex-row items-center gap-4">
+              <span className="w-8 h-[2px] bg-emerald-600 rounded-full" />
+              {category.title}
+            </h4>
+            <ul className="space-y-4 text-[14px] font-medium flex-grow w-full">
+              {category.links.map((link, i) => (
+                <li key={i}>
+                  <a href={`/accreditation#${link.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`} className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all duration-200 inline-block py-1">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </nav>
+  </section>
+);
+
+export default function HomePage() {
   return (
-    <motion.div 
-      variants={fadeIn}
-      className="bg-white border border-slate-100 p-8 rounded-[32px] hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 hover:-translate-y-2 group"
-    >
-      <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center mb-8 border transition-all duration-500 group-hover:scale-110", colors[color])}>
-        <Icon size={32} />
-      </div>
-      <h4 className="text-xl font-black text-slate-900 mb-4 tracking-tight">{title}</h4>
-      <p className="text-slate-500 text-sm leading-relaxed font-medium">
-        {description}
-      </p>
-    </motion.div>
-  );
-}
-
-function BlogCard({ image, category, title, date }: any) {
-  return (
-    <div className="group cursor-pointer">
-      <div className="relative h-64 rounded-[32px] overflow-hidden mb-6 shadow-lg">
-        <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 shadow-sm">
-          {category}
-        </div>
-      </div>
-      <div className="space-y-3 px-2">
-        <div className="text-slate-400 text-xs font-bold uppercase tracking-widest">{date}</div>
-        <h4 className="text-xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors leading-tight">{title}</h4>
-        <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
-          Read Article <ArrowRight size={16} />
-        </div>
-      </div>
+    <div className="bg-white text-slate-800 font-sans selection:bg-emerald-200 selection:text-emerald-950">
+      <HeroSection />
+      <EcosystemLinksSection />
+      <ImpactSection />
+      <MegaNavSection />
     </div>
   );
 }

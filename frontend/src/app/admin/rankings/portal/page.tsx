@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function RankingPortalPage() {
   const [activeTab, setActiveTab] = useState<'submissions' | 'submit'>('submissions');
@@ -11,14 +12,15 @@ export default function RankingPortalPage() {
 
   const fetchSubmissions = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    const res = await fetch('http://127.0.0.1:4000/rankings/submissions', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.status === 401) { router.push('/login'); return; }
-    const data = await res.json();
-    setSubmissions(data);
-    setLoading(false);
+    try {
+      const data = await apiFetch('/rankings/submissions');
+      setSubmissions(data);
+    } catch (err: any) {
+      console.error(err);
+      if (err.message === 'Unauthorized') router.push('/login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -26,19 +28,18 @@ export default function RankingPortalPage() {
   }, [activeTab]);
 
   const handleEvaluate = async (id: string) => {
-    const token = localStorage.getItem('token');
     const note = prompt('Enter evaluation notes:');
     if (!note) return;
 
-    const res = await fetch(`http://127.0.0.1:4000/rankings/submissions/${id}/evaluate`, {
-      method: 'PATCH',
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` 
-      },
-      body: JSON.stringify({ note, reviewerId: 'current-user-id' }), // Simplified
-    });
-    if (res.ok) fetchSubmissions();
+    try {
+      await apiFetch(`/rankings/submissions/${id}/evaluate`, {
+        method: 'PATCH',
+        body: JSON.stringify({ note, reviewerId: 'current-user-id' }), // Simplified
+      });
+      fetchSubmissions();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading && activeTab === 'submissions') return <div style={{ padding: 40 }}>Opening the Global Ranking Vault...</div>;

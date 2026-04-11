@@ -1,23 +1,51 @@
-const API_URL = 'http://127.0.0.1:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000';
 
 export async function apiFetch(
   endpoint: string,
-  options: RequestInit = {},
+  options: RequestInit & { skipToken?: boolean } = {},
 ) {
-  const token = localStorage.getItem('token');
+  const { skipToken, ...fetchOptions } = options;
+  const token = !skipToken && typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   const res = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
+    ...fetchOptions,
     headers: {
-      'Content-Type': 'application/json',
+      ...(!fetchOptions.body || !(fetchOptions.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
       ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
+      ...fetchOptions.headers,
     },
   });
 
   if (!res.ok) {
-    throw new Error('API Error');
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'API Error');
   }
 
   return res.json();
+}
+
+// ==== CMS Helpers ====
+
+export async function getPageContent(slug: string) {
+  try {
+    return await apiFetch(`/pages/public/${slug}`, { skipToken: true });
+  } catch (error) {
+    console.error("Error fetching page:", error);
+    return null;
+  }
+}
+
+export async function getAllPages() {
+  return apiFetch('/pages');
+}
+
+export async function updatePageContent(id: string, payload: any) {
+  return apiFetch(`/pages/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function getPageHistory(id: string) {
+  return apiFetch(`/pages/${id}/history`);
 }

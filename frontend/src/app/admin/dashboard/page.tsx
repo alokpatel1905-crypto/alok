@@ -42,16 +42,14 @@ const BAR_DATA = [
   { name: 'Organizations', value: 24 },
 ];
 
+import { apiFetch } from '@/lib/api';
+
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://127.0.0.1:4000/admin/dashboard', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
+    apiFetch('/admin/dashboard')
       .then((res) => {
         setData(res.stats);
         setLoading(false);

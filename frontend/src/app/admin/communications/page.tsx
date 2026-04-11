@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { apiFetch } from '@/lib/api';
+
 export default function CommunicationsPage() {
   const [activeTab, setActiveTab] = useState<'announcements' | 'newsletter'>('announcements');
   const [data, setData] = useState<any>(null);
@@ -14,26 +16,16 @@ export default function CommunicationsPage() {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      const endpoint = activeTab === 'announcements' ? 'communications/announcements' : 'communications/newsletter/subscribers';
+      const endpoint = activeTab === 'announcements' ? '/communications/announcements' : '/communications/newsletter/subscribers';
 
-      const res = await fetch(`http://127.0.0.1:4000/${endpoint}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.status === 401) {
-        router.push('/login');
-        return;
-      }
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch communications data');
-      }
-
-      const result = await res.json();
+      const result = await apiFetch(endpoint);
       setData(result);
     } catch (err: any) {
       console.error(err);
+      if (err.message === 'API Error' || err.message === 'Unauthorized') {
+        router.push('/login');
+        return;
+      }
       setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -47,18 +39,15 @@ export default function CommunicationsPage() {
   const handleDeleteAnnouncement = async (id: string) => {
     try {
       if (!confirm('Delete this announcement?')) return;
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/communications/announcements/${id}`, {
+      await apiFetch(`/communications/announcements/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.status === 401) {
-        router.push('/login');
-        return;
-      }
-      if (res.ok) fetchData();
-    } catch (err) {
+      fetchData();
+    } catch (err: any) {
       console.error('Failed to delete announcement:', err);
+      if (err.message === 'API Error' || err.message === 'Unauthorized') {
+        router.push('/login');
+      }
     }
   };
 

@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { apiFetch } from '@/lib/api';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('admin@test.com');
   const [password, setPassword] = useState('123456');
@@ -25,17 +27,11 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch('http://127.0.0.1:4000/auth/login', {
+      const data = await apiFetch('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        skipToken: true,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Invalid credentials');
-      }
 
       if (data.accessToken) {
         localStorage.setItem('token', data.accessToken);

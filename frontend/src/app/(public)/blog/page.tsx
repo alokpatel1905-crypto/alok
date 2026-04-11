@@ -16,15 +16,16 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
-export default function BlogPublicPage() {
-  const [articles, setArticles] = useState<any[]>([]);
+import { apiFetch } from '@/lib/api';
+
+export default function BlogPage() {
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:4000/publications')
-      .then(res => res.json())
+    apiFetch('/publications')
       .then(res => {
-        setArticles(res.data || []);
+        setPosts(res.data || []);
         setLoading(false);
       })
       .catch(err => {

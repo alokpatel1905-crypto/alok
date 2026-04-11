@@ -29,9 +29,9 @@ export declare class SecurityController {
             } | null;
         } & {
             id: string;
-            status: string;
-            createdAt: Date;
             email: string;
+            createdAt: Date;
+            status: string;
             userId: string | null;
             ipAddress: string | null;
             userAgent: string | null;

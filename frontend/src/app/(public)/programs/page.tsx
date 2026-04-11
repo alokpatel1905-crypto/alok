@@ -24,6 +24,8 @@ const CATEGORIES = [
   { id: 'TEACHER', label: 'Teacher Training' },
 ];
 
+import { apiFetch } from '@/lib/api';
+
 export default function ProgramsPage() {
   const [programs, setPrograms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,7 @@ export default function ProgramsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:4000/programs')
-      .then((res) => res.json())
+    apiFetch('/programs')
       .then((res) => {
         setPrograms(res.data || []);
         setLoading(false);

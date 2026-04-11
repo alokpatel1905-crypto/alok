@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -18,41 +19,34 @@ export default function CreateEventPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://localhost:4000/institutions', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
+    const fetchInstitutions = async () => {
+      try {
+        const res = await apiFetch('/institutions');
         setInstitutions(res.data || []);
+      } catch (error) {
+        console.error('Error fetching institutions:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch(console.error);
+      }
+    };
+    fetchInstitutions();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
 
-    const res = await fetch('http://localhost:4000/events', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        institutionId: form.institutionId || undefined,
-        endDate: form.endDate || undefined,
-      }),
-    });
-
-    if (res.ok) {
+    try {
+      await apiFetch('/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...form,
+          institutionId: form.institutionId || undefined,
+          endDate: form.endDate || undefined,
+        }),
+      });
       router.push('/events');
-    } else {
-      const err = await res.json();
+    } catch (err: any) {
+      console.error(err);
       alert(err.message || 'Failed to create event');
     }
   };

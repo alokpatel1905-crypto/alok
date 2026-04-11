@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function InstitutionProfilePage() {
   const { id } = useParams();
@@ -12,33 +13,24 @@ export default function InstitutionProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetch(`http://127.0.0.1:4000/institutions/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (res.status === 401) {
+    const fetchProfile = async () => {
+      try {
+        const res = await apiFetch(`/institutions/${id}`);
+        setData(res);
+        setLoading(false);
+      } catch (err: any) {
+        console.error(err);
+        if (err.message === 'Unauthorized') {
           localStorage.removeItem('token');
           router.push('/login');
           return;
         }
-        if (!res.ok) throw new Error('Failed to fetch institution profile');
-        return res.json();
-      })
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
         setError(err.message);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProfile();
   }, [id, router]);
 
   if (loading) return <div style={{ padding: 40 }}>Loading profile...</div>;

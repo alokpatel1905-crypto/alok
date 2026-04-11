@@ -119,4 +119,9 @@ export class PagesController {
   findById(@Param('id') id: string) {
     return this.pagesService.findById(id);
   }
+
+  @Get(':id/history')
+  getHistory(@Param('id') id: string) {
+    return this.pagesService.getHistory(id);
+  }
 }

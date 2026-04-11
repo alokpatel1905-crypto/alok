@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function DocumentsPage() {
   const [data, setData] = useState<any>(null);
@@ -14,28 +15,16 @@ export default function DocumentsPage() {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-
-      const res = await fetch('http://127.0.0.1:4000/documents', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.status === 401) {
+      
+      const result = await apiFetch('/documents');
+      setData(result);
+    } catch (err: any) {
+      console.error(err);
+      if (err.message === 'Unauthorized') {
         localStorage.removeItem('token');
         router.push('/login');
         return;
       }
-
-      if (!res.ok) throw new Error('Failed to fetch documents');
-      
-      const result = await res.json();
-      setData(result);
-    } catch (err: any) {
-      console.error(err);
       setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -49,18 +38,15 @@ export default function DocumentsPage() {
   const handleDelete = async (id: string) => {
     try {
       if (!confirm('Are you sure you want to delete this document?')) return;
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/documents/${id}`, {
+      await apiFetch(`/documents/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.status === 401) {
-        router.push('/login');
-        return;
-      }
-      if (res.ok) fetchDocuments();
-    } catch (err) {
+      fetchDocuments();
+    } catch (err: any) {
       console.error('Failed to delete document:', err);
+      if (err.message === 'Unauthorized') {
+        router.push('/login');
+      }
     }
   };
 

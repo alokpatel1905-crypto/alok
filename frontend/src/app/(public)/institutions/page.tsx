@@ -24,6 +24,8 @@ const TYPES = [
   { id: 'UNIVERSITY', label: 'Universities', icon: GraduationCap },
 ];
 
+import { apiFetch } from '@/lib/api';
+
 export default function InstitutionsPublicPage() {
   const [institutions, setInstitutions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,7 @@ export default function InstitutionsPublicPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:4000/institutions')
-      .then(res => res.json())
+    apiFetch('/institutions')
       .then(res => {
         setInstitutions(res.data || []);
         setLoading(false);

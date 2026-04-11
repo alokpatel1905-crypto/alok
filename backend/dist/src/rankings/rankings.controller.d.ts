@@ -51,11 +51,11 @@ export declare class RankingsController {
     })[]>;
     createSubmission(body: any): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;
@@ -68,11 +68,11 @@ export declare class RankingsController {
         };
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;
@@ -84,11 +84,11 @@ export declare class RankingsController {
         note: string;
     }): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SubmissionStatus;
         createdAt: Date;
         updatedAt: Date;
         data: import("@prisma/client/runtime/client").JsonValue | null;
         year: number;
+        status: import("@prisma/client").$Enums.SubmissionStatus;
         category: string;
         score: number | null;
         institutionId: string;
@@ -98,12 +98,12 @@ export declare class RankingsController {
     findOne(id: string): Promise<{
         institution: {
             id: string;
-            description: string | null;
+            name: string;
+            email: string | null;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            email: string | null;
+            description: string | null;
             type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;

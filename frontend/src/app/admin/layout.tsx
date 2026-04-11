@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 
 const SIDEBAR_ITEMS = [
   { name: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard', roles: ['ANY'] },
+  { name: 'Pages CMS', icon: FileText, href: '/admin/pages', roles: ['ANY'] },
   { name: 'Analytics', icon: PieChart, href: '/admin/analytics', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER'] },
   { name: 'User Management', icon: Users, href: '/admin/users', roles: ['SUPER_ADMIN'] },
   { name: 'Institutions', icon: School, href: '/admin/institutions', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER', 'CONTENT_EDITOR'] },
