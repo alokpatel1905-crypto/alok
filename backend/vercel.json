@@ -3,9 +3,9 @@
   "functions": {
     "vercel-bootstrap.ts": {
       "maxDuration": 60
-    },
-    "api/test.ts": {}
+    }
   },
+
   "routes": [
     {
       "src": "/api/test",
