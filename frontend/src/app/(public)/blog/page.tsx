@@ -19,13 +19,13 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     apiFetch('/publications')
       .then(res => {
-        setPosts(res.data || []);
+        setArticles(res.data || []);
         setLoading(false);
       })
       .catch(err => {
