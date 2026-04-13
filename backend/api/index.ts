@@ -32,8 +32,13 @@ export const bootstrap = async () => {
         }),
       );
       
-      app.enableCors();
+      app.enableCors({
+        origin: true,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
+      });
       await app.init();
+
       cachedServer = server;
       console.log('NestJS application initialized successfully.');
     } catch (err) {
