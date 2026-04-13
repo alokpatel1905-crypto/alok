@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alok-o4t4.vercel.app';
 
 export async function apiFetch(
   endpoint: string,
