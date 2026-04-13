@@ -14,7 +14,11 @@ export const bootstrap = async () => {
     
     if (!process.env.DATABASE_URL) {
       console.error('CRITICAL: DATABASE_URL is not set in environment variables');
+    } else {
+      console.log('DATABASE_URL is present (length: ' + process.env.DATABASE_URL.length + ')');
     }
+    
+    console.log('NODE_ENV:', process.env.NODE_ENV);
 
     try {
       const server = express();
@@ -49,7 +53,8 @@ export default async (req: any, res: any) => {
     res.status(500).json({
       statusCode: 500,
       message: 'Internal Server Error during application bootstrap',
-      error: process.env.NODE_ENV === 'development' ? err : undefined,
+      error: err instanceof Error ? err.message : String(err),
+      stack: process.env.NODE_ENV === 'development' ? (err instanceof Error ? err.stack : undefined) : undefined,
     });
   }
 };
