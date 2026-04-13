@@ -73,11 +73,12 @@ export default async (req: any, res: any) => {
     console.error('SERVERLESS_HANDLER_ERROR:', err);
     res.status(500).json({
       statusCode: 500,
-      message: 'Internal Server Error during application bootstrap',
+      message: `Internal Server Error: ${err instanceof Error ? err.message : String(err)}`,
       error: err instanceof Error ? err.message : String(err),
       type: err?.name || 'UnknownError',
       stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined,
     });
   }
+
 };
 
