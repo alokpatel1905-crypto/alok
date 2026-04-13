@@ -22,12 +22,14 @@ const roles_guard_1 = require("../auth/roles.guard");
 const roles_decorator_1 = require("../auth/roles.decorator");
 const common_2 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const multer_1 = require("multer");
 const common_3 = require("@nestjs/common");
+const cloudinary_service_1 = require("../upload/cloudinary.service");
 let ProgramsController = class ProgramsController {
     programsService;
-    constructor(programsService) {
+    cloudinaryService;
+    constructor(programsService, cloudinaryService) {
         this.programsService = programsService;
+        this.cloudinaryService = cloudinaryService;
     }
     create(dto) {
         return this.programsService.create(dto);
@@ -63,22 +65,29 @@ let ProgramsController = class ProgramsController {
         return this.programsService.getCounts();
     }
     async createWithImage(file, body) {
-        console.log('BODY:', body);
         if (!body.slug) {
             throw new common_3.BadRequestException('Slug is required');
         }
-        const imageUrl = file
-            ? `${process.env.BASE_URL || 'http://127.0.0.1:4000'}/uploads/${file.filename}`
-            : undefined;
+        let imageUrl = body.image;
+        if (file) {
+            const result = await this.cloudinaryService.uploadFile(file);
+            imageUrl = result.secure_url;
+        }
         return this.programsService.create({
             ...body,
             image: imageUrl,
         });
     }
-    updateWithImage(id, file, body) {
-        const imageUrl = file
-            ? `${process.env.BASE_URL}/uploads/${file.filename}`
-            : body.image;
+    async updateWithImage(id, file, body) {
+        let imageUrl = body.image;
+        if (file) {
+            const existing = await this.programsService.findById(id);
+            if (existing?.image) {
+                await this.cloudinaryService.deleteFileByUrl(existing.image);
+            }
+            const result = await this.cloudinaryService.uploadFile(file);
+            imageUrl = result.secure_url;
+        }
         return this.programsService.update(id, {
             ...body,
             image: imageUrl,
@@ -186,16 +195,7 @@ __decorate([
     (0, common_1.Post)('with-image'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'PROGRAM_MANAGER'),
-    (0, common_2.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (_req, file, callback) => {
-                const cleanName = file.originalname.replace(/\s+/g, '-');
-                const uniqueName = `${Date.now()}-${cleanName}`;
-                callback(null, uniqueName);
-            },
-        }),
-    })),
+    (0, common_2.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_2.UploadedFile)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -206,25 +206,17 @@ __decorate([
     (0, common_1.Patch)(':id/with-image'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'PROGRAM_MANAGER'),
-    (0, common_2.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (_req, file, callback) => {
-                const cleanName = file.originalname.replace(/\s+/g, '-');
-                const uniqueName = `${Date.now()}-${cleanName}`;
-                callback(null, uniqueName);
-            },
-        }),
-    })),
+    (0, common_2.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_2.UploadedFile)()),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ProgramsController.prototype, "updateWithImage", null);
 exports.ProgramsController = ProgramsController = __decorate([
     (0, common_1.Controller)('programs'),
-    __metadata("design:paramtypes", [programs_service_1.ProgramsService])
+    __metadata("design:paramtypes", [programs_service_1.ProgramsService,
+        cloudinary_service_1.CloudinaryService])
 ], ProgramsController);
 //# sourceMappingURL=programs.controller.js.map

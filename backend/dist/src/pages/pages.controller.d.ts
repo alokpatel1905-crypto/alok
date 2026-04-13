@@ -1,7 +1,9 @@
 import { PagesService } from './pages.service';
+import { CloudinaryService } from '../upload/cloudinary.service';
 export declare class PagesController {
     private readonly pagesService;
-    constructor(pagesService: PagesService);
+    private readonly cloudinaryService;
+    constructor(pagesService: PagesService, cloudinaryService: CloudinaryService);
     create(body: any): Promise<{
         id: string;
         isActive: boolean;

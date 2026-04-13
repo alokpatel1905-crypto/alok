@@ -11,11 +11,13 @@ const common_1 = require("@nestjs/common");
 const pages_service_1 = require("./pages.service");
 const pages_controller_1 = require("./pages.controller");
 const seed_controller_1 = require("./seed.controller");
+const upload_module_1 = require("../upload/upload.module");
 let PagesModule = class PagesModule {
 };
 exports.PagesModule = PagesModule;
 exports.PagesModule = PagesModule = __decorate([
     (0, common_1.Module)({
+        imports: [upload_module_1.UploadModule],
         controllers: [pages_controller_1.PagesController, seed_controller_1.SeedController],
         providers: [pages_service_1.PagesService],
     })

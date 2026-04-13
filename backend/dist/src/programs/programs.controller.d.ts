@@ -1,9 +1,11 @@
 import { ProgramsService } from './programs.service';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { UpdateProgramDto } from './dto/update-program.dto';
+import { CloudinaryService } from '../upload/cloudinary.service';
 export declare class ProgramsController {
     private readonly programsService;
-    constructor(programsService: ProgramsService);
+    private readonly cloudinaryService;
+    constructor(programsService: ProgramsService, cloudinaryService: CloudinaryService);
     create(dto: CreateProgramDto): Promise<{
         id: string;
         isActive: boolean;

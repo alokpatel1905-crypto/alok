@@ -22,9 +22,12 @@ async function bootstrap() {
   console.log('Uploads path:', uploadsPath);
   console.log('Uploads folder exists:', existsSync(uploadsPath));
 
-  app.useStaticAssets(uploadsPath, {
-    prefix: '/uploads',
-  });
+  if (existsSync(uploadsPath)) {
+    app.useStaticAssets(uploadsPath, {
+      prefix: '/uploads',
+    });
+  }
+
 
   app.enableCors();
 

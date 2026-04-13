@@ -17,9 +17,11 @@ async function bootstrap() {
     const uploadsPath = (0, path_1.join)(process.cwd(), 'uploads');
     console.log('Uploads path:', uploadsPath);
     console.log('Uploads folder exists:', (0, fs_1.existsSync)(uploadsPath));
-    app.useStaticAssets(uploadsPath, {
-        prefix: '/uploads',
-    });
+    if ((0, fs_1.existsSync)(uploadsPath)) {
+        app.useStaticAssets(uploadsPath, {
+            prefix: '/uploads',
+        });
+    }
     app.enableCors();
     await app.listen(4000, '0.0.0.0');
     console.log('Backend running on http://localhost:4000');

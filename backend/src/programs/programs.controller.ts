@@ -17,12 +17,15 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { BadRequestException } from '@nestjs/common';
+import { CloudinaryService } from '../upload/cloudinary.service';
 
 @Controller('programs')
 export class ProgramsController {
-  constructor(private readonly programsService: ProgramsService) {}
+  constructor(
+    private readonly programsService: ProgramsService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -111,76 +114,56 @@ export class ProgramsController {
   }
 
   @Post('with-image')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('SUPER_ADMIN', 'PROGRAM_MANAGER')
-@UseInterceptors(
-  FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (
-        _req: any,
-        file: Express.Multer.File,
-        callback: (error: Error | null, filename: string) => void,
-      ) => {
-        const cleanName = file.originalname.replace(/\s+/g, '-');
-        const uniqueName = `${Date.now()}-${cleanName}`;
-        callback(null, uniqueName);
-      },
-    }),
-  }),
-)
-async createWithImage(
-  @UploadedFile() file: Express.Multer.File,
-  @Body() body: any,
-) {
-  // 🔥 DEBUG (important)
-  console.log('BODY:', body);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PROGRAM_MANAGER')
+  @UseInterceptors(FileInterceptor('file'))
+  async createWithImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
+  ) {
+    if (!body.slug) {
+      throw new BadRequestException('Slug is required');
+    }
 
-  if (!body.slug) {
-    throw new BadRequestException('Slug is required');
+    let imageUrl = body.image;
+    if (file) {
+      const result = await this.cloudinaryService.uploadFile(file);
+      imageUrl = result.secure_url;
+    }
+
+    return this.programsService.create({
+      ...body,
+      image: imageUrl,
+    });
   }
 
-  const imageUrl = file
-    ? `${process.env.BASE_URL || 'http://127.0.0.1:4000'}/uploads/${file.filename}`
-    : undefined;
-
-  return this.programsService.create({
-    ...body,
-    image: imageUrl,
-  });
-  }
 
   @Patch(':id/with-image')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('SUPER_ADMIN', 'PROGRAM_MANAGER')
-@UseInterceptors(
-  FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (
-        _req: any,
-        file: Express.Multer.File,
-        callback: (error: Error | null, filename: string) => void,
-      ) => {
-        const cleanName = file.originalname.replace(/\s+/g, '-');
-        const uniqueName = `${Date.now()}-${cleanName}`;
-        callback(null, uniqueName);
-      },
-    }),
-  }),
-)
-updateWithImage(
-  @Param('id') id: string,
-  @UploadedFile() file: Express.Multer.File,
-  @Body() body: any,
-) {
-  const imageUrl = file
-    ? `${process.env.BASE_URL}/uploads/${file.filename}`
-    : body.image;
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PROGRAM_MANAGER')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateWithImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
+  ) {
+    let imageUrl = body.image;
+    if (file) {
+      // Fetch existing program to delete old image
+      const existing = await this.programsService.findById(id);
+      if (existing?.image) {
+        await this.cloudinaryService.deleteFileByUrl(existing.image);
+      }
+      
+      const result = await this.cloudinaryService.uploadFile(file);
+      imageUrl = (result as any).secure_url;
+    }
 
-  return this.programsService.update(id, {
-    ...body,
-    image: imageUrl,
-  });
+    return this.programsService.update(id, {
+      ...body,
+      image: imageUrl,
+    });
   }
+
+
 }

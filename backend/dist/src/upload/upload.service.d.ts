@@ -1,8 +1,10 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from './cloudinary.service';
 export declare class UploadService {
     private readonly prisma;
-    constructor(prisma: PrismaService);
-    create(file: Express.Multer.File, userId?: string): Promise<{
+    private readonly cloudinaryService;
+    constructor(prisma: PrismaService, cloudinaryService: CloudinaryService);
+    create(file: Express.Multer.File, cloudinaryResult: any, userId?: string): Promise<{
         url: string;
         id: string;
         createdAt: Date;

@@ -11,35 +11,25 @@ import {
   Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { UploadService } from './upload.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from './cloudinary.service';
 
 @Controller('upload')
 export class UploadController {
-  constructor(private readonly uploadService: UploadService) {}
+  constructor(
+    private readonly uploadService: UploadService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          _req: any,
-          file: Express.Multer.File,
-          callback: (error: Error | null, filename: string) => void,
-        ) => {
-          const cleanName = file.originalname.replace(/\s+/g, '-');
-          const uniqueName = `${Date.now()}-${cleanName}`;
-          callback(null, uniqueName);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
-    return this.uploadService.create(file, req.user.sub);
+    const result = await this.cloudinaryService.uploadFile(file);
+    return this.uploadService.create(file, result, req.user.sub);
   }
+
 
   @Get()
   @UseGuards(JwtAuthGuard)

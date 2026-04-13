@@ -1,24 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as fs from 'fs';
-import { join } from 'path';
+import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class UploadService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
-  async create(file: Express.Multer.File, userId?: string) {
+  async create(file: Express.Multer.File, cloudinaryResult: any, userId?: string) {
     return this.prisma.media.create({
       data: {
-        filename: file.filename,
+        filename: cloudinaryResult.public_id,
         originalname: file.originalname,
         mimetype: file.mimetype,
         size: file.size,
-        url: `${process.env.BASE_URL}/uploads/${file.filename}`,
+        url: cloudinaryResult.secure_url,
         uploadedById: userId,
       },
     });
   }
+
 
   async findAll(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
@@ -40,11 +43,10 @@ export class UploadService {
     const media = await this.prisma.media.findUnique({ where: { id } });
     if (!media) throw new NotFoundException('Media not found');
 
-    const filePath = join(process.cwd(), 'uploads', media.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
+    // Delete from Cloudinary
+    await this.cloudinaryService.deleteFile(media.filename);
 
     return this.prisma.media.delete({ where: { id } });
   }
+
 }

@@ -11,11 +11,14 @@ import {
 } from '@nestjs/common';
 import { PagesService } from './pages.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { CloudinaryService } from '../upload/cloudinary.service';
 
 @Controller('pages')
 export class PagesController {
-  constructor(private readonly pagesService: PagesService) {}
+  constructor(
+    private readonly pagesService: PagesService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   @Post()
   create(@Body() body: any) {
@@ -23,35 +26,23 @@ export class PagesController {
   }
 
   @Post('with-image')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          _req: any,
-          file: Express.Multer.File,
-          callback: (error: Error | null, filename: string) => void,
-        ) => {
-          const cleanName = file.originalname.replace(/\s+/g, '-');
-          const uniqueName = `${Date.now()}-${cleanName}`;
-          callback(null, uniqueName);
-        },
-      }),
-    }),
-  )
-  createWithImage(
+  @UseInterceptors(FileInterceptor('file'))
+  async createWithImage(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
-    const imageUrl = file
-      ? `${process.env.BASE_URL || 'http://127.0.0.1:4000'}/uploads/${file.filename}`
-      : undefined;
+    let imageUrl = body.image;
+    if (file) {
+      const result = await this.cloudinaryService.uploadFile(file);
+      imageUrl = (result as any).secure_url;
+    }
 
     return this.pagesService.create({
       ...body,
       image: imageUrl,
     });
   }
+
 
   @Get()
   findAll() {
@@ -79,36 +70,31 @@ export class PagesController {
   }
 
   @Patch(':id/with-image')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          _req: any,
-          file: Express.Multer.File,
-          callback: (error: Error | null, filename: string) => void,
-        ) => {
-          const cleanName = file.originalname.replace(/\s+/g, '-');
-          const uniqueName = `${Date.now()}-${cleanName}`;
-          callback(null, uniqueName);
-        },
-      }),
-    }),
-  )
-  updateWithImage(
+  @UseInterceptors(FileInterceptor('file'))
+  async updateWithImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
-    const imageUrl = file
-      ? `${process.env.BASE_URL}/uploads/${file.filename}`
-      : body.image;
+    let imageUrl = body.image;
+    if (file) {
+      // Fetch existing page to delete old image
+      const existing = await this.pagesService.findById(id);
+      if (existing?.image) {
+        await this.cloudinaryService.deleteFileByUrl(existing.image);
+      }
+      
+      const result = await this.cloudinaryService.uploadFile(file);
+      imageUrl = (result as any).secure_url;
+    }
 
     return this.pagesService.update(id, {
       ...body,
       image: imageUrl,
     });
   }
+
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

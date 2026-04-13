@@ -15,16 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const multer_1 = require("multer");
 const upload_service_1 = require("./upload.service");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const cloudinary_service_1 = require("./cloudinary.service");
 let UploadController = class UploadController {
     uploadService;
-    constructor(uploadService) {
+    cloudinaryService;
+    constructor(uploadService, cloudinaryService) {
         this.uploadService = uploadService;
+        this.cloudinaryService = cloudinaryService;
     }
     async uploadFile(file, req) {
-        return this.uploadService.create(file, req.user.sub);
+        const result = await this.cloudinaryService.uploadFile(file);
+        return this.uploadService.create(file, result, req.user.sub);
     }
     findAll(page = '1', limit = '20') {
         return this.uploadService.findAll(+page, +limit);
@@ -37,16 +40,7 @@ exports.UploadController = UploadController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (_req, file, callback) => {
-                const cleanName = file.originalname.replace(/\s+/g, '-');
-                const uniqueName = `${Date.now()}-${cleanName}`;
-                callback(null, uniqueName);
-            },
-        }),
-    })),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -72,6 +66,7 @@ __decorate([
 ], UploadController.prototype, "remove", null);
 exports.UploadController = UploadController = __decorate([
     (0, common_1.Controller)('upload'),
-    __metadata("design:paramtypes", [upload_service_1.UploadService])
+    __metadata("design:paramtypes", [upload_service_1.UploadService,
+        cloudinary_service_1.CloudinaryService])
 ], UploadController);
 //# sourceMappingURL=upload.controller.js.map
