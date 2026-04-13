@@ -50,8 +50,12 @@ export const bootstrap = async () => {
 };
 
 export default async (req: any, res: any) => {
+  console.log('REQUEST RECEIVED:', req.method, req.url);
+  
   // Manual CORS for all responses including errors
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Using explicit origin because credentials: true is incompatible with '*'
+  const origin = req.headers.origin || 'https://alok-lilac-rho.vercel.app';
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -60,6 +64,7 @@ export default async (req: any, res: any) => {
     res.status(200).end();
     return;
   }
+
 
   try {
     const app = await bootstrap();
