@@ -1,15 +1,19 @@
 {
   "version": 2,
   "functions": {
-    "api/index.ts": {
-      "memory": 1024,
+    "vercel-bootstrap.ts": {
       "maxDuration": 60
-    }
+    },
+    "api/test.ts": {}
   },
   "routes": [
     {
+      "src": "/api/test",
+      "dest": "api/test.ts"
+    },
+    {
       "src": "/(.*)",
-      "dest": "api/index.ts"
+      "dest": "vercel-bootstrap.ts"
     }
   ]
 }

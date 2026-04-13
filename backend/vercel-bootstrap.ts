@@ -2,23 +2,23 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { AppModule } from '../src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import express from 'express';
+import { AppModule } from './src/app.module';
 
+// Cache the server to prevent multiple bootstraps in the same instance
 let cachedServer: any;
 
 export const bootstrap = async () => {
   if (!cachedServer) {
     console.log('Bootstrapping NestJS application...');
     
+    // Check for critical environment variables
     if (!process.env.DATABASE_URL) {
-      console.error('CRITICAL: DATABASE_URL is not set in environment variables');
+      console.error('CRITICAL: DATABASE_URL is not set!');
     } else {
-      console.log('DATABASE_URL is present (length: ' + process.env.DATABASE_URL.length + ')');
+      console.log('DATABASE_URL detected (length: ' + process.env.DATABASE_URL.length + ')');
     }
-    
-    console.log('NODE_ENV:', process.env.NODE_ENV);
 
     try {
       const server = express();
@@ -48,13 +48,14 @@ export default async (req: any, res: any) => {
   try {
     const app = await bootstrap();
     app(req, res);
-  } catch (err) {
-    console.error('Request processing failed during bootstrap:', err);
+  } catch (err: any) {
+    console.error('SERVERLESS_HANDLER_ERROR:', err);
     res.status(500).json({
       statusCode: 500,
       message: 'Internal Server Error during application bootstrap',
       error: err instanceof Error ? err.message : String(err),
-      stack: process.env.NODE_ENV === 'development' ? (err instanceof Error ? err.stack : undefined) : undefined,
+      type: err?.name || 'UnknownError',
+      stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined,
     });
   }
 };
