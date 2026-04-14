@@ -1,10 +1,7 @@
-import 'reflect-metadata';
-import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import express from 'express';
 import { AppModule } from '../src/app.module';
+
 
 // Cache the server to prevent multiple bootstraps in the same instance
 let cachedServer: any;
@@ -13,16 +10,8 @@ export const bootstrap = async () => {
   if (!cachedServer) {
     console.log('Bootstrapping NestJS application...');
     
-    // Check for critical environment variables
-    if (!process.env.DATABASE_URL) {
-      console.error('CRITICAL: DATABASE_URL is not set!');
-    } else {
-      console.log('DATABASE_URL detected (length: ' + process.env.DATABASE_URL.length + ')');
-    }
-
     try {
-      const server = express();
-      const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+      const app = await NestFactory.create(AppModule);
       
       app.useGlobalPipes(
         new ValidationPipe({
@@ -37,9 +26,9 @@ export const bootstrap = async () => {
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
       });
+      
       await app.init();
-
-      cachedServer = server;
+      cachedServer = app.getHttpAdapter().getInstance();
       console.log('NestJS application initialized successfully.');
     } catch (err) {
       console.error('FATAL: Failed to bootstrap NestJS application:', err);
@@ -48,6 +37,7 @@ export const bootstrap = async () => {
   }
   return cachedServer;
 };
+
 
 export default async (req: any, res: any) => {
   console.log('REQUEST RECEIVED:', req.method, req.url);
