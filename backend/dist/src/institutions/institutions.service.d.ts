@@ -6,13 +6,13 @@ export declare class InstitutionsService {
     constructor(prisma: PrismaService);
     create(dto: CreateInstitutionDto, userId: string): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.InstitutionType;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         description: string | null;
-        type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
         city: string | null;
@@ -31,13 +31,13 @@ export declare class InstitutionsService {
             };
         } & {
             id: string;
+            type: import("@prisma/client").$Enums.InstitutionType;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             email: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             description: string | null;
-            type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
             city: string | null;
@@ -105,13 +105,13 @@ export declare class InstitutionsService {
         }[];
     } & {
         id: string;
+        type: import("@prisma/client").$Enums.InstitutionType;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         description: string | null;
-        type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
         city: string | null;
@@ -123,13 +123,13 @@ export declare class InstitutionsService {
     }>;
     update(id: string, dto: UpdateInstitutionDto): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.InstitutionType;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         description: string | null;
-        type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
         city: string | null;
@@ -141,13 +141,13 @@ export declare class InstitutionsService {
     }>;
     remove(id: string): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.InstitutionType;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         description: string | null;
-        type: import("@prisma/client").$Enums.InstitutionType;
         phone: string | null;
         address: string | null;
         city: string | null;

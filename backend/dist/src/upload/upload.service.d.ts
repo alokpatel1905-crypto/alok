@@ -7,12 +7,13 @@ export declare class UploadService {
     create(file: Express.Multer.File, cloudinaryResult: any, userId?: string): Promise<{
         url: string;
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         filename: string;
         originalname: string;
         mimetype: string;
         size: number;
+        type: string;
+        createdAt: Date;
+        updatedAt: Date;
         uploadedById: string | null;
     }>;
     findAll(page?: number, limit?: number): Promise<{
@@ -24,12 +25,13 @@ export declare class UploadService {
         } & {
             url: string;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
             filename: string;
             originalname: string;
             mimetype: string;
             size: number;
+            type: string;
+            createdAt: Date;
+            updatedAt: Date;
             uploadedById: string | null;
         })[];
         total: number;
@@ -39,12 +41,13 @@ export declare class UploadService {
     remove(id: string): Promise<{
         url: string;
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         filename: string;
         originalname: string;
         mimetype: string;
         size: number;
+        type: string;
+        createdAt: Date;
+        updatedAt: Date;
         uploadedById: string | null;
     }>;
 }

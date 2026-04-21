@@ -4,11 +4,11 @@ export declare class UsersService {
     constructor(prisma: PrismaService);
     findAll(): Promise<{
         id: string;
+        createdAt: Date;
         name: string;
         email: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
-        createdAt: Date;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
@@ -26,13 +26,13 @@ export declare class UsersService {
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string;
         passwordHash: string;
         refreshTokenHash: string | null;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }

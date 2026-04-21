@@ -5,10 +5,10 @@ export declare class NotificationsController {
     constructor(notificationsService: NotificationsService);
     create(createNotificationDto: CreateNotificationDto): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;
@@ -16,10 +16,10 @@ export declare class NotificationsController {
     findAll(user: any, page?: string, limit?: string): Promise<{
         data: {
             id: string;
+            type: import("@prisma/client").$Enums.NotificationType;
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            type: import("@prisma/client").$Enums.NotificationType;
             isRead: boolean;
             message: string;
             userId: string;
@@ -32,20 +32,20 @@ export declare class NotificationsController {
     markAllAsRead(user: any): Promise<import("@prisma/client").Prisma.BatchPayload>;
     markAsRead(id: string, user: any): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;
     }>;
     remove(id: string, user: any): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;

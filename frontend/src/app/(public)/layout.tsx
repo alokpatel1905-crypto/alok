@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Impact', href: '/impact' },
+  { label: 'Milestones', href: '/milestones' },
   { label: 'Accreditation', href: '/accreditation' },
   { label: 'Rankings', href: '/rankings' },
   { label: 'Events', href: '/events' },

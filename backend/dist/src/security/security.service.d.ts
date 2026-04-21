@@ -27,8 +27,8 @@ export declare class SecurityService {
         userAgent?: string;
     }): Promise<{
         id: string;
-        email: string;
         createdAt: Date;
+        email: string;
         status: string;
         userId: string | null;
         ipAddress: string | null;
@@ -61,8 +61,8 @@ export declare class SecurityService {
             } | null;
         } & {
             id: string;
-            email: string;
             createdAt: Date;
+            email: string;
             status: string;
             userId: string | null;
             ipAddress: string | null;

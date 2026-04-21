@@ -1,323 +1,183 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { Network, Globe, Users, Share2, Building2, GraduationCap, UserCheck, Crown, Lightbulb, Target, ArrowRight, Zap, Combine, Leaf, ShieldCheck } from 'lucide-react';
+import React from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { ArrowRight, CheckCircle2, FileText, Globe2, Network, Search, Target, Users } from 'lucide-react';
 
-const NETWORKS = [
-  {
-    id: "schools",
-    title: "Global Green Schools Network",
-    subtitle: "Connecting Schools Advancing Sustainability in Practice",
-    desc: "Connects leading schools unequivocally committed to environmental responsibility, green learning ecosystems, and campus transformation. We actively enable the sharing of best practices, peer inspiration, and collaborative growth to build a highly active global community shaping climate-conscious student learning.",
-    icon: <Building2 className="w-10 h-10 text-teal-600" strokeWidth={1.5} />,
-    color: "teal"
-  },
-  {
-    id: "university",
-    title: "Global Green University Network",
-    subtitle: "Advancing Sustainable Higher Education Through Collaboration",
-    desc: "Brings together elite universities integrating sustainability deeply into academics, research, governance, and campus operations. This network aggressively supports high-level academic dialogue, stringent benchmarking, and strategic cross-border partnerships that strengthen global leadership in higher education.",
-    icon: <GraduationCap className="w-10 h-10 text-teal-600" strokeWidth={1.5} />,
-    color: "teal"
-  },
-  {
-    id: "teacher",
-    title: "Global Green Teacher Network",
-    subtitle: "Empowering Educators Through Shared Learning and Leadership",
-    desc: "Functionally connects teachers absolutely committed to sustainability-led teaching paradigms. This network actively encourages the rigorous exchange of progressive pedagogy, actionable practices, and classroom innovation, fiercely supporting educators as leaders of community transformation.",
-    icon: <UserCheck className="w-10 h-10 text-teal-600" strokeWidth={1.5} />,
-    color: "teal"
-  },
-  {
-    id: "graduates",
-    title: "Global Green Graduates Network",
-    subtitle: "A Community of Future-Ready Changemakers",
-    desc: "Unites ambitious graduates prepared to lead practically in sustainability, responsible innovation, and the burgeoning green economy. It strategically builds long-term community presence, executive visibility, and active collaboration among emerging leaders to strengthen the transition into real-world impact.",
-    icon: <Crown className="w-10 h-10 text-teal-600" strokeWidth={1.5} />,
-    color: "teal"
-  },
-  {
-    id: "innovator",
-    title: "Global Green Innovator Network",
-    subtitle: "Connecting Innovation with Sustainable Educational Futures",
-    desc: "A nexus expressly bringing together systemic innovators, visionary thinkers, and solution-builders working at the critical intersection of sustainability and education. Through collective engagement, we dynamically help amplify and deploy practical innovations bearing profound global relevance.",
-    icon: <Lightbulb className="w-10 h-10 text-teal-600" strokeWidth={1.5} />,
-    color: "teal"
+export const dynamic = 'force-dynamic';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+async function getNetworksData() {
+  try {
+    const res = await fetch(`${API_URL}/networks-page`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+    return null;
+  } catch (e) {
+    console.error('Failed to fetch Networks data', e);
+    return null;
   }
-];
+}
 
-const WHY_JOIN = [
-  { title: "Global Collaboration", text: "Direct access to international collaborative ecosystems.", icon: <Globe className="w-6 h-6" /> },
-  { title: "Shared Learning", text: "Exchange proven, high-value pedagogical and operational practices.", icon: <Share2 className="w-6 h-6" /> },
-  { title: "Institutional Visibility", text: "Solidify global positioning amongst elite educational ranks.", icon: <Target className="w-6 h-6" /> },
-  { title: "Peer Inspiration", text: "Continuous mutual recognition and dynamic structural engagement.", icon: <Users className="w-6 h-6" /> }
-];
+export default async function NetworksPage() {
+  const page = await getNetworksData();
 
-const PARTICIPATION_FLOW = [
-  { step: "1", title: "Choose Network", desc: "Select the ecosystem alignment best fitting your institution or profile." },
-  { step: "2", title: "Submit Registration", desc: "Complete our thorough integration and validation application." },
-  { step: "3", title: "Connect & Collaborate", desc: "Gain immediate access to international working groups and databases." },
-  { step: "4", title: "Global Growth", desc: "Co-create actionable solutions escalating global impact." }
-];
+  if (!page) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <p className="text-xl text-slate-500 font-medium">Networks page hasn&apos;t been configured yet.</p>
+      </div>
+    );
+  }
 
-export default function NetworksPage() {
-  const [mounted, setMounted] = useState(false);
+  const networks = [
+    { prefix: 'school', t: page.school_title, st: page.school_subtitle, d: page.school_description, b1t: page.school_button_1_text, b1l: page.school_button_1_link, b2t: page.school_button_2_text, b2l: page.school_button_2_link, img: page.school_image },
+    { prefix: 'university', t: page.university_title, st: page.university_subtitle, d: page.university_description, b1t: page.university_button_1_text, b1l: page.university_button_1_link, b2t: page.university_button_2_text, b2l: page.university_button_2_link, img: page.university_image },
+    { prefix: 'teacher', t: page.teacher_title, st: page.teacher_subtitle, d: page.teacher_description, b1t: page.teacher_button_1_text, b1l: page.teacher_button_1_link, b2t: page.teacher_button_2_text, b2l: page.teacher_button_2_link, img: page.teacher_image },
+    { prefix: 'graduates', t: page.graduates_title, st: page.graduates_subtitle, d: page.graduates_description, b1t: page.graduates_button_1_text, b1l: page.graduates_button_1_link, b2t: page.graduates_button_2_text, b2l: page.graduates_button_2_link, img: page.graduates_image },
+    { prefix: 'innovator', t: page.innovator_title, st: page.innovator_subtitle, d: page.innovator_description, b1t: page.innovator_button_1_text, b1l: page.innovator_button_1_link, b2t: page.innovator_button_2_text, b2l: page.innovator_button_2_link, img: page.innovator_image },
+  ].filter((s) => s.t);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  const steps = [
+    { title: page.step1, icon: Network },
+    { title: page.step2, icon: FileText },
+    { title: page.step3, icon: Users },
+    { title: page.step4, icon: Globe2 },
+  ].filter((s) => s.title);
 
   return (
-    <div className="bg-[#FAF9F6] font-sans text-slate-800 selection:bg-teal-200 selection:text-teal-950 flex flex-col pt-24">
-      
-      {/* 1. Top Hero / Page Intro */}
-      <header className="relative pt-16 pb-32 px-8 overflow-hidden bg-slate-900 border-b-4 border-teal-600 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-teal-900/40 via-emerald-950 to-slate-950" />
-        
-        {/* CSS Abstract Node Network Background */}
-        <div className="absolute inset-0 opacity-[0.15] bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
-        <div className="absolute inset-0 opacity-20">
-            {/* Some decorative glowing nodes */}
-            <div className="absolute top-[20%] left-[20%] w-2 h-2 bg-teal-400 rounded-full shadow-[0_0_20px_4px_rgba(45,212,191,0.5)]" />
-            <div className="absolute top-[60%] left-[10%] w-3 h-3 bg-emerald-400 rounded-full shadow-[0_0_20px_4px_rgba(52,211,153,0.5)]" />
-            <div className="absolute top-[30%] right-[20%] w-2 h-2 bg-teal-400 rounded-full shadow-[0_0_20px_4px_rgba(45,212,191,0.5)]" />
-            <div className="absolute top-[70%] right-[15%] w-3 h-3 bg-emerald-400 rounded-full shadow-[0_0_20px_4px_rgba(52,211,153,0.5)]" />
-        </div>
-
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
-          <nav className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-6 flex items-center justify-center gap-2">
-            <Link href="/" className="hover:text-teal-400 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-teal-400">Networks</span>
-          </nav>
-
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-slate-800/80 border border-teal-900/50 text-teal-400 text-[10px] font-bold uppercase tracking-widest mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(20,184,166,0.2)]">
-            <Network size={14} className="text-teal-400" />
-            Global Networks
+    <div className="bg-[#f7f7fb] font-sans text-slate-900 selection:bg-violet-200 antialiased min-h-screen flex flex-col">
+      {/* HERO */}
+      <section className="bg-slate-950 text-white pt-24 lg:pt-32 pb-24 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-violet-600/15 blur-[120px] rounded-full pointer-events-none -translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-violet-800/10 blur-[100px] rounded-full pointer-events-none translate-x-1/3 translate-y-1/3" />
+        <div className="container mx-auto px-6 max-w-5xl text-center relative z-10">
+          <div className="w-20 h-20 bg-violet-900/40 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-violet-800/50 shadow-2xl">
+            <Network size={44} className="text-violet-400" strokeWidth={1.5} />
           </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-6">
-            Building a Global Community <br className="hidden md:block"/> for Sustainable Education
-          </h1>
-          
-          <p className="text-xl font-medium text-slate-300 max-w-3xl leading-relaxed">
-            The Green Mentors network meticulously connects schools, universities, leading teachers, graduates, innovators, and partner institutions to forcefully accelerate climate-conscious transformation across global education.
-          </p>
+          {page.subtitle && (
+            <span className="inline-block px-5 py-2 rounded-full bg-violet-500/20 text-violet-300 font-bold tracking-widest text-xs uppercase mb-8 border border-violet-500/30 backdrop-blur-sm">{page.subtitle}</span>
+          )}
+          <h1 className="text-5xl md:text-7xl font-black mb-8 leading-[1.1] tracking-tight">{page.page_title || 'Networks'}</h1>
+          {page.intro_description && (
+            <p className="text-lg md:text-2xl text-slate-300 mx-auto leading-relaxed font-light max-w-4xl">{page.intro_description}</p>
+          )}
         </div>
-      </header>
+      </section>
 
-      <main className="flex-grow">
-        
-        {/* 2. Introduction Section */}
-        <section className="py-24 px-8 bg-white relative">
-          <div className="max-w-4xl mx-auto text-center">
-             <div className="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center mx-auto mb-8">
-                <Globe className="w-8 h-8 text-teal-600" />
-             </div>
-            <p className="text-xl md:text-2xl text-slate-600 font-medium leading-[1.8]">
-              Networks are the critical infrastructure of institutional acceleration. Collaboration deliberately compounds learning, rapidly scales operational innovation, and amplifies mutual visibility. Green Mentors uniquely engineers robust platforms where disparate communities across countries can fluidly connect, seamlessly share, and powerfully co-create actionable solutions.
-            </p>
-          </div>
-        </section>
-
-        {/* 8. Highlight Strip */}
-        <div className="bg-[#FAF9F6] border-y border-slate-200">
-          <div className="max-w-7xl mx-auto px-8 py-10 flex justify-center flex-wrap gap-x-12 gap-y-6">
-            {["Global Community", "Shared Learning", "Institutional Collaboration", "Ecosystem Visibility", "Sustainability Leadership"].map((label, idx) => (
-              <div key={idx} className="flex items-center gap-3 text-slate-700 font-bold text-xs uppercase tracking-[0.15em]">
-                <ShieldCheck className="w-4 h-4 text-teal-600" />
-                {label}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 3. Network Categories (Core Section) */}
-        <section className="py-32 px-8 bg-white" id="categories">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-               <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Active Global Nodes</h2>
-               <p className="mt-4 text-lg text-slate-500 font-medium">Find your dedicated institutional or individual community.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              {NETWORKS.map((network, idx) => (
-                <div key={network.id} className={cn(
-                  "bg-white border border-slate-200 rounded-[2.5rem] p-10 hover:border-teal-200 hover:shadow-2xl hover:shadow-teal-900/5 transition-all duration-500 flex flex-col h-full group",
-                  idx === NETWORKS.length - 1 && NETWORKS.length % 2 !== 0 ? "lg:col-span-2 lg:max-w-4xl lg:mx-auto lg:w-full" : ""
-                )}>
-                  
-                  <div className="flex items-center justify-between mb-8">
-                     <div className="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 border border-teal-100 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
-                       {network.icon}
-                     </div>
-                     <div className="flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                         <div className="w-2 h-2 rounded-full bg-teal-500"/>
-                         <div className="w-2 h-2 rounded-full bg-teal-500"/>
-                         <div className="w-2 h-2 rounded-full bg-teal-500"/>
-                     </div>
-                  </div>
-                  
-                  <div className="flex-grow">
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-3 group-hover:text-teal-700 transition-colors">{network.title}</h3>
-                    <h4 className="text-sm font-bold text-emerald-600 mb-6 uppercase tracking-widest">{network.subtitle}</h4>
-                    <p className="text-slate-600 font-medium leading-[1.8] mb-10 max-w-xl">
-                      {network.desc}
-                    </p>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                    <button className="bg-slate-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-teal-600 hover:-translate-y-0.5 transition-all shadow-xl shadow-slate-900/10 text-center">
-                      Join the Network
-                    </button>
-                    <button className="bg-slate-50 text-slate-700 border border-slate-200 px-8 py-3.5 rounded-xl font-bold hover:border-teal-300 hover:bg-white transition-all text-center">
-                      Know More
-                    </button>
+      {/* NETWORK CATEGORIES */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6 max-w-6xl space-y-32">
+          {networks.map((net, idx) => {
+            const isReversed = idx % 2 !== 0;
+            return (
+              <div key={idx} className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-16 lg:gap-24`}>
+                <div className="w-full lg:w-1/2">
+                  <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group">
+                    {net.img ? (
+                      <img src={net.img} alt={net.t} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-violet-50">
+                        <Network className="w-28 h-28 text-violet-200" />
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 6. Global Community Visual Section */}
-        <section className="py-24 bg-slate-900 border-y border-slate-800 relative overflow-hidden">
-           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal-900/30 via-slate-900 to-slate-900" />
-           <div className="max-w-7xl mx-auto px-8 relative z-10 text-center">
-              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-6">A Global Community in Motion</h2>
-              <p className="text-lg text-slate-400 font-medium mb-12 max-w-2xl mx-auto">
-                 The Green Mentors network operates uninterrupted across borders, uniting progressive institutions through a synchronized, climate-conscious mission.
-              </p>
-              
-              {/* Abstract Tailwind Visualization */}
-              <div className="relative h-64 md:h-96 w-full max-w-4xl mx-auto border border-slate-800 rounded-3xl bg-slate-950/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
-                 {/* Decorative connecting lines and nodes */}
-                 <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M20,50 Q40,20 60,50 T100,20" fill="none" stroke="#0d9488" strokeWidth="0.5" className="animate-pulse" />
-                    <path d="M0,80 Q30,40 70,70 T100,50" fill="none" stroke="#047857" strokeWidth="0.5" />
-                 </svg>
-                 <div className="flex flex-wrap gap-4 justify-center relative z-10 p-8">
-                     {["United States", "India", "United Kingdom", "Australia", "Canada", "Singapore", "Japan", "Brazil", "South Africa", "UAE"].map((country, idx) => (
-                         <span key={idx} className="px-4 py-2 rounded-full bg-slate-800 border border-slate-700 text-teal-300 text-xs font-bold tracking-widest uppercase hover:bg-teal-900 hover:border-teal-500 cursor-default transition-all shadow-[0_0_10px_rgba(13,148,136,0.1)]">
-                             {country}
-                         </span>
-                     ))}
-                 </div>
-              </div>
-           </div>
-        </section>
-
-        {/* 4 & 5. Why Join & Collective Impact Container */}
-        <section className="py-32 px-8 bg-white relative">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
-            
-            {/* 4. Why Join */}
-            <div>
-              <div className="inline-flex items-center gap-2 text-teal-600 text-xs font-bold uppercase tracking-widest mb-4">
-                <Network size={16} /> Ecosystem Advantage
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-10">Why Join the Network?</h2>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {WHY_JOIN.map((benefit, idx) => (
-                  <div key={idx} className="bg-slate-50 border border-slate-100 rounded-3xl p-6 group">
-                    <div className="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-teal-600 mb-6 shadow-sm group-hover:scale-110 group-hover:shadow-teal-100 transition-all">
-                      {benefit.icon}
-                    </div>
-                    <h4 className="font-bold text-slate-900 mb-2">{benefit.title}</h4>
-                    <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                      {benefit.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 5. From Connection to Collective Impact */}
-            <div className="flex flex-col justify-center">
-              <div className="inline-flex items-center gap-2 text-emerald-600 text-xs font-bold uppercase tracking-widest mb-4">
-                <Combine size={16} /> Systemic Change
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-10">From Connection to Collective Impact</h2>
-              
-              <div className="space-y-8">
-                 <p className="text-lg text-slate-600 font-medium leading-relaxed">
-                   Participation explicitly translates connection into measurable institutional value. Schools and universities systematically benchmark and learn from one another, completely eliminating isolated trial and error.
-                 </p>
-                 
-                 <div className="pl-6 border-l-2 border-teal-500 space-y-4">
-                    <p className="text-slate-600 font-medium">
-                      Educators fluidly exchange academic approaches and rigorous frameworks.
-                    </p>
-                    <p className="text-slate-600 font-medium">
-                      Graduates and corporate innovators rapidly identify collaborative economic opportunities.
-                    </p>
-                    <p className="text-slate-600 font-medium">
-                      Sustained cross-border dialogue inherently strengthens the systemic transition toward global sustainability-led transformation.
-                    </p>
-                 </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* 7. Membership / Participation Flow */}
-        <section className="py-32 px-8 bg-[#FAF9F6] relative border-t border-slate-200">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-               <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">How to Participate</h2>
-               <p className="text-lg text-slate-500 font-medium">Streamlined onboarding yielding immediate ecosystem immersion.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-              <div className="hidden md:block absolute top-[36px] left-[10%] right-[10%] h-0.5 bg-slate-200" />
-              
-              {PARTICIPATION_FLOW.map((step, idx) => (
-                <div key={idx} className="relative flex flex-col pt-12 items-center text-center group">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-16 rounded-[24px] bg-teal-600 border-4 border-white shadow-xl shadow-teal-900/10 flex items-center justify-center font-black text-xl text-white z-10 group-hover:scale-110 group-hover:bg-slate-900 transition-all">
-                    {step.step}
-                  </div>
-                  <div className="bg-white border border-slate-100 rounded-3xl p-8 pt-12 w-full h-full hover:shadow-xl hover:shadow-teal-900/5 transition-all">
-                     <h4 className="text-[17px] font-bold text-slate-900 mb-3">{step.title}</h4>
-                     <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                       {step.desc}
-                     </p>
+                <div className="w-full lg:w-1/2 flex flex-col justify-center">
+                  <span className="text-violet-600 font-black tracking-wider uppercase text-sm border-b-2 border-violet-400 pb-1 inline-block mb-4 w-fit">Network 0{idx + 1}</span>
+                  <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight">{net.t}</h2>
+                  {net.st && <h3 className="text-xl text-slate-500 font-medium mb-6 italic">&ldquo;{net.st}&rdquo;</h3>}
+                  {net.d && <div className="prose prose-lg text-slate-600 font-medium leading-relaxed mb-10 whitespace-pre-wrap">{net.d}</div>}
+                  <div className="flex flex-wrap items-center gap-4 border-t border-slate-100 pt-8">
+                    {net.b1t && (
+                      <Link href={net.b1l || '#'} className="inline-flex items-center gap-2 bg-violet-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-violet-700 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300">
+                        {net.b1t} <CheckCircle2 size={18} />
+                      </Link>
+                    )}
+                    {net.b2t && (
+                      <Link href={net.b2l || '#'} className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 font-bold px-8 py-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-colors">
+                        {net.b2t}
+                      </Link>
+                    )}
                   </div>
                 </div>
-              ))}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* WHY JOIN + IMPACT */}
+      {(page.why_title || page.impact_title) && (
+        <section className="py-24 bg-slate-50 border-y border-slate-200">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <div className="grid lg:grid-cols-2 gap-16">
+              {page.why_title && (
+                <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-100">
+                  <div className="w-16 h-16 bg-violet-100 text-violet-600 rounded-2xl flex items-center justify-center mb-8">
+                    <Target size={32} />
+                  </div>
+                  <h2 className="text-3xl font-black text-slate-900 mb-6">{page.why_title}</h2>
+                  <div className="prose prose-lg text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">{page.why_description}</div>
+                </div>
+              )}
+              {page.impact_title && (
+                <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-100">
+                  <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-8">
+                    <Globe2 size={32} />
+                  </div>
+                  <h2 className="text-3xl font-black text-slate-900 mb-6">{page.impact_title}</h2>
+                  <div className="prose prose-lg text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">{page.impact_description}</div>
+                </div>
+              )}
             </div>
           </div>
         </section>
+      )}
 
-        {/* 9. Call to Action */}
-        <section className="py-32 px-8 bg-teal-950 relative overflow-hidden text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-teal-800/40 via-teal-950 to-slate-950" />
-          
-          <div className="max-w-4xl mx-auto relative z-10">
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-8">
-              Join the Global Community
-            </h2>
-            <p className="text-teal-100/90 text-lg md:text-2xl font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
-              We formally invite elite schools, universities, visionary teachers, graduates, and innovators to structurally become part of a shared movement for rapid sustainability leadership.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-              <button className="w-full sm:w-auto bg-teal-500 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-teal-500/20 hover:bg-teal-400 hover:-translate-y-1 transition-all duration-300 focus:outline-none flex justify-center items-center gap-2">
-                Join a Network <ArrowRight className="w-5 h-5" />
-              </button>
-              <Link href="/contact" className="w-full sm:w-auto bg-slate-900 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-800 hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 shadow-xl text-center">
-                Contact Green Mentors
+      {/* PROCESS STEPS */}
+      {steps.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="container mx-auto px-6 max-w-6xl text-center">
+            <h2 className="text-4xl font-black text-slate-900 mb-16">{page.process_title}</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {steps.map((st, i) => {
+                const Icon = st.icon;
+                return (
+                  <div key={i} className="bg-slate-50 border border-slate-100 p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                    <div className="w-16 h-16 bg-violet-600 text-white rounded-full flex items-center justify-center font-black text-xl mb-6 shadow-xl shadow-violet-600/20">{i + 1}</div>
+                    <Icon className="text-violet-500 mb-4" size={32} />
+                    <h3 className="text-xl font-bold text-slate-800">{st.title}</h3>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* CTA */}
+      {(page.cta_title || page.button_text) && (
+        <section className="py-32 bg-violet-900 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 pointer-events-none" />
+          <div className="container mx-auto px-6 relative z-10 max-w-4xl">
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">{page.cta_title}</h2>
+            {page.cta_description && <p className="text-xl text-violet-100 max-w-2xl mx-auto mb-10 font-medium">{page.cta_description}</p>}
+            {page.button_text && (
+              <Link href={page.button_link || '#'} className="inline-flex items-center gap-2 bg-white text-violet-900 font-black px-10 py-5 rounded-2xl hover:bg-violet-50 hover:scale-105 transition-all shadow-2xl">
+                {page.button_text} <ArrowRight size={20} />
               </Link>
-            </div>
+            )}
           </div>
         </section>
-
-      </main>
+      )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  const page = await getNetworksData();
+  if (!page) return { title: 'Networks' };
+  return {
+    title: page.meta_title || page.page_title,
+    description: page.meta_description,
+    keywords: page.meta_keywords,
+  };
 }

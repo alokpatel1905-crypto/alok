@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as fs from 'fs';
 
 @Injectable()
 export class PagesService {
@@ -13,42 +12,34 @@ export class PagesService {
   async create(data: {
     title: string;
     slug: string;
-    content?: any;
-    image?: string;
+    metaTitle?: string;
+    metaDescription?: string;
     status?: 'DRAFT' | 'PUBLISHED';
+    sections?: any[];
   }) {
+    const { sections, ...pageData } = data;
     try {
-    const existing = await this.prisma.page.findUnique({
-      where: { slug: data.slug },
-    });
-
-    if (existing) {
-      throw new BadRequestException('Slug already exists');
-    }
-
-    return this.prisma.page.create({
-      data: {
-        title: data.title,
-        slug: data.slug,
-        content: data.content,
-        image: data.image,
-        status: data.status || 'DRAFT',
-        histories: {
-          create: {
-            content: data.content,
-            editedBy: 'admin', // Placeholder until auth is wired
-          }
-        }
-      },
-    });
+      return await this.prisma.page.create({
+        data: {
+          ...pageData,
+          status: data.status || 'DRAFT',
+          sections: sections ? {
+            create: sections
+          } : undefined
+        },
+      });
     } catch (error: any) {
-      fs.appendFileSync('error.log', `${new Date().toISOString()} ERROR in create: ${error.message}\n${error.stack}\n`);
+      if (error.code === 'P2002' && error.meta?.target?.includes('slug')) {
+        // Return existing page instead of throwing an error for race conditions
+        return this.prisma.page.findUnique({ where: { slug: data.slug } });
+      }
       throw error;
     }
   }
 
   async findAll() {
     return this.prisma.page.findMany({
+      include: { sections: { orderBy: { order: 'asc' } } },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -70,6 +61,11 @@ export class PagesService {
         status: 'PUBLISHED',
         isActive: true,
       },
+      include: {
+        sections: {
+          orderBy: { order: 'asc' },
+        },
+      },
     });
 
     if (!page) {
@@ -82,6 +78,11 @@ export class PagesService {
   async findBySlug(slug: string) {
     const page = await this.prisma.page.findUnique({
       where: { slug },
+      include: {
+        sections: {
+          orderBy: { order: 'asc' },
+        },
+      },
     });
 
     if (!page) {
@@ -96,8 +97,8 @@ export class PagesService {
     data: {
       title?: string;
       slug?: string;
-      content?: any;
-      image?: string;
+      metaTitle?: string;
+      metaDescription?: string;
       status?: 'DRAFT' | 'PUBLISHED';
       isActive?: boolean;
     },
@@ -125,38 +126,20 @@ export class PagesService {
 
     return this.prisma.page.update({
       where: { id },
-      data: {
-        ...data,
-        histories: data.content ? {
-          create: {
-            content: data.content,
-            editedBy: 'admin',
-          }
-        } : undefined
-      },
+      data,
     });
   }
 
   async remove(id: string) {
-    const page = await this.prisma.page.findUnique({
+    return this.prisma.page.delete({
       where: { id },
-    });
-
-    if (!page) {
-      throw new NotFoundException('Page not found');
-    }
-
-    return this.prisma.page.update({
-      where: { id },
-      data: {
-        isActive: false,
-      },
     });
   }
 
   async findById(id: string) {
     const page = await this.prisma.page.findUnique({
       where: { id },
+      include: { sections: { orderBy: { order: 'asc' } } },
     });
 
     if (!page) {
@@ -164,12 +147,5 @@ export class PagesService {
     }
 
     return page;
-  }
-
-  async getHistory(id: string) {
-    return this.prisma.pageHistory.findMany({
-      where: { pageId: id },
-      orderBy: { createdAt: 'desc' },
-    });
   }
 }

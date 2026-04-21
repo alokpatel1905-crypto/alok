@@ -21,6 +21,17 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { CommunicationsModule } from './communications/communications.module';
 import { SeoModule } from './seo/seo.module';
 import { SecurityModule } from './security/security.module';
+import { SectionsModule } from './sections/sections.module';
+import { AboutPageModule } from './about-page/about-page.module';
+import { MilestonesModule } from './milestones/milestones.module';
+import { ImpactModule } from './impact/impact.module';
+import { AccreditationModule } from './accreditation/accreditation.module';
+import { EventsPageModule } from './events-page/events.module';
+import { AwardsPageModule } from './awards-page/awards-page.module';
+import { NetworksPageModule } from './networks-page/networks-page.module';
+import { SupportPageModule } from './support-page/support-page.module';
+import { ContactPageModule } from './contact-page/contact-page.module';
+import { MediaPageModule } from './media-page/media-page.module';
 
 @Module({
   imports: [
@@ -44,6 +55,17 @@ import { SecurityModule } from './security/security.module';
     CommunicationsModule,
     SeoModule,
     SecurityModule,
+    SectionsModule,
+    AboutPageModule,
+    MilestonesModule,
+    ImpactModule,
+    AccreditationModule,
+    EventsPageModule,
+    AwardsPageModule,
+    NetworksPageModule,
+    SupportPageModule,
+    ContactPageModule,
+    MediaPageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

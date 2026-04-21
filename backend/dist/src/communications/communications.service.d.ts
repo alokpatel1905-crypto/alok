@@ -4,9 +4,9 @@ export declare class CommunicationsService {
     constructor(prisma: PrismaService);
     createAnnouncement(data: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         message: string;
         priority: string;
@@ -14,9 +14,9 @@ export declare class CommunicationsService {
     findAllAnnouncements(page?: number, limit?: number): Promise<{
         data: {
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            isActive: boolean;
             title: string;
             message: string;
             priority: string;
@@ -27,34 +27,34 @@ export declare class CommunicationsService {
     }>;
     removeAnnouncement(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         message: string;
         priority: string;
     }>;
     subscribe(email: string, name?: string): Promise<{
         id: string;
+        createdAt: Date;
         name: string | null;
         email: string;
         isActive: boolean;
-        createdAt: Date;
     }>;
     unsubscribe(email: string): Promise<{
         id: string;
+        createdAt: Date;
         name: string | null;
         email: string;
         isActive: boolean;
-        createdAt: Date;
     }>;
     findAllSubscribers(page?: number, limit?: number): Promise<{
         data: {
             id: string;
+            createdAt: Date;
             name: string | null;
             email: string;
             isActive: boolean;
-            createdAt: Date;
         }[];
         total: number;
         page: number;

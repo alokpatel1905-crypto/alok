@@ -4,12 +4,12 @@ export declare class PublicationsController {
     constructor(publicationsService: PublicationsService);
     createPublication(body: any): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.PublicationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
         author: string | null;
@@ -17,12 +17,12 @@ export declare class PublicationsController {
     findAllPublications(page?: string, limit?: string, type?: string): Promise<{
         data: {
             id: string;
+            type: import("@prisma/client").$Enums.PublicationType;
             createdAt: Date;
             updatedAt: Date;
             title: string;
             image: string | null;
             status: string;
-            type: import("@prisma/client").$Enums.PublicationType;
             content: string | null;
             fileUrl: string | null;
             author: string | null;
@@ -33,24 +33,24 @@ export declare class PublicationsController {
     }>;
     updatePublication(id: string, body: any): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.PublicationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
         author: string | null;
     }>;
     removePublication(id: string): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.PublicationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
         image: string | null;
         status: string;
-        type: import("@prisma/client").$Enums.PublicationType;
         content: string | null;
         fileUrl: string | null;
         author: string | null;

@@ -23,9 +23,30 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const SIDEBAR_ITEMS = [
+const SIDEBAR_ITEMS: any[] = [
   { name: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard', roles: ['ANY'] },
-  { name: 'Pages CMS', icon: FileText, href: '/admin/pages', roles: ['ANY'] },
+  { 
+    name: 'Pages', 
+    icon: FileText, 
+    roles: ['ANY'],
+    subItems: [
+      { name: 'About Us', href: '/admin/about' },
+      { name: 'Impact', href: '/admin/impact' },
+      { name: 'Accreditation CMS', href: '/admin/accreditations-cms' },
+      { name: 'Rankings CMS', href: '/admin/rankings-cms' },
+      { name: 'Events CMS', href: '/admin/events-cms' },
+      { name: 'Awards CMS', href: '/admin/awards-cms' },
+      { name: 'Networks CMS', href: '/admin/networks-cms' },
+      { name: 'Support CMS', href: '/admin/support-cms' },
+      { name: 'Contact CMS', href: '/admin/contact-cms' },
+      { name: 'Media CMS', href: '/admin/media-cms' },
+      { name: 'Milestones', href: '/admin/milestones' },
+      { name: 'Contact Us', href: '/admin/pages/contact' },
+      { name: 'Gallery', href: '/admin/pages/gallery' },
+      { name: 'Blog', href: '/admin/pages/blog' },
+      { name: 'Dynamic Pages', href: '/admin/pages' }
+    ]
+  },
   { name: 'Analytics', icon: PieChart, href: '/admin/analytics', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER'] },
   { name: 'User Management', icon: Users, href: '/admin/users', roles: ['SUPER_ADMIN'] },
   { name: 'Institutions', icon: School, href: '/admin/institutions', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER', 'CONTENT_EDITOR'] },
@@ -91,6 +112,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="mt-4 px-3 space-y-1">
           {filteredItems.map((item) => {
+            if (item.subItems) {
+              const isSubActive = item.subItems.some((sub: any) => pathname.startsWith(sub.href));
+              return (
+                <details key={item.name} open={isSubActive || undefined} className="group">
+                  <summary className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all cursor-pointer list-none", 
+                      isSubActive ? "bg-emerald-50 text-emerald-700 font-semibold" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900")}>
+                    <item.icon className={cn("w-5 h-5", isSubActive ? "text-emerald-600" : "group-hover:text-slate-700")} />
+                    {isSidebarOpen && <span className="text-[14px] flex-1">{item.name}</span>}
+                    {isSidebarOpen && (
+                       <svg className="w-4 h-4 ml-auto rotate-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                       </svg>
+                    )}
+                  </summary>
+                  {isSidebarOpen && (
+                    <div className="mt-1 ml-9 pl-3 border-l border-slate-200 flex flex-col space-y-1">
+                      {item.subItems.map((sub: any) => (
+                        <Link key={sub.name} href={sub.href} className={cn("px-3 py-2 rounded-lg text-[13px] transition-colors", pathname === sub.href ? "bg-emerald-50 text-emerald-700 font-semibold" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </details>
+              );
+            }
+
             const isActive = pathname === item.href;
             return (
               <Link

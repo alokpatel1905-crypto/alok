@@ -40,13 +40,13 @@ export declare class PaymentsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
+            type: import("@prisma/client").$Enums.InstitutionType;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             email: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             description: string | null;
-            type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
             city: string | null;
@@ -101,13 +101,13 @@ export declare class PaymentsService {
         date: Date;
         institution: {
             id: string;
+            type: import("@prisma/client").$Enums.InstitutionType;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             email: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             description: string | null;
-            type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
             city: string | null;

@@ -11,13 +11,13 @@ export declare class AdminController {
                 totalInstitutions: number;
                 recentInstitutions: {
                     id: string;
+                    type: import("@prisma/client").$Enums.InstitutionType;
+                    createdAt: Date;
+                    updatedAt: Date;
                     name: string;
                     email: string | null;
                     isActive: boolean;
-                    createdAt: Date;
-                    updatedAt: Date;
                     description: string | null;
-                    type: import("@prisma/client").$Enums.InstitutionType;
                     phone: string | null;
                     address: string | null;
                     city: string | null;
@@ -82,10 +82,10 @@ export declare class AdminController {
                 unreadCount: number;
                 recent: {
                     id: string;
+                    type: import("@prisma/client").$Enums.NotificationType;
                     createdAt: Date;
                     updatedAt: Date;
                     title: string;
-                    type: import("@prisma/client").$Enums.NotificationType;
                     isRead: boolean;
                     message: string;
                     userId: string;

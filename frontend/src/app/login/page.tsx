@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils';
 import { apiFetch } from '@/lib/api';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('admin@test.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('admin@greenmentors.com');
+  const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@greenmentors.in"
+                  placeholder="admin@greenmentors.com"
                   className="w-full bg-[#161616] border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/40 transition-all placeholder:text-gray-700"
                   required
                 />

@@ -46,13 +46,13 @@ export declare class EventsService {
     findOne(id: string): Promise<{
         institution: {
             id: string;
+            type: import("@prisma/client").$Enums.InstitutionType;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             email: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             description: string | null;
-            type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
             city: string | null;
@@ -64,20 +64,20 @@ export declare class EventsService {
         } | null;
         speakers: {
             id: string;
-            name: string;
-            role: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            role: string | null;
             image: string | null;
             bio: string | null;
             eventId: string;
         }[];
         registrations: {
             id: string;
-            name: string;
-            email: string;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            email: string;
             status: string;
             phone: string | null;
             eventId: string;
@@ -99,40 +99,40 @@ export declare class EventsService {
     }>;
     addSpeaker(eventId: string, data: any): Promise<{
         id: string;
-        name: string;
-        role: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        role: string | null;
         image: string | null;
         bio: string | null;
         eventId: string;
     }>;
     removeSpeaker(speakerId: string): Promise<{
         id: string;
-        name: string;
-        role: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        role: string | null;
         image: string | null;
         bio: string | null;
         eventId: string;
     }>;
     registerForEvent(eventId: string, data: any): Promise<{
         id: string;
-        name: string;
-        email: string;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        email: string;
         status: string;
         phone: string | null;
         eventId: string;
     }>;
     updateRegistrationStatus(regId: string, status: string): Promise<{
         id: string;
-        name: string;
-        email: string;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        email: string;
         status: string;
         phone: string | null;
         eventId: string;

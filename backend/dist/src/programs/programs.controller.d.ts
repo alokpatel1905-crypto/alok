@@ -8,9 +8,9 @@ export declare class ProgramsController {
     constructor(programsService: ProgramsService, cloudinaryService: CloudinaryService);
     create(dto: CreateProgramDto): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -24,9 +24,9 @@ export declare class ProgramsController {
     findAll(page?: string, limit?: string, search?: string, status?: string, sortBy?: string, order?: 'asc' | 'desc', isActive?: string): Promise<{
         data: {
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            isActive: boolean;
             title: string;
             slug: string;
             description: string | null;
@@ -48,9 +48,9 @@ export declare class ProgramsController {
     }>;
     findPublished(): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -63,9 +63,9 @@ export declare class ProgramsController {
     }[]>;
     findPublishedBySlug(slug: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -78,9 +78,9 @@ export declare class ProgramsController {
     }>;
     findBySlug(slug: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -93,9 +93,9 @@ export declare class ProgramsController {
     }>;
     update(id: string, dto: UpdateProgramDto): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -108,9 +108,9 @@ export declare class ProgramsController {
     }>;
     remove(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -123,9 +123,9 @@ export declare class ProgramsController {
     }>;
     toggleActive(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -138,9 +138,9 @@ export declare class ProgramsController {
     }>;
     toggleStatus(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -153,9 +153,9 @@ export declare class ProgramsController {
     }>;
     findById(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -175,9 +175,9 @@ export declare class ProgramsController {
     }>;
     createWithImage(file: Express.Multer.File, body: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -190,9 +190,9 @@ export declare class ProgramsController {
     }>;
     updateWithImage(id: string, file: Express.Multer.File, body: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;

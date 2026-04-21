@@ -1,15 +1,14 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
-import { apiFetch, updatePageContent, getPageHistory } from '@/lib/api';
-import { ArrowLeft, Save, Clock, AlertCircle } from 'lucide-react';
+import { apiFetch } from '@/lib/api';
+import { ArrowLeft, Save, Globe, Settings, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { SectionsList } from '../components/SectionsList';
 
 export default function PageEditor({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [page, setPage] = useState<any>(null);
-  const [history, setHistory] = useState<any[]>([]);
-  const [contentStr, setContentStr] = useState('{}');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -19,131 +18,171 @@ export default function PageEditor({ params }: { params: Promise<{ id: string }>
 
   const fetchData = async () => {
     try {
-      const pageData = await apiFetch(`/pages/id/${id}`);
-      setPage(pageData);
+      let pageData;
+      const isId = id.length > 20;
       
-      // If content exists, format it beautifully. If not, seed empty object.
-      setContentStr(JSON.stringify(pageData.content || {}, null, 2));
-
-      const historyData = await getPageHistory(id);
-      setHistory(historyData || []);
-    } catch (e) {
+      if (isId) {
+        pageData = await apiFetch(`/pages/id/${id}`);
+      } else {
+        pageData = await apiFetch(`/pages/${id}`);
+      }
+      setPage(pageData);
+    } catch (e: any) {
       console.error(e);
-      setError("Failed to load page data.");
+      const isId = id.length > 20;
+
+      // Auto-initialize if it was a slug and not found
+      if (!isId && (e.message?.includes('404') || e.message?.toLowerCase().includes('not found'))) {
+        try {
+          const newPage = await apiFetch('/pages', {
+            method: 'POST',
+            body: JSON.stringify({
+              title: id.charAt(0).toUpperCase() + id.slice(1),
+              slug: id,
+              status: 'DRAFT',
+            })
+          });
+          setPage(newPage);
+          return;
+        } catch (createError) {
+          console.error('Auto-initialize failed:', createError);
+        }
+      }
+
+      setError("Failed to load page data. It may not exist.");
     }
   };
 
-  const handleSave = async () => {
+  const handleUpdatePage = async (data: any) => {
     try {
       setIsSaving(true);
-      setError('');
-      
-      // Validate JSON
-      const parsedContent = JSON.parse(contentStr);
-      
-      await updatePageContent(id, {
-        content: parsedContent
+      await apiFetch(`/pages/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
       });
-
-      // Refresh to get new history log
-      await fetchData();
-      alert("Page Updated Successfully! The public page will now reflect these changes.");
-    } catch (err: any) {
-      if (err instanceof SyntaxError) {
-        setError("Invalid JSON format. Please check your syntax.");
-      } else {
-        setError("Failed to save changes. Please try again.");
-      }
+      setPage({ ...page, ...data });
+    } catch (err) {
+      setError("Failed to update page settings.");
     } finally {
       setIsSaving(false);
     }
   };
 
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-8 p-8">
+        <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-100">
+          <h2 className="font-bold text-lg mb-2">Error</h2>
+          <p className="font-medium text-sm mb-4">{error}</p>
+          <Link href="/admin/pages" className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg text-sm font-bold transition-colors">
+            <ArrowLeft size={16} /> Back to Pages
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!page) return <div className="p-8 text-slate-500 font-medium">Loading editor...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="max-w-7xl mx-auto space-y-8 pb-20">
       
-      {/* LEFT: Editor Area */}
-      <div className="lg:col-span-2 space-y-6">
-        <div className="flex items-center gap-4 mb-8">
-           <Link href="/admin/pages" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
-              <ArrowLeft size={18} />
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+           <Link href="/admin/pages" className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
+              <ArrowLeft size={20} />
            </Link>
            <div>
-               <h1 className="text-2xl font-black text-slate-900 tracking-tight">Editing: {page.title}</h1>
-               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Route: /{page.slug}</p>
+               <h1 className="text-3xl font-black text-slate-900 tracking-tight">CMS Page Builder</h1>
+               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Editing: <span className="text-emerald-600">{page.title}</span></p>
            </div>
         </div>
 
-        {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex items-center gap-3 font-medium text-sm">
-                <AlertCircle className="shrink-0" size={18} /> {error}
-            </div>
-        )}
-
-        <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
-           <div className="mb-6">
-               <h3 className="font-bold text-slate-900 mb-2">Structured Content Editor</h3>
-               <p className="text-sm font-medium text-slate-500 leading-relaxed mb-6">
-                  Warning: The architecture of this page relies on specific JSON keys. Modification of formatting or keys may break the frontend layout. Only modify text values inside the quotes.
-               </p>
-               
-               <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[1.5rem] opacity-0 group-focus-within:opacity-20 transition-opacity blur" />
-                  <textarea 
-                    value={contentStr}
-                    onChange={(e) => setContentStr(e.target.value)}
-                    className="relative w-full h-[600px] bg-slate-900 text-emerald-300 font-mono text-sm p-6 rounded-2xl border border-slate-800 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none leading-relaxed"
-                    spellCheck={false}
-                  />
-               </div>
-           </div>
-
-           <div className="flex justify-end pt-6 border-t border-slate-100">
-               <button 
-                 onClick={handleSave}
-                 disabled={isSaving}
-                 className="bg-emerald-600 text-white px-8 py-3.5 rounded-xl font-bold flex items-center gap-2 hover:bg-emerald-500 transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-               >
-                 {isSaving ? 'Saving...' : <>Save Changes <Save size={18} /></>}
-               </button>
-           </div>
+        <div className="flex items-center gap-3">
+          <a href={page.slug === 'home' ? '/' : `/${page.slug}`} target="_blank" className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all shadow-lg">
+            <Eye size={18} /> Preview Page
+          </a>
         </div>
       </div>
 
-      {/* RIGHT: History Log */}
-      <div className="lg:col-span-1">
-         <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm flex flex-col h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LEFT: Sections List */}
+        <div className="lg:col-span-2 space-y-6">
+          <SectionsList pageId={page.id} initialSections={page.sections} />
+        </div>
+
+        {/* RIGHT: Page Settings */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
             <h3 className="font-black text-slate-900 text-lg mb-6 flex items-center gap-2">
-               <Clock className="text-slate-400" size={20} /> Revision History
+               <Settings className="text-slate-400" size={20} /> Page Settings
             </h3>
             
-            {history.length === 0 ? (
-                <p className="text-sm text-slate-500 font-medium">No edits have been made to this page yet.</p>
-            ) : (
-                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
-                   {history.map((h, i) => (
-                       <div key={h.id} className="relative flex items-start gap-4">
-                           <div className="w-4 h-4 rounded-full bg-emerald-100 border-2 border-emerald-500 shrink-0 mt-1 z-10" />
-                           <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex-grow shadow-sm">
-                               <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
-                                   {new Date(h.createdAt).toLocaleString()}
-                               </p>
-                               <p className="font-bold text-slate-700 text-sm">
-                                   Edited by: {h.editedBy || 'System/Admin'}
-                               </p>
-                               {i === 0 && (
-                                   <span className="inline-block mt-2 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
-                                       Current Version
-                                   </span>
-                               )}
-                           </div>
-                       </div>
-                   ))}
-                </div>
-            )}
-         </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Page Title</label>
+                <input 
+                  type="text" 
+                  value={page.title}
+                  onChange={(e) => setPage({...page, title: e.target.value})}
+                  onBlur={(e) => handleUpdatePage({ title: e.target.value })}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">URL Slug</label>
+                <input 
+                  type="text" 
+                  value={page.slug}
+                  onChange={(e) => setPage({...page, slug: e.target.value})}
+                  onBlur={(e) => handleUpdatePage({ slug: e.target.value })}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">SEO Title</label>
+                <input 
+                  type="text" 
+                  value={page.metaTitle || ''}
+                  onChange={(e) => setPage({...page, metaTitle: e.target.value})}
+                  onBlur={(e) => handleUpdatePage({ metaTitle: e.target.value })}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">SEO Description</label>
+                <textarea 
+                  value={page.metaDescription || ''}
+                  onChange={(e) => setPage({...page, metaDescription: e.target.value})}
+                  onBlur={(e) => handleUpdatePage({ metaDescription: e.target.value })}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all h-24 resize-none"
+                />
+              </div>
+              <div className="pt-4 flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-600">Status</span>
+                <select 
+                  value={page.status}
+                  onChange={(e) => handleUpdatePage({ status: e.target.value })}
+                  className="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-100 outline-none"
+                >
+                  <option value="DRAFT">DRAFT</option>
+                  <option value="PUBLISHED">PUBLISHED</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-100 rounded-[2rem] p-8">
+            <h3 className="font-bold text-slate-900 text-sm mb-4">Quick Help</h3>
+            <ul className="space-y-3 text-xs text-slate-500 font-medium leading-relaxed">
+              <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" /> Add sections using the buttons on the left.</li>
+              <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" /> Reorder sections using up/down arrows.</li>
+              <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" /> Changes to settings are saved automatically on blur.</li>
+              <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" /> Edit JSON content directly for precise control.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
     </div>

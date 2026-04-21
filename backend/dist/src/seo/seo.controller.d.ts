@@ -28,24 +28,22 @@ export declare class SeoController {
     }>;
     updatePageSeo(id: string, body: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
-        image: string | null;
         status: import("@prisma/client").$Enums.PageStatus;
         views: number;
         metaTitle: string | null;
         metaDescription: string | null;
         schemaMarkup: string | null;
-        content: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     updateProgramSeo(id: string, body: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;

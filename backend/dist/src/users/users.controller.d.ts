@@ -4,11 +4,11 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     getUsers(): Promise<{
         id: string;
+        createdAt: Date;
         name: string;
         email: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
-        createdAt: Date;
     }[]>;
     updateUser(id: string, body: any): Promise<{
         id: string;
@@ -19,13 +19,13 @@ export declare class UsersController {
     }>;
     removeUser(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         email: string;
         passwordHash: string;
         refreshTokenHash: string | null;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }

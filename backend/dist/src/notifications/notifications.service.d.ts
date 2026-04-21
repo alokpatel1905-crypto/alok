@@ -5,10 +5,10 @@ export declare class NotificationsService {
     constructor(prisma: PrismaService);
     create(dto: CreateNotificationDto): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;
@@ -16,10 +16,10 @@ export declare class NotificationsService {
     findAllForUser(userId: string, page?: number, limit?: number): Promise<{
         data: {
             id: string;
+            type: import("@prisma/client").$Enums.NotificationType;
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            type: import("@prisma/client").$Enums.NotificationType;
             isRead: boolean;
             message: string;
             userId: string;
@@ -31,10 +31,10 @@ export declare class NotificationsService {
     }>;
     markAsRead(id: string, userId: string): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;
@@ -42,10 +42,10 @@ export declare class NotificationsService {
     markAllAsRead(userId: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
     remove(id: string, userId: string): Promise<{
         id: string;
+        type: import("@prisma/client").$Enums.NotificationType;
         createdAt: Date;
         updatedAt: Date;
         title: string;
-        type: import("@prisma/client").$Enums.NotificationType;
         isRead: boolean;
         message: string;
         userId: string;

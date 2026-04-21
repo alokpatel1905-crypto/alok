@@ -1,165 +1,85 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRankingDto } from './dto/create-ranking.dto';
-import { UpdateRankingDto } from './dto/update-ranking.dto';
 
 @Injectable()
 export class RankingsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateRankingDto) {
-    const institution = await this.prisma.institution.findUnique({
-      where: { id: dto.institutionId },
-    });
+  async getPageConfig() {
+    const existing = await this.prisma.rankingsPage.findFirst();
+    if (!existing) {
+      return {
+        page_title: 'Rankings',
+        subtitle: 'Recognizing Leadership in Sustainable Education',
+        intro_description: 'Green Mentors rankings highlight institutions that demonstrate excellence in sustainability, environmental responsibility, and climate-conscious education systems.',
+        
+        school_title: 'Global Green School Ranking',
+        school_subtitle: 'Benchmarking Sustainability Leadership in Schools',
+        school_description: 'The Global Green School Ranking recognizes schools that successfully integrate sustainability into their curriculum, campus practices, and student engagement.\n\nThis ranking evaluates schools based on environmental responsibility, climate education, and institutional transformation, providing global recognition for sustainability leadership.',
+        school_button_1_text: 'Apply for Ranking',
+        school_button_1_link: '/apply/school-ranking',
+        school_button_2_text: 'Know More',
+        school_button_2_link: '/green-school-ranking',
 
-    if (!institution) {
-      throw new NotFoundException('Institution not found');
+        university_title: 'Global Green University Ranking',
+        university_subtitle: 'Recognizing Universities Leading Sustainable Innovation',
+        university_description: 'The Global Green University Ranking evaluates universities on sustainability integration across academics, research, campus operations, and community impact.\n\nUniversities are assessed on their commitment to environmental responsibility and their role in shaping future-ready graduates for the green economy.',
+        university_button_1_text: 'Apply for Ranking',
+        university_button_1_link: '/apply/university-ranking',
+        university_button_2_text: 'Know More',
+        university_button_2_link: '/green-university-ranking',
+
+        regional_title: 'National & Regional Green Rankings',
+        regional_subtitle: 'Strengthening Sustainability at Local Levels',
+        regional_description: 'Regional and national rankings allow institutions to benchmark their sustainability performance within their local ecosystem while contributing to global sustainability goals.',
+        regional_button_1_text: 'Explore Framework',
+        regional_button_1_link: '/regional-ranking',
+        regional_button_2_text: 'Contact Us',
+        regional_button_2_link: '/contact',
+
+        why_title: 'Why Participate in Rankings',
+        why_description: 'Participating in Green Mentors rankings provides institutions with global visibility, credibility, and benchmarking opportunities.\n\nIt helps institutions:\n- showcase sustainability achievements\n- improve institutional strategy\n- gain international recognition\n- align with global sustainability goals',
+
+        methodology_title: 'How Rankings Work',
+        methodology_description: 'Green Mentors rankings are based on a structured framework that evaluates institutions across multiple dimensions:\n\n- Curriculum & Learning\n- Campus Operations\n- Environmental Practices\n- Innovation & Research\n- Student Participation\n- Community Engagement\n- Governance & Leadership',
+
+        process_title: 'Ranking Process',
+        step1: 'Submit Application',
+        step2: 'Institutional Review',
+        step3: 'Assessment Against Framework',
+        step4: 'Recognition & Ranking Publication',
+
+        cta_title: 'Showcase Your Sustainability Leadership',
+        cta_description: 'Join the Green Mentors ranking ecosystem and gain recognition for your institution’s sustainability achievements.',
+        button_text: 'Apply Now',
+        button_link: '/contact',
+
+        meta_title: 'Green Mentors Rankings | Sustainable Education Recognition',
+        meta_keywords: 'green school ranking, green university ranking, sustainability rankings, education rankings',
+        meta_description: 'Explore Green Mentors rankings for schools and universities leading sustainability in education.',
+        status: 'Active',
+      };
     }
-
-    return this.prisma.ranking.create({
-      data: {
-        category: dto.category,
-        rank: dto.rank,
-        year: dto.year,
-        score: dto.score,
-        institutionId: dto.institutionId,
-      },
-    });
+    return existing;
   }
 
-  async findAll(page = 1, limit = 10, category?: string, year?: number) {
-    const skip = (page - 1) * limit;
-    const where: any = {};
+  async updatePageConfig(data: any) {
+    const existing = await this.prisma.rankingsPage.findFirst();
+    
+    const cleanedData = { ...data };
+    delete cleanedData.id;
+    delete cleanedData.created_at;
+    delete cleanedData.updated_at;
 
-    if (category) {
-      where.category = { contains: category, mode: 'insensitive' };
+    if (existing) {
+      return this.prisma.rankingsPage.update({
+        where: { id: existing.id },
+        data: cleanedData,
+      });
+    } else {
+      return this.prisma.rankingsPage.create({
+        data: cleanedData,
+      });
     }
-
-    if (year) {
-      where.year = +year;
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.ranking.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: [{ year: 'desc' }, { rank: 'asc' }],
-        include: {
-          institution: {
-            select: { id: true, name: true, type: true },
-          },
-        },
-      }),
-      this.prisma.ranking.count({ where }),
-    ]);
-
-    return { data, total, page, limit };
-  }
-
-  async findOne(id: string) {
-    const ranking = await this.prisma.ranking.findUnique({
-      where: { id },
-      include: {
-        institution: true,
-      },
-    });
-
-    if (!ranking) {
-      throw new NotFoundException('Ranking not found');
-    }
-
-    return ranking;
-  }
-
-  async update(id: string, dto: UpdateRankingDto) {
-    await this.findOne(id);
-
-    return this.prisma.ranking.update({
-      where: { id },
-      data: dto,
-    });
-  }
-
-  async remove(id: string) {
-    await this.findOne(id);
-    return this.prisma.ranking.delete({ where: { id } });
-  }
-
-  async getTopRankings(limit = 5) {
-    return this.prisma.ranking.findMany({
-      take: limit,
-      orderBy: [{ rank: 'asc' }],
-      include: {
-        institution: {
-          select: { name: true },
-        },
-      },
-    });
-  }
-
-  // Future Scalability: Submission Portal Logic
-  async createSubmission(data: any) {
-    return this.prisma.rankingSubmission.create({
-      data: {
-        ...data,
-        status: 'SUBMITTED',
-      },
-    });
-  }
-
-  async findAllSubmissions(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-    return this.prisma.rankingSubmission.findMany({
-      skip,
-      take: limit,
-      include: { institution: { select: { name: true } } },
-      orderBy: { createdAt: 'desc' },
-    });
-  }
-
-  // Automated Ranking Score Calculation
-  async evaluateSubmission(id: string, reviewerId: string, reviewerNote: string) {
-    const submission = await this.prisma.rankingSubmission.findUnique({
-      where: { id },
-    });
-
-    if (!submission) throw new Error('Submission not found');
-
-    // Automated Scoring Algorithm (Scalable)
-    // Based on hypothetical data points in submission.data JSON
-    const data = (submission.data as any) || {};
-    let calculatedScore = 0;
-
-    // Example Criteria
-    if (data.energyEfficiency) calculatedScore += (data.energyEfficiency * 0.4);
-    if (data.wasteManagement) calculatedScore += (data.wasteManagement * 0.3);
-    if (data.curriculumIntegration) calculatedScore += (data.curriculumIntegration * 0.3);
-
-    return this.prisma.rankingSubmission.update({
-      where: { id },
-      data: {
-        status: 'UNDER_REVIEW',
-        score: calculatedScore,
-        reviewerId,
-        reviewerNote,
-      },
-    });
-  }
-
-  async finalizeResult(id: string) {
-    const sub = await this.prisma.rankingSubmission.findUnique({ where: { id } });
-    if (!sub || !sub.score) throw new Error('Ready for finalization? No score found.');
-
-    // Convert submission to final ranking result
-    return this.prisma.ranking.create({
-      data: {
-        category: sub.category,
-        year: sub.year,
-        score: sub.score,
-        rank: 0, // Will be calculated after batch finalization
-        institutionId: sub.institutionId,
-      },
-    });
   }
 }

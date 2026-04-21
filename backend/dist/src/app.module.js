@@ -30,6 +30,17 @@ const analytics_module_1 = require("./analytics/analytics.module");
 const communications_module_1 = require("./communications/communications.module");
 const seo_module_1 = require("./seo/seo.module");
 const security_module_1 = require("./security/security.module");
+const sections_module_1 = require("./sections/sections.module");
+const about_page_module_1 = require("./about-page/about-page.module");
+const milestones_module_1 = require("./milestones/milestones.module");
+const impact_module_1 = require("./impact/impact.module");
+const accreditation_module_1 = require("./accreditation/accreditation.module");
+const events_module_2 = require("./events-page/events.module");
+const awards_page_module_1 = require("./awards-page/awards-page.module");
+const networks_page_module_1 = require("./networks-page/networks-page.module");
+const support_page_module_1 = require("./support-page/support-page.module");
+const contact_page_module_1 = require("./contact-page/contact-page.module");
+const media_page_module_1 = require("./media-page/media-page.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -56,6 +67,17 @@ exports.AppModule = AppModule = __decorate([
             communications_module_1.CommunicationsModule,
             seo_module_1.SeoModule,
             security_module_1.SecurityModule,
+            sections_module_1.SectionsModule,
+            about_page_module_1.AboutPageModule,
+            milestones_module_1.MilestonesModule,
+            impact_module_1.ImpactModule,
+            accreditation_module_1.AccreditationModule,
+            events_module_2.EventsPageModule,
+            awards_page_module_1.AwardsPageModule,
+            networks_page_module_1.NetworksPageModule,
+            support_page_module_1.SupportPageModule,
+            contact_page_module_1.ContactPageModule,
+            media_page_module_1.MediaPageModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

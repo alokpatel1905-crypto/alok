@@ -15,28 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PagesController = void 0;
 const common_1 = require("@nestjs/common");
 const pages_service_1 = require("./pages.service");
-const platform_express_1 = require("@nestjs/platform-express");
-const cloudinary_service_1 = require("../upload/cloudinary.service");
 let PagesController = class PagesController {
     pagesService;
-    cloudinaryService;
-    constructor(pagesService, cloudinaryService) {
+    constructor(pagesService) {
         this.pagesService = pagesService;
-        this.cloudinaryService = cloudinaryService;
     }
     create(body) {
         return this.pagesService.create(body);
-    }
-    async createWithImage(file, body) {
-        let imageUrl = body.image;
-        if (file) {
-            const result = await this.cloudinaryService.uploadFile(file);
-            imageUrl = result.secure_url;
-        }
-        return this.pagesService.create({
-            ...body,
-            image: imageUrl,
-        });
     }
     findAll() {
         return this.pagesService.findAll();
@@ -53,29 +38,11 @@ let PagesController = class PagesController {
     update(id, body) {
         return this.pagesService.update(id, body);
     }
-    async updateWithImage(id, file, body) {
-        let imageUrl = body.image;
-        if (file) {
-            const existing = await this.pagesService.findById(id);
-            if (existing?.image) {
-                await this.cloudinaryService.deleteFileByUrl(existing.image);
-            }
-            const result = await this.cloudinaryService.uploadFile(file);
-            imageUrl = result.secure_url;
-        }
-        return this.pagesService.update(id, {
-            ...body,
-            image: imageUrl,
-        });
-    }
     remove(id) {
         return this.pagesService.remove(id);
     }
     findById(id) {
         return this.pagesService.findById(id);
-    }
-    getHistory(id) {
-        return this.pagesService.getHistory(id);
     }
 };
 exports.PagesController = PagesController;
@@ -86,15 +53,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], PagesController.prototype, "create", null);
-__decorate([
-    (0, common_1.Post)('with-image'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    __param(0, (0, common_1.UploadedFile)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], PagesController.prototype, "createWithImage", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
@@ -130,16 +88,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PagesController.prototype, "update", null);
 __decorate([
-    (0, common_1.Patch)(':id/with-image'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.UploadedFile)()),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
-    __metadata("design:returntype", Promise)
-], PagesController.prototype, "updateWithImage", null);
-__decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -153,16 +101,8 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], PagesController.prototype, "findById", null);
-__decorate([
-    (0, common_1.Get)(':id/history'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PagesController.prototype, "getHistory", null);
 exports.PagesController = PagesController = __decorate([
     (0, common_1.Controller)('pages'),
-    __metadata("design:paramtypes", [pages_service_1.PagesService,
-        cloudinary_service_1.CloudinaryService])
+    __metadata("design:paramtypes", [pages_service_1.PagesService])
 ], PagesController);
 //# sourceMappingURL=pages.controller.js.map

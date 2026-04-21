@@ -7,23 +7,38 @@ export class SeedController {
 
   @Post('page')
   async seedPage() {
+    // Attempt to delete home first to avoid slug conflict if we want a fresh seed via API
+    try {
+      const existing = await this.pagesService.findBySlug('home');
+      if (existing) {
+        await this.pagesService.remove(existing.id);
+      }
+    } catch (e) {}
+
     return this.pagesService.create({
       title: 'Home Page',
       slug: 'home',
       status: 'PUBLISHED',
-      content: {
-        hero: {
-          title: "Welcome to Green Mentors",
-          subtitle: "Empowering the next generation of eco-leaders"
-        },
-        sections: [
-          {
-            id: 1,
-            title: "Our Mission",
-            text: "To transform education for a sustainable future."
+      sections: [
+        {
+          sectionKey: 'hero',
+          order: 0,
+          content: {
+            title: "Welcome to Green Mentors",
+            description: "Empowering the next generation of eco-leaders"
           }
-        ]
-      }
+        },
+        {
+          sectionKey: 'stats',
+          order: 1,
+          content: {
+            title: "Our Mission",
+            stats: [
+              { value: "10", label: "Countries", icon: "globe" }
+            ]
+          }
+        }
+      ]
     });
   }
 }

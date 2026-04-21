@@ -6,9 +6,9 @@ export declare class ProgramsService {
     constructor(prisma: PrismaService);
     create(dto: CreateProgramDto): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -22,9 +22,9 @@ export declare class ProgramsService {
     findAll(page?: number, limit?: number, search?: string, status?: string, sortBy?: string, order?: 'asc' | 'desc', isActive?: string): Promise<{
         data: {
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            isActive: boolean;
             title: string;
             slug: string;
             description: string | null;
@@ -46,9 +46,9 @@ export declare class ProgramsService {
     }>;
     findPublished(): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -61,9 +61,9 @@ export declare class ProgramsService {
     }[]>;
     findPublishedBySlug(slug: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -76,9 +76,9 @@ export declare class ProgramsService {
     }>;
     findBySlug(slug: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -91,9 +91,9 @@ export declare class ProgramsService {
     }>;
     update(id: string, dto: UpdateProgramDto): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -106,9 +106,9 @@ export declare class ProgramsService {
     }>;
     remove(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -121,9 +121,9 @@ export declare class ProgramsService {
     }>;
     toggleActive(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -136,9 +136,9 @@ export declare class ProgramsService {
     }>;
     toggleStatus(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;
@@ -151,9 +151,9 @@ export declare class ProgramsService {
     }>;
     findById(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         slug: string;
         description: string | null;

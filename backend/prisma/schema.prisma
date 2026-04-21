@@ -336,6 +336,7 @@ model Media {
   mimetype     String
   size         Int
   url          String
+  type         String   @default("image") // image/video
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -357,28 +358,39 @@ model Notification {
 }
 
 model Page {
-  id        String     @id @default(cuid())
-  title     String
-  slug      String     @unique
-  content   Json?
-  image     String?
-  status    PageStatus @default(DRAFT)
-  isActive  Boolean    @default(true)
-  views     Int        @default(0)
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
   metaTitle       String?
   metaDescription String?
+  status          PageStatus    @default(DRAFT)
+  isActive        Boolean       @default(true)
+  views           Int           @default(0)
   schemaMarkup    String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  histories PageHistory[]
+  sections        Section[]
+  histories       PageHistory[]
+}
+
+model Section {
+  id          String   @id @default(cuid())
+  sectionKey  String   // hero, stats, cards, etc.
+  content     Json
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pageId      String
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
 }
 
 model PageHistory {
   id        String   @id @default(cuid())
   pageId    String
-  page      Page     @relation(fields: [pageId], references: [id])
-  content   Json?
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  content   Json?    // Can store snapshot of all sections
   editedBy  String?
   createdAt DateTime @default(now())
 }
@@ -434,3 +446,642 @@ model LoginHistory {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
 }
+
+model AboutPage {
+  id                   String   @id @default(cuid())
+  section_name         String?  @default("About Us")
+  page_title           String?
+  short_subtitle       String?
+  main_description     String?
+  about_image          String?
+  image_alt            String?
+  image_caption        String?
+  vision_title         String?
+  vision_description   String?
+  leadership_title     String?
+  founder_name         String?
+  founder_designation  String?
+  founder_description  String?
+  founder_image        String?
+  founder_profile_link String?
+  partner_1_name       String?
+  partner_1_link       String?
+  partner_2_name       String?
+  partner_2_link       String?
+  partner_3_name       String?
+  partner_3_link       String?
+  founded_year         String?
+  countries_count      String?
+  growth_description   String?
+  history_notes        String?
+  approach_title       String?
+  approach_description String?
+  soil_title           String?
+  soil_description     String?
+  water_title          String?
+  water_description    String?
+  air_title            String?
+  air_description      String?
+  energy_title         String?
+  energy_description   String?
+  spaces_title         String?
+  spaces_description   String?
+  button_text          String?
+  button_link          String?
+  secondary_button_text String?
+  secondary_button_link String?
+  meta_title           String?
+  meta_keywords        String?
+  meta_description     String?
+  status               String?  @default("Active")
+  updated_at           DateTime @updatedAt
+}
+
+model MilestonePage {
+  id                   String   @id @default(cuid())
+  page_title           String?  @default("Milestones of Impact")
+  subtitle             String?
+  intro_description    String?
+  show_timeline_style  Boolean? @default(true)
+  show_year_highlight  Boolean? @default(true)
+  cta_title            String?
+  cta_description      String?
+  button_text          String?
+  button_link          String?
+  meta_title           String?
+  meta_keywords        String?
+  meta_description     String?
+  status               String?  @default("Active")
+  updatedAt            DateTime @updatedAt
+  createdAt            DateTime @default(now())
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  year        String
+  title       String?
+  description String
+  order       Int      @default(0)
+  status      String   @default("Active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImpactPage {
+  id                   String   @id @default(cuid())
+  title                String?
+  subtitle             String?
+  description          String?
+  stat1_title          String?
+  stat1_value          String?
+  stat2_title          String?
+  stat2_value          String?
+  stat3_title          String?
+  stat3_value          String?
+  stat4_title          String?
+  stat4_value          String?
+  image                String?
+  why_title            String?
+  why_description      String?
+  story_title          String?
+  story_description    String?
+  cta_title            String?
+  cta_description      String?
+  button_text          String?
+  button_link          String?
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model SupportPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  partnership_title       String?
+  partnership_subtitle    String?
+  partnership_description String?
+  partnership_button_1_text    String?
+  partnership_button_1_link   String?
+  partnership_button_2_text   String?
+  partnership_button_2_link   String?
+  partnership_image       String?
+
+  sponsorship_title       String?
+  sponsorship_subtitle    String?
+  sponsorship_description String?
+  sponsorship_button_1_text   String?
+  sponsorship_button_1_link  String?
+  sponsorship_button_2_text  String?
+  sponsorship_button_2_link  String?
+  sponsorship_image       String?
+
+  philanthropy_title       String?
+  philanthropy_subtitle    String?
+  philanthropy_description String?
+  philanthropy_button_1_text   String?
+  philanthropy_button_1_link  String?
+  philanthropy_button_2_text   String?
+  philanthropy_button_2_link   String?
+  philanthropy_image       String?
+
+  advisory_title       String?
+  advisory_subtitle    String?
+  advisory_description String?
+  advisory_button_1_text   String?
+  advisory_button_1_link   String?
+  advisory_button_2_text   String?
+  advisory_button_2_link   String?
+  advisory_image        String?
+
+  why_title               String?
+  why_description         String?
+
+  impact_title           String?
+  impact_description     String?
+
+  process_title          String?
+  step1                  String?
+  step2                  String?
+  step3                  String?
+  step4                  String?
+
+  quote_title             String?
+  quote_description      String?
+  quote_author            String?
+
+  cta_title              String?
+  cta_description        String?
+  button_text            String?
+  button_link            String?
+  secondary_button_text  String?
+  secondary_button_link  String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model ContactPage {
+  id                    String   @id @default(cuid())
+  page_title           String?
+  subtitle             String?
+  intro_description    String?
+
+  form_title           String?
+  form_description     String?
+  submit_button_text   String?
+  privacy_note         String?
+
+  general_email        String?
+  partnerships_email   String?
+  media_email          String?
+  events_email         String?
+  phone                String?
+  office_address       String?
+  response_time        String?
+
+  who_title            String?
+  who_description      String?
+  who_supporting_text  String?
+
+  global_title         String?
+  global_description   String?
+  global_image         String?
+  region1              String?
+  region2              String?
+  region3              String?
+  region4              String?
+
+  faq_title            String?
+  faq1_question        String?
+  faq1_answer          String?
+  faq2_question        String?
+  faq2_answer          String?
+  faq3_question        String?
+  faq3_answer          String?
+  faq4_question        String?
+  faq4_answer          String?
+
+  cta_title            String?
+  cta_description      String?
+  button1_text         String?
+  button1_link         String?
+  button2_text         String?
+  button2_link         String?
+
+  meta_title           String?
+  meta_keywords        String?
+  meta_description     String?
+  status               String   @default("Active")
+  updated_at           DateTime @updatedAt
+  created_at           DateTime @default(now())
+}
+
+model InquiryType {
+  id      String @id @default(cuid())
+  name    String
+  order   Int    @default(0)
+  status  String @default("Active")
+}
+
+model AccreditationPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  school_title            String?
+  school_subtitle         String?
+  school_description      String?
+  school_button_1_text    String?
+  school_button_1_link    String?
+  school_button_2_text    String?
+  school_button_2_link    String?
+  school_image            String?
+
+  university_title        String?
+  university_subtitle     String?
+  university_description  String?
+  university_button_1_text String?
+  university_button_1_link String?
+  university_button_2_text String?
+  university_button_2_link String?
+  university_image        String?
+
+  teacher_title           String?
+  teacher_subtitle        String?
+  teacher_description     String?
+  teacher_button_1_text   String?
+  teacher_button_1_link   String?
+  teacher_button_2_text   String?
+  teacher_button_2_link   String?
+  teacher_image           String?
+
+  graduate_title          String?
+  graduate_subtitle       String?
+  graduate_description    String?
+  graduate_button_1_text  String?
+  graduate_button_1_link  String?
+  graduate_button_2_text  String?
+  graduate_button_2_link  String?
+  graduate_image          String?
+
+  fellowship_title        String?
+  fellowship_subtitle     String?
+  fellowship_description  String?
+  fellowship_button_1_text String?
+  fellowship_button_1_link String?
+  fellowship_button_2_text String?
+  fellowship_button_2_link String?
+  fellowship_image        String?
+
+  cta_title               String?
+  cta_description         String?
+  primary_button_text     String?
+  primary_button_link     String?
+  secondary_button_text   String?
+  secondary_button_link   String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model RankingsPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  school_title            String?
+  school_subtitle         String?
+  school_description      String?
+  school_button_1_text    String?
+  school_button_1_link    String?
+  school_button_2_text    String?
+  school_button_2_link    String?
+  school_image            String?
+
+  university_title        String?
+  university_subtitle     String?
+  university_description  String?
+  university_button_1_text String?
+  university_button_1_link String?
+  university_button_2_text String?
+  university_button_2_link String?
+  university_image        String?
+
+  regional_title          String?
+  regional_subtitle       String?
+  regional_description    String?
+  regional_button_1_text  String?
+  regional_button_1_link  String?
+  regional_button_2_text  String?
+  regional_button_2_link  String?
+  regional_image          String?
+
+  why_title               String?
+  why_description         String?
+
+  methodology_title       String?
+  methodology_description String?
+
+  process_title           String?
+  step1                   String?
+  step2                   String?
+  step3                   String?
+  step4                   String?
+
+  cta_title               String?
+  cta_description         String?
+  button_text             String?
+  button_link             String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model UpcomingEvent {
+  id              String       @id @default(cuid())
+  name            String
+  location        String?
+  date            String?
+  description     String?
+  link            String?
+  sort_order      Int          @default(0)
+  events_page_id  String
+  events_page     EventsPage   @relation(fields: [events_page_id], references: [id], onDelete: Cascade)
+}
+
+model EventsPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  event1_title            String?
+  event1_subtitle         String?
+  event1_description      String?
+  event1_location         String?
+  event1_date             String?
+  event1_button1_text     String?
+  event1_button1_link     String?
+  event1_button2_text     String?
+  event1_button2_link     String?
+  event1_image            String?
+
+  event2_title            String?
+  event2_subtitle         String?
+  event2_description      String?
+  event2_location         String?
+  event2_date             String?
+  event2_button1_text     String?
+  event2_button1_link     String?
+  event2_button2_text     String?
+  event2_button2_link     String?
+  event2_image            String?
+
+  event3_title            String?
+  event3_subtitle         String?
+  event3_description      String?
+  event3_location         String?
+  event3_date             String?
+  event3_button1_text     String?
+  event3_button1_link     String?
+  event3_button2_text     String?
+  event3_button2_link     String?
+  event3_image            String?
+
+  event4_title            String?
+  event4_subtitle         String?
+  event4_description      String?
+  event4_location         String?
+  event4_date             String?
+  event4_button1_text     String?
+  event4_button1_link     String?
+  event4_button2_text     String?
+  event4_button2_link     String?
+  event4_image            String?
+
+  upcoming_events         UpcomingEvent[]
+
+  why_title               String?
+  why_description         String?
+
+  cta_title               String?
+  cta_description         String?
+  button_text             String?
+  button_link             String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model AwardsPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  school_title            String?
+  school_subtitle         String?
+  school_description      String?
+  school_button_1_text    String?
+  school_button_1_link    String?
+  school_button_2_text    String?
+  school_button_2_link    String?
+  school_image            String?
+
+  university_title        String?
+  university_subtitle     String?
+  university_description  String?
+  university_button_1_text String?
+  university_button_1_link String?
+  university_button_2_text String?
+  university_button_2_link String?
+  university_image        String?
+
+  teacher_title           String?
+  teacher_subtitle        String?
+  teacher_description     String?
+  teacher_button_1_text   String?
+  teacher_button_1_link   String?
+  teacher_button_2_text   String?
+  teacher_button_2_link   String?
+  teacher_image           String?
+
+  graduate_title          String?
+  graduate_subtitle       String?
+  graduate_description    String?
+  graduate_button_1_text  String?
+  graduate_button_1_link  String?
+  graduate_button_2_text  String?
+  graduate_button_2_link  String?
+  graduate_image          String?
+
+  innovator_title         String?
+  innovator_subtitle      String?
+  innovator_description   String?
+  innovator_button_1_text String?
+  innovator_button_1_link String?
+  innovator_button_2_text String?
+  innovator_button_2_link String?
+  innovator_image         String?
+
+  curriculum_title        String?
+  curriculum_subtitle     String?
+  curriculum_description  String?
+  curriculum_button_1_text String?
+  curriculum_button_1_link String?
+  curriculum_button_2_text String?
+  curriculum_button_2_link String?
+  curriculum_image        String?
+
+  why_title               String?
+  why_description         String?
+
+  process_title           String?
+  step1                   String?
+  step2                   String?
+  step3                   String?
+  step4                   String?
+
+  cta_title               String?
+  cta_description         String?
+  button_text             String?
+  button_link             String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+
+model NetworksPage {
+  id                      String   @id @default(cuid())
+  page_title              String?
+  subtitle                String?
+  intro_description       String?
+
+  school_title            String?
+  school_subtitle         String?
+  school_description      String?
+  school_button_1_text    String?
+  school_button_1_link    String?
+  school_button_2_text    String?
+  school_button_2_link    String?
+  school_image            String?
+
+  university_title        String?
+  university_subtitle     String?
+  university_description  String?
+  university_button_1_text String?
+  university_button_1_link String?
+  university_button_2_text String?
+  university_button_2_link String?
+  university_image        String?
+
+  teacher_title           String?
+  teacher_subtitle        String?
+  teacher_description     String?
+  teacher_button_1_text   String?
+  teacher_button_1_link   String?
+  teacher_button_2_text   String?
+  teacher_button_2_link   String?
+  teacher_image           String?
+
+  graduates_title         String?
+  graduates_subtitle      String?
+  graduates_description   String?
+  graduates_button_1_text String?
+  graduates_button_1_link String?
+  graduates_button_2_text String?
+  graduates_button_2_link String?
+  graduates_image         String?
+
+  innovator_title         String?
+  innovator_subtitle      String?
+  innovator_description   String?
+  innovator_button_1_text String?
+  innovator_button_1_link String?
+  innovator_button_2_text String?
+  innovator_button_2_link String?
+  innovator_image         String?
+
+  why_title               String?
+  why_description         String?
+
+  impact_title            String?
+  impact_description      String?
+
+  process_title           String?
+  step1                   String?
+  step2                   String?
+  step3                   String?
+  step4                   String?
+
+  cta_title               String?
+  cta_description         String?
+  button_text             String?
+  button_link             String?
+
+  meta_title              String?
+  meta_keywords           String?
+  meta_description        String?
+  status                  String?  @default("Active")
+  updated_at              DateTime @updatedAt
+  created_at              DateTime @default(now())
+}
+model MediaPageConfig {
+  id                   String   @id @default(cuid())
+  page_title           String?  @default("Media & Publications")
+  subtitle             String?
+  intro_description    String?
+  
+  cta_title            String?
+  cta_description      String?
+  cta_button_text      String?
+  cta_button_link      String?
+  
+  meta_title           String?
+  meta_description     String?
+  meta_keywords        String?
+  updated_at           DateTime @updatedAt
+  created_at           DateTime @default(now())
+}
+
+model MediaPost {
+  id          String   @id @default(cuid())
+  title       String
+  category    String   
+  description String?
+  image       String?
+  date        String?  
+  link        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+

@@ -49,7 +49,6 @@ export default function AdminPagesList() {
           title,
           slug,
           status: 'PUBLISHED',
-          content: {}
         })
       });
       fetchPages();
@@ -102,7 +101,7 @@ export default function AdminPagesList() {
                              <td className="px-6 py-5 text-right">
                                  {dbRecord ? (
                                      <Link 
-                                       href={`/admin/pages/${dbRecord.id}`}
+                                       href={stdPage.slug === 'about' ? '/admin/about' : `/admin/pages/${dbRecord.id}`}
                                        className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-emerald-600 transition-all shadow-sm"
                                      >
                                          <Edit size={14} /> Edit Content

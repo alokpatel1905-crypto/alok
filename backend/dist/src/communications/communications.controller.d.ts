@@ -4,9 +4,9 @@ export declare class CommunicationsController {
     constructor(communicationsService: CommunicationsService);
     createAnnouncement(body: any): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         message: string;
         priority: string;
@@ -14,9 +14,9 @@ export declare class CommunicationsController {
     findAllAnnouncements(page?: string, limit?: string): Promise<{
         data: {
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            isActive: boolean;
             title: string;
             message: string;
             priority: string;
@@ -27,9 +27,9 @@ export declare class CommunicationsController {
     }>;
     removeAnnouncement(id: string): Promise<{
         id: string;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isActive: boolean;
         title: string;
         message: string;
         priority: string;
@@ -39,25 +39,25 @@ export declare class CommunicationsController {
         name?: string;
     }): Promise<{
         id: string;
+        createdAt: Date;
         name: string | null;
         email: string;
         isActive: boolean;
-        createdAt: Date;
     }>;
     unsubscribe(email: string): Promise<{
         id: string;
+        createdAt: Date;
         name: string | null;
         email: string;
         isActive: boolean;
-        createdAt: Date;
     }>;
     findAllSubscribers(page?: string, limit?: string): Promise<{
         data: {
             id: string;
+            createdAt: Date;
             name: string | null;
             email: string;
             isActive: boolean;
-            createdAt: Date;
         }[];
         total: number;
         page: number;

@@ -1,268 +1,183 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { Award, Trophy, Star, Medal, ArrowRight, ShieldCheck, CheckCircle2, Crown, Sparkles, Building2, GraduationCap, Lightbulb, BookOpen, UserCheck, Settings } from 'lucide-react';
+import React from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { ArrowRight, Award, CheckCircle2, FileText, Search, Star, Target, Trophy } from 'lucide-react';
 
-const AWARDS = [
-  {
-    id: "school",
-    title: "Green School Award",
-    subtitle: "Recognizing Schools Leading Environmental Transformation",
-    desc: "Celebrates schools integrating sustainability into core learning, campus culture, environmental stewardship, and student engagement. This award recognizes institutions actively creating climate-conscious and responsible learning environments, highlighting practical, measurable school-wide transformation.",
-    icon: <Building2 className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
-  },
-  {
-    id: "university",
-    title: "Green University Award",
-    subtitle: "Celebrating Higher Education Institutions Driving Sustainable Change",
-    desc: "Recognizes universities advancing sustainability explicitly through academics, cutting-edge research, campus operations, innovation, and community engagement. This honors institutions effectively shaping the future of responsible higher education on a global stage.",
-    icon: <GraduationCap className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
-  },
-  {
-    id: "teacher",
-    title: "Green Teacher Award",
-    subtitle: "Honoring Educators Inspiring Climate-Conscious Learning",
-    desc: "Celebrates exceptional teachers integrating sustainability, critical thinking, and environmental responsibility deeply into their teaching. This award honors educators who inspire students to actively think and act for a better planetary future.",
-    icon: <UserCheck className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
-  },
-  {
-    id: "graduate",
-    title: "Green Graduate Award",
-    subtitle: "Recognizing Emerging Leaders for a Sustainable Future",
-    desc: "Honors recent graduates demonstrating exceptional commitment to sustainability, innovation, and responsible leadership. We celebrate young changemakers contributing tangibly to environmental and social progress, positioning them as future-ready leaders.",
-    icon: <Crown className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
-  },
-  {
-    id: "innovator",
-    title: "Green Innovator Award",
-    subtitle: "Celebrating Creative Solutions for Sustainable Education",
-    desc: "Recognizes brilliant innovators developing ideas, tools, systems, or practices that substantially advance sustainability within education. We celebrate applied creativity, structural leadership, and high-impact problem-solving for global environmental challenges.",
-    icon: <Lightbulb className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
-  },
-  {
-    id: "curriculum",
-    title: "Curriculum Award",
-    subtitle: "Recognizing Excellence in Sustainability-Integrated Learning",
-    desc: "Honors comprehensive curriculum models and academic frameworks that successfully embed environmental responsibility. This recognizes institutions and educators shaping highly effective, future-ready educational content pushing long-term systemic change.",
-    icon: <BookOpen className="w-10 h-10 text-amber-500" strokeWidth={1.5} />,
-    color: "amber"
+export const dynamic = 'force-dynamic';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+async function getAwardsData() {
+  try {
+    const res = await fetch(`${API_URL}/awards-page`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+    return null;
+  } catch (e) {
+    console.error('Failed to fetch Awards data', e);
+    return null;
   }
-];
+}
 
-const WHY_RECOGNITION_MATTERS = [
-  { title: "Showcases Best Practices", desc: "Highlights operational and academic excellence for global replication." },
-  { title: "Encourages Innovation", desc: "Drives institutions to push the boundaries of green education continuously." },
-  { title: "Institutional Visibility", text: "Drastically strengthens the global prestige of participating schools and universities." },
-  { title: "Builds Credibility", text: "Validates long-term commitments to global sustainability-led frameworks." }
-];
+export default async function AwardsPage() {
+  const page = await getAwardsData();
 
-const NOMINATION_PROCESS = [
-  { step: "1", title: "Submit Nomination", desc: "Detailed institutional alignment and supporting evidence." },
-  { step: "2", title: "Review & Evaluation", desc: "Preliminary screening of submitted operational metrics." },
-  { step: "3", title: "Jury Assessment", desc: "Expert panel analysis verifying actual sustainability impact." },
-  { step: "4", title: "Recognition", desc: "Prestigious global awarding and continued network collaboration." }
-];
+  if (!page) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <p className="text-xl text-slate-500 font-medium">Awards page hasn&apos;t been configured yet.</p>
+      </div>
+    );
+  }
 
-export default function AwardsPage() {
-  const [mounted, setMounted] = useState(false);
+  const awards = [
+    { prefix: 'school', t: page.school_title, st: page.school_subtitle, d: page.school_description, b1t: page.school_button_1_text, b1l: page.school_button_1_link, b2t: page.school_button_2_text, b2l: page.school_button_2_link, img: page.school_image },
+    { prefix: 'university', t: page.university_title, st: page.university_subtitle, d: page.university_description, b1t: page.university_button_1_text, b1l: page.university_button_1_link, b2t: page.university_button_2_text, b2l: page.university_button_2_link, img: page.university_image },
+    { prefix: 'teacher', t: page.teacher_title, st: page.teacher_subtitle, d: page.teacher_description, b1t: page.teacher_button_1_text, b1l: page.teacher_button_1_link, b2t: page.teacher_button_2_text, b2l: page.teacher_button_2_link, img: page.teacher_image },
+    { prefix: 'graduate', t: page.graduate_title, st: page.graduate_subtitle, d: page.graduate_description, b1t: page.graduate_button_1_text, b1l: page.graduate_button_1_link, b2t: page.graduate_button_2_text, b2l: page.graduate_button_2_link, img: page.graduate_image },
+    { prefix: 'innovator', t: page.innovator_title, st: page.innovator_subtitle, d: page.innovator_description, b1t: page.innovator_button_1_text, b1l: page.innovator_button_1_link, b2t: page.innovator_button_2_text, b2l: page.innovator_button_2_link, img: page.innovator_image },
+    { prefix: 'curriculum', t: page.curriculum_title, st: page.curriculum_subtitle, d: page.curriculum_description, b1t: page.curriculum_button_1_text, b1l: page.curriculum_button_1_link, b2t: page.curriculum_button_2_text, b2l: page.curriculum_button_2_link, img: page.curriculum_image },
+  ].filter((s) => s.t);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  const steps = [
+    { title: page.step1, icon: FileText },
+    { title: page.step2, icon: Search },
+    { title: page.step3, icon: Star },
+    { title: page.step4, icon: Trophy },
+  ].filter((s) => s.title);
 
   return (
-    <div className="bg-[#FAF9F6] font-sans text-slate-800 selection:bg-amber-200 selection:text-amber-950 flex flex-col pt-24">
-      
-      {/* 1. Top Hero / Page Intro */}
-      <header className="relative pt-16 pb-32 px-8 overflow-hidden bg-slate-900 border-b-8 border-amber-500 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-slate-900 to-slate-950" />
-        <div className="absolute top-0 right-0 w-full h-full opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNGRkZGRkYiLz48L3N2Zz4=')]" />
-        
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
-          <nav className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-6 flex items-center justify-center gap-2">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-amber-400">Awards</span>
-          </nav>
+    <div className="bg-[#faf9f7] font-sans text-slate-900 selection:bg-amber-200 antialiased min-h-screen flex flex-col">
+      {/* 1. HERO */}
+      <section className="bg-slate-950 text-white pt-24 lg:pt-32 pb-24 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-amber-500/15 blur-[120px] rounded-full pointer-events-none translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-700/10 blur-[100px] rounded-full pointer-events-none -translate-x-1/3 translate-y-1/3" />
 
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-slate-800/80 border border-amber-900/50 text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-            <Trophy size={14} className="text-amber-500" />
-            Global Awards
+        <div className="container mx-auto px-6 max-w-5xl text-center relative z-10">
+          <div className="w-20 h-20 bg-amber-900/40 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-amber-800/50 shadow-2xl">
+            <Award size={44} className="text-amber-400" strokeWidth={1.5} />
           </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-6">
-            Honoring Leadership in <br className="hidden md:block"/> Sustainable Education
-          </h1>
-          
-          <p className="text-xl font-medium text-slate-400 max-w-3xl leading-relaxed">
-            The Green Mentors Awards formally celebrate institutions, distinct educators, outstanding graduates, innovators, and changemakers actively advancing global sustainability through transformative education.
-          </p>
+          {page.subtitle && (
+            <span className="inline-block px-5 py-2 rounded-full bg-amber-500/20 text-amber-300 font-bold tracking-widest text-xs uppercase mb-8 border border-amber-500/30 backdrop-blur-sm">
+              {page.subtitle}
+            </span>
+          )}
+          <h1 className="text-5xl md:text-7xl font-black mb-8 leading-[1.1] tracking-tight">{page.page_title || 'Awards'}</h1>
+          {page.intro_description && (
+            <p className="text-lg md:text-2xl text-slate-300 mx-auto leading-relaxed font-light max-w-4xl">{page.intro_description}</p>
+          )}
         </div>
-      </header>
+      </section>
 
-      <main className="flex-grow">
-        
-        {/* 2. Introduction Section */}
-        <section className="py-24 px-8 bg-white border-b border-slate-100 relative">
-          <div className="max-w-4xl mx-auto text-center">
-             <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center mx-auto mb-8 shadow-sm">
-                <Medal className="w-8 h-8 text-amber-600" />
-             </div>
-            <p className="text-xl md:text-2xl text-slate-600 font-medium leading-[1.8]">
-              Targeted recognition matters profoundly in sustainability-led education. It structurally inspires supreme leadership, elevates institutional visibility, and crucially drives the replication of proven best practices. At Green Mentors, we honor these massive collaborative commitments transcending schools, universities, visionary educators, and dedicated students worldwide.
-            </p>
-          </div>
-        </section>
+      {/* 2. AWARD CATEGORIES */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6 max-w-6xl space-y-32">
+          {awards.map((aw, idx) => {
+            const isReversed = idx % 2 !== 0;
+            return (
+              <div key={idx} className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-16 lg:gap-24`}>
+                {/* Visual Side */}
+                <div className="w-full lg:w-1/2">
+                  <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group">
+                    {aw.img ? (
+                      <img src={aw.img} alt={aw.t} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-amber-50">
+                        <Award className="w-28 h-28 text-amber-200" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-amber-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                </div>
 
-        {/* 6. Featured Honors / Recognition Strip */}
-        <div className="bg-[#FAF9F6] border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-8 py-10 flex justify-center flex-wrap gap-x-12 gap-y-6">
-            {["Institutional Excellence", "Educator Leadership", "Youth Recognition", "Innovation for Impact", "Sustainability in Practice"].map((label, idx) => (
-              <div key={idx} className="flex items-center gap-3 text-slate-700 font-bold text-xs uppercase tracking-[0.15em]">
-                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                {label}
+                {/* Content Side */}
+                <div className="w-full lg:w-1/2 flex flex-col justify-center">
+                  <span className="text-amber-600 font-black tracking-wider uppercase text-sm border-b-2 border-amber-400 pb-1 inline-block mb-4 w-fit">
+                    Award 0{idx + 1}
+                  </span>
+                  <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight">{aw.t}</h2>
+                  {aw.st && <h3 className="text-xl text-slate-500 font-medium mb-6 italic">&ldquo;{aw.st}&rdquo;</h3>}
+                  {aw.d && <div className="prose prose-lg text-slate-600 font-medium leading-relaxed mb-10 whitespace-pre-wrap">{aw.d}</div>}
+                  <div className="flex flex-wrap items-center gap-4 border-t border-slate-100 pt-8">
+                    {aw.b1t && (
+                      <Link href={aw.b1l || '#'} className="inline-flex items-center gap-2 bg-amber-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-amber-700 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300">
+                        {aw.b1t} <CheckCircle2 size={18} />
+                      </Link>
+                    )}
+                    {aw.b2t && (
+                      <Link href={aw.b2l || '#'} className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 font-bold px-8 py-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-colors">
+                        {aw.b2t}
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
+      </section>
 
-        {/* 3. Award Categories (Core Section) */}
-        <section className="py-32 px-8 bg-white" id="categories">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-24">
-               <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Prestigious Categories</h2>
-               <div className="w-24 h-1 bg-amber-500 mx-auto mt-8 rounded-full" />
+      {/* 3. INFO BLOCKS: WHY RECOGNITION MATTERS */}
+      {(page.why_title || page.why_description) && (
+        <section className="py-24 bg-slate-50 border-y border-slate-200">
+          <div className="container mx-auto px-6 max-w-4xl text-center">
+            <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
+              <Target size={32} />
             </div>
+            <h2 className="text-4xl font-black text-slate-900 mb-8">{page.why_title}</h2>
+            <div className="prose prose-lg text-slate-600 font-medium leading-relaxed whitespace-pre-wrap mx-auto">{page.why_description}</div>
+          </div>
+        </section>
+      )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              {AWARDS.map((award, idx) => (
-                <div key={award.id} className="bg-[#FAF9F6] border border-slate-200 rounded-[2.5rem] p-10 hover:bg-white hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-900/5 transition-all duration-500 group flex flex-col h-full relative overflow-hidden">
-                  
-                  {/* Subtle decorative background icon */}
-                  <div className="absolute -right-8 -bottom-8 opacity-[0.03] text-amber-900 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-                    {award.icon}
+      {/* 4. PROCESS STEPS */}
+      {steps.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="container mx-auto px-6 max-w-6xl text-center">
+            <h2 className="text-4xl font-black text-slate-900 mb-16">{page.process_title}</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {steps.map((st, i) => {
+                const Icon = st.icon;
+                return (
+                  <div key={i} className="relative">
+                    <div className="bg-slate-50 border border-slate-100 p-8 rounded-3xl h-full shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                      <div className="w-16 h-16 bg-amber-500 text-white rounded-full flex items-center justify-center font-black text-xl mb-6 shadow-xl shadow-amber-500/20">
+                        {i + 1}
+                      </div>
+                      <Icon className="text-amber-500 mb-4" size={32} />
+                      <h3 className="text-xl font-bold text-slate-800">{st.title}</h3>
+                    </div>
                   </div>
-
-                  <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-md shadow-amber-900/5 border border-amber-100 mb-8 z-10 group-hover:-translate-y-1 transition-transform">
-                    {award.icon}
-                  </div>
-                  
-                  <div className="flex-grow z-10">
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-3 group-hover:text-amber-700 transition-colors">{award.title}</h3>
-                    <h4 className="text-sm font-bold text-amber-600 mb-6 uppercase tracking-widest">{award.subtitle}</h4>
-                    <p className="text-slate-600 font-medium leading-[1.8] mb-10">
-                      {award.desc}
-                    </p>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 mt-auto z-10">
-                    <button className="bg-slate-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-amber-600 hover:-translate-y-0.5 transition-all shadow-xl shadow-slate-900/10">
-                      Nominate Now
-                    </button>
-                    <button className="bg-white text-slate-700 border border-slate-200 px-8 py-3.5 rounded-xl font-bold hover:border-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-all">
-                      Know More
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
+      )}
 
-        {/* 4. Why These Awards Matter */}
-        <section className="py-32 px-8 bg-slate-900 text-white relative">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center gap-2 text-amber-500 text-xs font-bold uppercase tracking-widest mb-4">
-                <Crown size={16} /> Ecosystem Value
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">Why Recognition Matters</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {WHY_RECOGNITION_MATTERS.map((benefit, idx) => (
-                <div key={idx} className="bg-slate-800 border border-slate-700 rounded-3xl p-8 hover:border-amber-500/50 hover:bg-slate-800/80 transition-colors group">
-                  <div className="w-12 h-12 bg-slate-900 border border-slate-700 rounded-xl flex items-center justify-center text-amber-400 mb-6 group-hover:scale-110 transition-transform">
-                    <Sparkles className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-slate-100 text-lg mb-3">{benefit.title}</h4>
-                  <p className="text-sm text-slate-400 leading-relaxed font-medium">
-                    {benefit.desc || benefit.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Nomination / Selection Process */}
-        <section className="py-32 px-8 bg-[#FAF9F6] relative border-b border-slate-200">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
-              <div>
-                <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">How the Awards Process Works</h2>
-                <p className="text-lg text-slate-500 font-medium">A transparent, rigorous, and mission-aligned global evaluation system.</p>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-700 font-bold bg-emerald-50 px-5 py-2.5 rounded-full border border-emerald-100 text-sm">
-                <ShieldCheck size={18} /> Verified by Global Jury
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-              <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-1 bg-gradient-to-r from-slate-200 via-amber-200 to-emerald-200" />
-              
-              {NOMINATION_PROCESS.map((step, idx) => (
-                <div key={idx} className="relative flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 rounded-full bg-white border-4 border-amber-100 shadow-xl shadow-amber-900/10 flex items-center justify-center font-black text-2xl text-amber-600 mb-6 relative z-10 group-hover:scale-110 group-hover:border-amber-400 transition-all">
-                    {step.step}
-                  </div>
-                  <h4 className="text-[17px] font-bold text-slate-900 mb-3 px-4">{step.title}</h4>
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">
-                    {step.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 7. Call to Action */}
-        <section className="py-32 px-8 bg-emerald-900 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-amber-600/20 via-emerald-900 to-slate-950" />
-          
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-500 text-amber-950 mb-8 border-4 border-amber-400/50 shadow-2xl shadow-amber-900/50 animate-bounce-slow">
-              <Award className="w-10 h-10" />
-            </div>
-            
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-8">
-              Celebrate Leadership That Shapes the Future
-            </h2>
-            <p className="text-emerald-100/90 text-lg md:text-2xl font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
-              We highly encourage schools, universities, educators, graduates, and innovators to participate in the prestigious Green Mentors awards ecosystem.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-              <button className="w-full sm:w-auto bg-amber-500 text-amber-950 px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-amber-500/20 hover:bg-amber-400 hover:-translate-y-1 transition-all duration-300 focus:outline-none flex justify-center items-center gap-2">
-                Submit a Nomination <ArrowRight className="w-5 h-5" />
-              </button>
-              <Link href="/contact" className="w-full sm:w-auto bg-slate-900 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-800 hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 shadow-xl text-center">
-                Contact Green Mentors
+      {/* 5. CTA */}
+      {(page.cta_title || page.button_text) && (
+        <section className="py-32 bg-amber-900 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 pointer-events-none" />
+          <div className="container mx-auto px-6 relative z-10 max-w-4xl">
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">{page.cta_title}</h2>
+            {page.cta_description && <p className="text-xl text-amber-100 max-w-2xl mx-auto mb-10 font-medium">{page.cta_description}</p>}
+            {page.button_text && (
+              <Link href={page.button_link || '#'} className="inline-flex items-center gap-2 bg-white text-amber-900 font-black px-10 py-5 rounded-2xl hover:bg-amber-50 hover:scale-105 transition-all shadow-2xl">
+                {page.button_text} <ArrowRight size={20} />
               </Link>
-            </div>
+            )}
           </div>
         </section>
-
-      </main>
+      )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  const page = await getAwardsData();
+  if (!page) return { title: 'Awards' };
+
+  return {
+    title: page.meta_title || page.page_title,
+    description: page.meta_description,
+    keywords: page.meta_keywords,
+  };
 }

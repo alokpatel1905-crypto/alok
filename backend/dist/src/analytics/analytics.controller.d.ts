@@ -48,13 +48,13 @@ export declare class AnalyticsController {
             }[];
         } & {
             id: string;
+            type: import("@prisma/client").$Enums.InstitutionType;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             email: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             description: string | null;
-            type: import("@prisma/client").$Enums.InstitutionType;
             phone: string | null;
             address: string | null;
             city: string | null;
@@ -78,10 +78,10 @@ export declare class AnalyticsController {
             };
         } & {
             id: string;
-            name: string;
-            email: string;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            email: string;
             status: string;
             phone: string | null;
             eventId: string;
