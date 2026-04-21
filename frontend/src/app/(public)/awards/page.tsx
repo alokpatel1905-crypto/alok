@@ -2,18 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Award, CheckCircle2, FileText, Search, Star, Target, Trophy } from 'lucide-react';
 
+import { apiFetch } from '@/lib/api';
+
 export const dynamic = 'force-dynamic';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 async function getAwardsData() {
-  try {
-    const res = await fetch(`${API_URL}/awards-page`, { cache: 'no-store' });
-    if (res.ok) return await res.json();
-    return null;
-  } catch (e) {
-    console.error('Failed to fetch Awards data', e);
-    return null;
-  }
+  return await apiFetch('/awards-page', { cache: 'no-store' });
 }
 
 export default async function AwardsPage() {

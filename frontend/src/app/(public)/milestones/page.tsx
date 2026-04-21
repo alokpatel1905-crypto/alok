@@ -2,22 +2,16 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, CalendarDays, Award } from 'lucide-react';
 
+import { apiFetch } from '@/lib/api';
+
 export const dynamic = 'force-dynamic';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 async function getMilestoneData() {
-  try {
-    const [pageRes, listRes] = await Promise.all([
-      fetch(`${API_URL}/milestones/page`, { cache: 'no-store' }),
-      fetch(`${API_URL}/milestones`, { cache: 'no-store' }),
-    ]);
-    const page = pageRes.ok ? await pageRes.json() : null;
-    const list = listRes.ok ? await listRes.json() : [];
-    return { page, list };
-  } catch (e) {
-    console.error("Failed to fetch milestone data", e);
-    return { page: null, list: [] };
-  }
+  const [page, list] = await Promise.all([
+    apiFetch('/milestones/page', { cache: 'no-store' }),
+    apiFetch('/milestones', { cache: 'no-store' }),
+  ]);
+  return { page, list: list || [] };
 }
 
 export default async function MilestonesPage() {

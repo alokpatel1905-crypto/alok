@@ -2,18 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Calendar, MapPin, Globe, Target, CheckCircle2 } from 'lucide-react';
 
+import { apiFetch } from '@/lib/api';
+
 export const dynamic = 'force-dynamic';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 async function getEventsData() {
-  try {
-    const res = await fetch(`${API_URL}/events-page`, { cache: 'no-store' });
-    if (res.ok) return await res.json();
-    return null;
-  } catch (e) {
-    console.error("Failed to fetch Events data", e);
-    return null;
-  }
+  return await apiFetch('/events-page', { cache: 'no-store' });
 }
 
 export default async function EventsPage() {
