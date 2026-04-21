@@ -1085,3 +1085,91 @@ model MediaPost {
   updatedAt   DateTime @updatedAt
 }
 
+model HomePage {
+  id                   String   @id @default(cuid())
+  
+  // Section 1: Hero
+  hero_title           String?
+  hero_subtitle        String?
+  hero_description     String?
+  hero_button_1_text   String?
+  hero_button_1_link   String?
+  hero_button_2_text   String?
+  hero_button_2_link   String?
+  hero_image_url       String?
+  
+  // Section 2: About
+  about_title          String?
+  about_description    String?
+  about_button_text    String?
+  about_button_link    String?
+  
+  // Section 3: Impact Stats
+  stat_1_title         String?
+  stat_1_value         String?
+  stat_2_title         String?
+  stat_2_value         String?
+  stat_3_title         String?
+  stat_3_value         String?
+  stat_4_title         String?
+  stat_4_value         String?
+  
+  // Section 4: Programs
+  programs_title       String?
+  program_1_title      String?
+  program_1_desc       String?
+  program_2_title      String?
+  program_2_desc       String?
+  program_3_title      String?
+  program_3_desc       String?
+  program_4_title      String?
+  program_4_desc       String?
+  
+  // Section 5: Why Choose Us
+  why_title            String?
+  why_description      String?
+  
+  // Section 6: Five Elements Framework
+  element_soil_title   String?
+  element_soil_desc    String?
+  element_water_title  String?
+  element_water_desc   String?
+  element_air_title    String?
+  element_air_desc     String?
+  element_energy_title String?
+  element_energy_desc  String?
+  element_spaces_title String?
+  element_spaces_desc  String?
+  
+  // Section 7: Events
+  events_title         String?
+  events_description   String?
+  events_button_text   String?
+  events_button_link   String?
+  
+  // Section 8: Testimonials
+  testimonial_title    String?
+  testimonial_quote    String?
+  testimonial_author   String?
+  
+  // Section 9: Call to Action
+  cta_title            String?
+  cta_description      String?
+  cta_button_1_text    String?
+  cta_button_1_link    String?
+  cta_button_2_text    String?
+  cta_button_2_link    String?
+  
+  // Section 10: SEO
+  meta_title           String?
+  meta_keywords        String?
+  meta_description     String?
+  
+  // Section 11: Status
+  status               String?  @default("Active")
+  
+  updated_at           DateTime @updatedAt
+  created_at           DateTime @default(now())
+}
+
+

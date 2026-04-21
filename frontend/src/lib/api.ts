@@ -48,6 +48,14 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
 /**
  * CMS Specific API Helpers
  */
+export async function getHomePage() {
+  try {
+    return await apiFetch('/home-page');
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getPageData(slug: string) {
   try {
     const res = await fetch(`${API_URL}/pages/public/${slug}`, {

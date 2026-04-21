@@ -30,6 +30,7 @@ const SIDEBAR_ITEMS: any[] = [
     icon: FileText, 
     roles: ['ANY'],
     subItems: [
+      { name: 'Home CMS', href: '/admin/home-cms' },
       { name: 'About Us', href: '/admin/about' },
       { name: 'Impact', href: '/admin/impact' },
       { name: 'Accreditation CMS', href: '/admin/accreditations-cms' },

@@ -32,6 +32,7 @@ import { NetworksPageModule } from './networks-page/networks-page.module';
 import { SupportPageModule } from './support-page/support-page.module';
 import { ContactPageModule } from './contact-page/contact-page.module';
 import { MediaPageModule } from './media-page/media-page.module';
+import { HomePageModule } from './home-page/home-page.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { MediaPageModule } from './media-page/media-page.module';
     SupportPageModule,
     ContactPageModule,
     MediaPageModule,
+    HomePageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
