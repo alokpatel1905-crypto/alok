@@ -16,10 +16,17 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
     ...options.headers,
   };
 
-  const res = await fetch(`${API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`, {
+      ...options,
+      headers,
+    });
+  } catch (error: any) {
+    console.error(`[apiFetch NETWORK ERROR] url: ${API_URL}${endpoint}, message:`, error.message);
+    // Return a graceful dummy failure object to prevent SSG compiler crashes
+    return null; 
+  }
 
   if (!res.ok) {
     if (res.status === 401 && typeof window !== 'undefined') {
@@ -41,16 +48,22 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
  * CMS Specific API Helpers
  */
 export async function getPageData(slug: string) {
-  const res = await fetch(`${API_URL}/pages/public/${slug}`, {
-    next: { revalidate: 60 }, // Revalidate every minute
-  });
+  try {
+    const res = await fetch(`${API_URL}/pages/public/${slug}`, {
+      next: { revalidate: 60 }, // Revalidate every minute
+    });
 
-  if (!res.ok) {
-    if (res.status === 404) return null;
-    throw new Error('Failed to fetch page data');
+    if (!res.ok) {
+      if (res.status === 404) return null;
+      console.error(`Failed to fetch page data (${slug}): ${res.status}`);
+      return null;
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error(`Network or fetch error for page (${slug}):`, error);
+    return null; // Return null gracefully to prevent Vercel Build crashes
   }
-
-  return res.json();
 }
 
 export async function getAllPages() {
