@@ -200,14 +200,3 @@ export async function generateMetadata() {
     keywords: page.meta_keywords,
   };
 }
-
-
-export async function generateMetadata() {
-  const page = await getNetworksData();
-  if (!page) return { title: 'Networks' };
-  return {
-    title: page.meta_title || page.page_title,
-    description: page.meta_description,
-    keywords: page.meta_keywords,
-  };
-}
