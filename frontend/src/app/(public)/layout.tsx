@@ -2,202 +2,508 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Globe, Leaf, Mail } from 'lucide-react';
+import { Menu, X, Globe, Leaf, Mail, ArrowRight, Instagram, Twitter, Linkedin, Facebook, Heart, Home, GraduationCap, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { Container } from '@/components/ui/Section';
+import { cn } from '@/lib/utils';
 
-const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Impact', href: '/impact' },
-  { label: 'Milestones', href: '/milestones' },
-  { label: 'Accreditation', href: '/accreditation' },
-  { label: 'Rankings', href: '/rankings' },
-  { label: 'Events', href: '/events' },
-  { label: 'Awards', href: '/awards' },
-  { label: 'Networks', href: '/networks' },
-  { label: 'Support Us', href: '/support' },
-  { label: 'Media', href: '/media' },
-  { label: 'Contact', href: '/contact' }
+const NAV_GROUPS = [
+  { 
+    label: 'Mission', 
+    icon: Leaf,
+    links: [
+      { label: 'About', href: '/about' },
+      { label: 'Impact', href: '/impact' },
+      { label: 'Milestones', href: '/milestones' }
+    ]
+  },
+  { 
+    label: 'Education', 
+    icon: Globe,
+    links: [
+      { label: 'Programs', href: '/programs' },
+      { label: 'Accreditation', href: '/accreditation' },
+      { label: 'Rankings', href: '/rankings' }
+    ]
+  },
+  { 
+    label: 'Updates', 
+    icon: Mail,
+    links: [
+      { label: 'Events', href: '/events' },
+      { label: 'Media', href: '/media' },
+      { label: 'Blog', href: '/blog' }
+    ]
+  },
+  { 
+    label: 'Join', 
+    icon: Heart,
+    links: [
+      { label: 'Support Us', href: '/support' },
+      { label: 'Contact', href: '/contact' }
+    ]
+  }
 ];
 
-const SOCIAL_ICONS = {
-  Facebook: ({ className, size = 20 }: { className?: string, size?: number }) => (
-    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-  ),
-  Twitter: ({ className, size = 20 }: { className?: string, size?: number }) => (
-    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-  ),
-  Linkedin: ({ className, size = 20 }: { className?: string, size?: number }) => (
-    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-  )
-};
-
-const Header = () => (
-  <header className="pt-20 pb-12 px-8 flex flex-col items-center text-center bg-[#FDFDFD]">
-    <div className="flex flex-col items-center max-w-4xl mx-auto">
-      <Link href="/" className="w-[88px] h-[88px] bg-emerald-800 rounded-full flex items-center justify-center shadow-lg shadow-emerald-900/10 mb-8 transition-transform hover:scale-105 duration-500 relative group">
-        <Leaf className="w-10 h-10 text-white relative z-10 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
-        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-600 to-teal-400 rounded-full opacity-20 blur-md" />
-      </Link>
-      
-      <h1 className="text-4xl md:text-5xl font-bold text-slate-800 tracking-tight mb-3">GREEN MENTORS</h1>
-      <p className="text-[12px] md:text-sm font-semibold text-emerald-800 uppercase tracking-[0.25em] mb-10">Global Responsible Education Network</p>
-      
-      <div className="flex flex-col gap-4 items-center">
-        <span className="text-[10px] md:text-[11px] font-bold text-emerald-700 uppercase tracking-[0.15em] bg-emerald-50 px-6 py-2.5 rounded-full border border-emerald-100">
-          Special Consultative Status with the United Nations ECOSOC
-        </span>
-        <span className="text-[15px] border-t border-slate-100 pt-5 md:text-base font-medium text-slate-500">
-          Education for a climate-conscious and sustainable future
-        </span>
-      </div>
-    </div>
-  </header>
-);
-
-const MainNav = ({ isScrolled, currentPath }: { isScrolled: boolean, currentPath: string }) => (
-  <nav className={`hidden lg:block w-full z-40 transition-all duration-300 sticky top-0 ${isScrolled ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 py-5 shadow-sm" : "bg-[#FDFDFD]/90 backdrop-blur-md py-6 border-b border-slate-100"}`}>
-    <ul className="max-w-[1400px] mx-auto px-8 flex justify-center items-center flex-wrap gap-x-8 gap-y-2">
-      {NAV_LINKS.filter(l => l.href !== '/').map((link) => {
-        const isActive = currentPath === link.href;
-        return (
-          <li key={link.label}>
-            <Link href={link.href} className={`text-[14px] font-semibold transition-colors relative group py-2 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-sm ${isActive ? 'text-emerald-800' : 'text-slate-600 hover:text-emerald-700'}`}>
-              {link.label}
-              <span className={`absolute -bottom-1 left-0 h-[2px] bg-emerald-600 transition-all duration-300 rounded-full ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
-  </nav>
-);
-
-const FloatingQuickNav = ({ currentPath }: { currentPath: string }) => (
-  <aside className="hidden xl:flex flex-col gap-4 fixed right-8 top-1/2 -translate-y-1/2 z-50 pointer-events-none">
-    {NAV_LINKS.map((link) => {
-      const isActive = currentPath === link.href;
-      return (
-        <Link key={link.label} href={link.href} className="group flex items-center justify-end gap-4 outline-none pointer-events-auto" aria-label={`Navigate to ${link.label}`}>
-          <span className={`text-[10px] font-bold uppercase tracking-[0.15em] backdrop-blur-xl px-3 py-1.5 rounded-md transition-all duration-300 border ${isActive ? 'text-emerald-800 bg-emerald-50/90 border-emerald-200 translate-x-0 opacity-100 shadow-sm' : 'text-slate-500 bg-white/80 border-slate-200/50 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0'}`}>
-            {link.label}
-          </span>
-          <div className={`w-2 h-2 rounded-full border transition-all duration-300 shadow-sm ${isActive ? 'border-emerald-600 bg-emerald-600 scale-125' : 'border-slate-300 bg-white group-hover:bg-emerald-500 group-hover:border-emerald-500 group-hover:scale-125 group-focus-visible:bg-emerald-500 group-focus-visible:scale-125'}`} />
-        </Link>
-      );
-    })}
-  </aside>
-);
-
-const MobileNav = ({ currentPath }: { currentPath: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
-    return () => { document.body.style.overflow = 'unset'; }
-  }, [isOpen]);
-
-  return (
-    <>
-      <div className="lg:hidden fixed top-6 right-6 z-[100]">
-        <button onClick={() => setIsOpen(!isOpen)} className="p-3 bg-white shadow-xl shadow-slate-200/50 rounded-full text-emerald-800 border border-slate-100 hover:bg-slate-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="fixed inset-0 bg-white z-[90] flex flex-col pt-32 px-10 overflow-y-auto lg:hidden animate-in fade-in slide-in-from-right-8 duration-300">
-          <ul className="flex flex-col gap-6 pb-32">
-            {NAV_LINKS.map(link => {
-              const isActive = currentPath === link.href;
-              return (
-                <li key={link.label}>
-                  <Link href={link.href} onClick={() => setIsOpen(false)} className={`text-3xl font-bold transition-colors border-b border-slate-100 pb-4 block ${isActive ? 'text-emerald-700' : 'text-slate-800 hover:text-emerald-700'}`}>
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-    </>
-  );
-};
-
-const MiniFooterStrip = () => (
-  <div className="bg-slate-950 py-10 px-8 border-t border-b border-slate-800/50 mt-auto">
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-      <Link href="/" className="flex items-center gap-4 group">
-        <div className="w-10 h-10 rounded-full border border-emerald-800/50 flex items-center justify-center bg-slate-900 group-hover:bg-emerald-900/50 transition-colors">
-          <Leaf className="w-4 h-4 text-emerald-600" />
-        </div>
-        <span className="font-black text-[15px] tracking-widest text-slate-200 uppercase">Green Mentors</span>
-      </Link>
-      <div className="w-full h-px bg-slate-800/50 md:hidden" />
-      <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
-        <Link href="/about" className="hover:text-emerald-500 transition-colors">Our Programs</Link>
-        <Link href="/rankings" className="hover:text-emerald-500 transition-colors">Global Rankings</Link>
-        <Link href="/awards" className="hover:text-emerald-500 transition-colors">Awards</Link>
-        <Link href="/contact" className="hover:text-emerald-500 transition-colors">Support Us</Link>
-      </div>
-    </div>
-  </div>
-);
-
-const Footer = () => (
-  <footer className="bg-slate-950 py-20 px-8 relative text-slate-500">
-    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 text-center lg:text-left">
-      <div className="flex flex-col items-center lg:items-start gap-4">
-        <p className="text-[15px] font-medium tracking-wide max-w-md leading-[1.8]">
-          Building the blueprint for schools, universities, and educators to design, execute, and sustain zero-carbon educational ecosystems globally.
-        </p>
-        <a href="mailto:contact@greenmentors.org" className="inline-flex items-center gap-2 text-emerald-600 font-bold text-sm mt-3 hover:text-emerald-400 transition-colors">
-          <Mail size={16} />
-          info@greenmentors.world
-        </a>
-      </div>
-      <div className="flex flex-col items-center lg:items-end gap-8">
-        <div className="flex gap-6">
-          <Link href="#twitter" aria-label="Twitter" className="text-slate-600 hover:text-slate-300 transition-colors"><SOCIAL_ICONS.Twitter size={22} /></Link>
-          <Link href="#linkedin" aria-label="LinkedIn" className="text-slate-600 hover:text-slate-300 transition-colors"><SOCIAL_ICONS.Linkedin size={22} /></Link>
-          <Link href="#facebook" aria-label="Facebook" className="text-slate-600 hover:text-slate-300 transition-colors"><SOCIAL_ICONS.Facebook size={22} /></Link>
-        </div>
-        <p className="text-[12px] font-medium tracking-widest uppercase">
-          &copy; {new Date().getFullYear()} Green Mentors. All Rights Reserved.
-        </p>
-      </div>
-    </div>
-  </footer>
-);
-
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+const Navbar = ({ 
+  isMobileMenuOpen, 
+  setIsMobileMenuOpen 
+}: { 
+  isMobileMenuOpen: boolean; 
+  setIsMobileMenuOpen: (val: boolean) => void;
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const pathname = usePathname() || '/';
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-emerald-200 selection:text-emerald-950">
-      <FloatingQuickNav currentPath={pathname} />
-      <MobileNav currentPath={pathname} />
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center p-3 lg:p-5 pointer-events-none">
+      {/* 0. TOP SHADOW OVERLAY FOR VISIBILITY */}
+      <div className="absolute top-0 left-0 right-0 h-24 lg:h-32 bg-gradient-to-b from-black/20 via-black/5 to-transparent pointer-events-none" />
+
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className={cn(
+          "pointer-events-auto flex items-center justify-between px-5 lg:px-8 py-2.5 lg:py-3 rounded-[1.5rem] lg:rounded-[2rem] transition-all duration-700 relative",
+          isScrolled 
+            ? "w-[98%] lg:w-[90%] max-w-6xl bg-primary/90 backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.4)] border border-white/10" 
+            : "w-[98%] lg:w-[92%] max-w-[1200px] bg-white/20 backdrop-blur-2xl border border-white/30 shadow-[0_20px_40px_rgba(0,0,0,0.1)]"
+        )}
+      >
+        {/* 1. LOGO & STATUS */}
+        <div className="flex items-center gap-4 lg:gap-8">
+          <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+            <div className="w-9 h-9 lg:w-11 lg:h-11 bg-flora rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-all duration-500 ring-2 lg:ring-4 ring-white/10">
+              <Leaf className="text-primary" size={20} />
+            </div>
+            <div className="flex flex-col">
+              <span className={cn(
+                "text-lg lg:text-xl font-black tracking-tighter leading-none transition-colors drop-shadow-sm text-white"
+              )}>
+                Green <span className="text-flora">Mentors</span>
+              </span>
+              <div className="hidden lg:flex items-center gap-1.5 mt-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-flora animate-pulse" />
+                <span className={cn(
+                  "text-[8px] font-black uppercase tracking-[0.3em] opacity-50 text-white"
+                )}>
+                  Eco-Live 2026
+                </span>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* 2. DESKTOP NAVIGATION (Centered) */}
+        <div className="hidden xl:flex items-center bg-black/5 dark:bg-white/5 p-1.5 rounded-full border border-black/5">
+          <ul className="flex items-center gap-2">
+            <li 
+              className="relative"
+              onMouseEnter={() => setActiveGroup('Home')}
+              onMouseLeave={() => setActiveGroup(null)}
+            >
+              <Link 
+                href="/"
+                className={cn(
+                  "flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-500 cursor-pointer relative group/btn",
+                  isScrolled 
+                    ? (pathname === "/" ? "text-flora" : "text-white hover:text-flora") 
+                    : (pathname === "/" ? "text-white" : "text-white hover:text-white")
+                )}
+              >
+                <Home size={16} className={cn(
+                  "transition-all duration-500 group-hover/btn:scale-125 drop-shadow-sm", 
+                  isScrolled 
+                    ? (pathname === "/" ? "text-flora" : "text-flora") 
+                    : (pathname === "/" ? "text-white" : "text-white")
+                )} />
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] drop-shadow-sm">Home</span>
+                
+                <AnimatePresence>
+                  {activeGroup === 'Home' && (
+                    <motion.div 
+                      layoutId="navbar-pill"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className={cn(
+                        "absolute inset-0 rounded-full shadow-lg border border-white/20",
+                        isScrolled ? "bg-white/10 shadow-flora/10" : "bg-white/20"
+                      )}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </AnimatePresence>
+              </Link>
+            </li>
+
+            {NAV_GROUPS.map((group) => (
+              <li 
+                key={group.label}
+                onMouseEnter={() => setActiveGroup(group.label)}
+                onMouseLeave={() => setActiveGroup(null)}
+                className="relative"
+              >
+                <div className={cn(
+                  "flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-500 cursor-pointer relative group/btn",
+                  isScrolled 
+                    ? "text-white hover:text-flora" 
+                    : "text-white hover:text-white"
+                )}>
+                  <group.icon size={16} className={cn("transition-all duration-500 group-hover/btn:scale-125 drop-shadow-sm", isScrolled ? "text-flora" : "text-white")} />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] drop-shadow-sm">{group.label}</span>
+                  
+                  {/* SLIDING PILL BACKGROUND */}
+                  <AnimatePresence>
+                    {activeGroup === group.label && (
+                      <motion.div 
+                        layoutId="navbar-pill"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className={cn(
+                          "absolute inset-0 rounded-full shadow-lg border border-white/20",
+                          isScrolled ? "bg-white/10 shadow-flora/10" : "bg-white/20"
+                        )}
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* DROPDOWN MENU */}
+                <AnimatePresence>
+                  {activeGroup === group.label && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15, rotateX: -15 }}
+                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                      exit={{ opacity: 0, y: 10, rotateX: -15 }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-72 perspective-1000"
+                    >
+                      <div className={cn(
+                        "rounded-[2.5rem] p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] border border-white relative overflow-hidden",
+                        isScrolled ? "bg-primary/95 backdrop-blur-3xl" : "bg-white/95 backdrop-blur-2xl"
+                      )}>
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-flora" />
+                        {group.links.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                              "flex items-center justify-between px-6 py-5 rounded-[1.5rem] text-sm font-black transition-all group/link",
+                              pathname === link.href 
+                                ? "bg-flora text-primary shadow-lg shadow-flora/20" 
+                                : (isScrolled ? "text-white/60 hover:bg-white/10 hover:text-white" : "text-foreground/60 hover:bg-primary/5 hover:text-primary")
+                            )}
+                          >
+                            {link.label}
+                            <div className={cn(
+                              "w-8 h-8 rounded-full flex items-center justify-center transition-all",
+                              pathname === link.href ? "bg-primary/20" : (isScrolled ? "bg-white/10 group-hover/link:bg-white/20" : "bg-primary/5 group-hover/link:bg-primary/10")
+                            )}>
+                              <ArrowRight size={14} className={cn(
+                                "transition-transform duration-500",
+                                pathname === link.href ? (isScrolled ? "text-primary" : "text-primary") : (isScrolled ? "text-white" : "text-primary group-hover/link:translate-x-1")
+                              )} />
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* 3. CTA & MOBILE TOGGLE */}
+        <div className="flex items-center gap-6">
+          <Button 
+            variant="primary" 
+            size="xl" 
+            className="hidden md:flex rounded-full bg-gradient-to-r from-primary to-flora hover:scale-110 shadow-2xl px-8 py-4 text-sm font-black uppercase tracking-widest border-none"
+          >
+            Get Started
+          </Button>
+          
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={cn(
+              "xl:hidden w-12 h-12 rounded-xl flex items-center justify-center transition-all shadow-lg",
+              isScrolled ? "bg-primary/10 text-primary" : "bg-white/20 text-white backdrop-blur-md border border-white/20"
+            )}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* 4. MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed inset-0 z-[60] xl:hidden"
+          >
+            <div className="absolute inset-0 bg-primary/95 backdrop-blur-3xl" />
+            
+            <div className="relative h-full flex flex-col p-8 pt-24 overflow-y-auto">
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute top-8 right-8 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="space-y-12 mb-20">
+                {NAV_GROUPS.map((group, i) => (
+                  <motion.div 
+                    key={group.label}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <div className="flex items-center gap-4 text-flora font-black uppercase tracking-[0.5em] text-[10px] mb-6">
+                      <div className="w-10 h-[2px] bg-flora rounded-full" /> {group.label}
+                    </div>
+                    <ul className="space-y-6">
+                      {group.links.map((link, j) => (
+                        <motion.li 
+                          key={link.href}
+                          initial={{ opacity: 0, x: 30 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: (i * 0.1) + (j * 0.05) }}
+                        >
+                          <Link 
+                            href={link.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={cn(
+                              "text-5xl font-black transition-all leading-none tracking-tighter inline-block",
+                              pathname === link.href 
+                                ? "text-flora" 
+                                : "text-white/30 hover:text-white"
+                            )}
+                          >
+                            {link.label}.
+                          </Link>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="mt-auto pt-12 border-t border-white/5 space-y-10">
+                <Button 
+                  size="xl" 
+                  className="w-full rounded-2xl py-10 text-xl font-black uppercase tracking-widest shadow-3d bg-flora text-primary" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Join Movement <ArrowRight className="ml-4" />
+                </Button>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-6 text-white/20">
+                    {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+                      <Icon key={i} size={24} className="hover:text-flora transition-colors cursor-pointer" />
+                    ))}
+                  </div>
+                  <div className="text-[9px] font-black text-white/20 uppercase tracking-widest">
+                    &copy; 2026 Green Mentors
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const Footer = () => (
+  <footer className="relative bg-[#061B14] text-white pt-20 lg:pt-32 pb-10 lg:pb-16 overflow-hidden border-t border-white/5">
+    {/* SUBTLE BACKGROUND GRID */}
+    <div className="absolute inset-0 opacity-[0.02] lg:opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+    
+    {/* VIBRANT ACCENT BLOBS */}
+    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full -tr-40" />
+    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-flora/5 blur-[100px] rounded-full -bl-40" />
+
+    <Container className="relative z-10">
+      <div className="grid lg:grid-cols-12 gap-12 mb-24">
+        {/* BENTO COL 1: BRAND & MISSION (4 Cols) */}
+        <div className="lg:col-span-4 space-y-10">
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="w-14 h-14 bg-flora rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-all duration-500">
+              <Leaf className="text-primary" size={28} />
+            </div>
+            <span className="font-display font-black text-3xl tracking-tighter leading-none">
+              GREEN <br /> <span className="text-flora">MENTORS</span>
+            </span>
+          </Link>
+          <p className="text-white/40 leading-relaxed font-medium text-lg max-w-sm">
+            Pioneering the global transition to zero-carbon educational ecosystems through nature-inspired design and technology.
+          </p>
+          <div className="flex gap-5">
+            {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+              <Link 
+                key={i} 
+                href="#" 
+                className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center hover:bg-flora hover:text-primary transition-all duration-300"
+              >
+                <Icon size={20} />
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* BENTO COL 2: QUICK LINKS (2 Cols) */}
+        <div className="lg:col-span-2 space-y-8">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-flora/60">Ecosystem</h4>
+          <ul className="space-y-4">
+            {NAV_GROUPS[0].links.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-white/50 hover:text-white transition-colors text-sm font-bold flex items-center gap-2 group">
+                  <div className="w-1 h-1 rounded-full bg-flora opacity-0 group-hover:opacity-100 transition-all" />
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            {NAV_GROUPS[1].links.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-white/50 hover:text-white transition-colors text-sm font-bold flex items-center gap-2 group">
+                  <div className="w-1 h-1 rounded-full bg-flora opacity-0 group-hover:opacity-100 transition-all" />
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* BENTO COL 3: TRUST & RECOGNITION (3 Cols) */}
+        <div className="lg:col-span-3 space-y-8">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-flora/60">Verification</h4>
+          <div className="bg-white/[0.03] border border-white/5 rounded-[2.5rem] p-8 space-y-6 hover:bg-white/[0.05] transition-colors">
+            <div className="flex items-center gap-3 text-flora">
+              <Globe size={20} />
+              <span className="text-xs font-black uppercase tracking-widest">UN ECOSOC</span>
+            </div>
+            <p className="text-xs text-white/30 leading-relaxed font-medium">
+              Special Consultative Status with the United Nations Economic and Social Council since 2021.
+            </p>
+            <div className="flex items-center justify-between">
+               <div className="px-3 py-1 rounded-full bg-flora/10 text-flora text-[8px] font-black uppercase tracking-widest">Certified</div>
+               <ArrowRight size={14} className="text-white/20" />
+            </div>
+          </div>
+        </div>
+
+        {/* BENTO COL 4: NEWSLETTER (3 Cols) */}
+        <div className="lg:col-span-3 space-y-8">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-flora/60">Stay Rooted</h4>
+          <div className="space-y-6">
+            <p className="text-sm text-white/40 leading-relaxed font-medium">
+              Join 50k+ eco-educators receiving our weekly insights.
+            </p>
+            <div className="space-y-3">
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-flora transition-all text-sm font-medium"
+              />
+              <Button className="w-full rounded-2xl bg-flora text-primary font-black uppercase tracking-widest py-6 hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
+                Join Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FOOTER BOTTOM BAR */}
+      <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="flex items-center gap-6 text-[9px] font-black uppercase tracking-[0.3em] text-white/20">
+          <span>&copy; {new Date().getFullYear()} Green Mentors Global</span>
+          <div className="w-1 h-1 rounded-full bg-white/10" />
+          <span>Made for Earth</span>
+        </div>
+        <div className="flex gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-white/30">
+          <Link href="/privacy" className="hover:text-flora transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-flora transition-colors">Terms</Link>
+          <Link href="/cookies" className="hover:text-flora transition-colors">Cookies</Link>
+        </div>
+      </div>
+    </Container>
+  </footer>
+);
+
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const pathname = usePathname();
+
+  return (
+    <div className="flex flex-col min-h-screen relative">
+      {/* GLOBAL BACKGROUND BLOOMS */}
+      <div className="fixed top-0 left-0 w-[50vw] h-[50vw] bg-primary/3 blur-[150px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+      <div className="fixed bottom-0 right-0 w-[40vw] h-[40vw] bg-flora/3 blur-[120px] rounded-full translate-x-1/3 translate-y-1/3 pointer-events-none z-0" />
+
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       
-      <Header />
-      <MainNav isScrolled={isScrolled} currentPath={pathname} />
-      
-      <main className="flex-grow">
-        {children}
+      <main className="flex-grow pb-24 xl:pb-0 relative z-10">
+        <div className="max-w-[1440px] mx-auto bg-white/40 shadow-[0_0_100px_-20px_rgba(0,0,0,0.05)] border-x border-white/20">
+          {children}
+        </div>
       </main>
 
-      <MiniFooterStrip />
+      {/* MOBILE BOTTOM NAV - NATIVE APP FEEL */}
+      <div className="xl:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-primary/90 backdrop-blur-2xl rounded-2xl z-50 flex justify-around items-center border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] px-2">
+        {[
+          { icon: Home, label: 'Home', href: '/' },
+          { icon: GraduationCap, label: 'Programs', href: '/programs' },
+          { icon: TrendingUp, label: 'Impact', href: '/impact' },
+          { icon: isMobileMenuOpen ? X : Menu, label: 'More', action: () => setIsMobileMenuOpen(!isMobileMenuOpen) }
+        ].map((item, i) => (
+          item.href ? (
+            <Link 
+              key={i} 
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center gap-1 transition-all",
+                pathname === item.href ? "text-flora scale-110" : "text-white/40 hover:text-white"
+              )}
+            >
+              <item.icon size={20} />
+              <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
+            </Link>
+          ) : (
+            <button 
+              key={i} 
+              onClick={item.action}
+              className={cn(
+                "flex flex-col items-center gap-1 transition-all",
+                isMobileMenuOpen ? "text-flora scale-110" : "text-white/40 hover:text-white"
+              )}
+            >
+              <item.icon size={20} />
+              <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
+            </button>
+          )
+        ))}
+      </div>
+
       <Footer />
     </div>
   );

@@ -1,8 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Award, CheckCircle2, FileText, Search, Star, Target, Trophy } from 'lucide-react';
-
+import { ArrowRight, Award, CheckCircle2, FileText, Search, Star, Target, Trophy, Sparkles } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Section, Container } from '@/components/ui/Section';
+import { NatureIcon } from '@/components/ui/NatureIcon';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +18,7 @@ export default async function AwardsPage() {
 
   if (!page) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-xl text-slate-500 font-medium">Awards page hasn&apos;t been configured yet.</p>
       </div>
     );
@@ -38,129 +41,134 @@ export default async function AwardsPage() {
   ].filter((s) => s.title);
 
   return (
-    <div className="bg-[#faf9f7] font-sans text-slate-900 selection:bg-amber-200 antialiased min-h-screen flex flex-col">
-      {/* 1. HERO */}
-      <section className="bg-slate-950 text-white pt-24 lg:pt-32 pb-24 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-amber-500/15 blur-[120px] rounded-full pointer-events-none translate-x-1/3 -translate-y-1/3" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-700/10 blur-[100px] rounded-full pointer-events-none -translate-x-1/3 translate-y-1/3" />
-
-        <div className="container mx-auto px-6 max-w-5xl text-center relative z-10">
-          <div className="w-20 h-20 bg-amber-900/40 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-amber-800/50 shadow-2xl">
-            <Award size={44} className="text-amber-400" strokeWidth={1.5} />
+    <div className="overflow-x-hidden">
+      
+      {/* 1. HERO SECTION */}
+      <section className="relative min-h-[60vh] flex items-center pt-32 pb-20 overflow-hidden bg-foreground text-white">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 blur-[120px] rounded-full -mr-40 -mt-40 animate-blob" />
+        <Container className="relative z-10 text-center max-w-4xl">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary-foreground text-xs font-black uppercase tracking-[0.2em] mb-8">
+            <Trophy size={14} className="text-secondary" />
+            Recognizing Global Excellence
           </div>
-          {page.subtitle && (
-            <span className="inline-block px-5 py-2 rounded-full bg-amber-500/20 text-amber-300 font-bold tracking-widest text-xs uppercase mb-8 border border-amber-500/30 backdrop-blur-sm">
-              {page.subtitle}
-            </span>
-          )}
-          <h1 className="text-5xl md:text-7xl font-black mb-8 leading-[1.1] tracking-tight">{page.page_title || 'Awards'}</h1>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-none tracking-tighter">
+            {page.page_title || 'Global Awards'}
+          </h1>
           {page.intro_description && (
-            <p className="text-lg md:text-2xl text-slate-300 mx-auto leading-relaxed font-light max-w-4xl">{page.intro_description}</p>
+            <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed font-medium">
+              {page.intro_description}
+            </p>
           )}
-        </div>
+        </Container>
       </section>
 
       {/* 2. AWARD CATEGORIES */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-6 max-w-6xl space-y-32">
+      <Section background="white">
+        <Container className="space-y-32">
           {awards.map((aw, idx) => {
             const isReversed = idx % 2 !== 0;
             return (
-              <div key={idx} className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-16 lg:gap-24`}>
-                {/* Visual Side */}
-                <div className="w-full lg:w-1/2">
-                  <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group">
+              <div key={idx} className={`grid lg:grid-cols-2 gap-20 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
+                <div className={`relative ${isReversed ? 'lg:order-2' : ''}`}>
+                  <div className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl border border-black/5 bg-slate-50 relative group">
                     {aw.img ? (
                       <img src={aw.img} alt={aw.t} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-amber-50">
-                        <Award className="w-28 h-28 text-amber-200" />
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <Award className="w-24 h-24 text-primary/20" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-amber-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
+                  <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-secondary/10 rounded-full blur-3xl" />
                 </div>
 
-                {/* Content Side */}
-                <div className="w-full lg:w-1/2 flex flex-col justify-center">
-                  <span className="text-amber-600 font-black tracking-wider uppercase text-sm border-b-2 border-amber-400 pb-1 inline-block mb-4 w-fit">
-                    Award 0{idx + 1}
-                  </span>
-                  <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight">{aw.t}</h2>
-                  {aw.st && <h3 className="text-xl text-slate-500 font-medium mb-6 italic">&ldquo;{aw.st}&rdquo;</h3>}
-                  {aw.d && <div className="prose prose-lg text-slate-600 font-medium leading-relaxed mb-10 whitespace-pre-wrap">{aw.d}</div>}
-                  <div className="flex flex-wrap items-center gap-4 border-t border-slate-100 pt-8">
+                <div className={`space-y-8 ${isReversed ? 'lg:order-1' : ''}`}>
+                  <div className="flex items-center gap-3 text-primary font-black uppercase tracking-widest text-sm">
+                    <div className="w-10 h-0.5 bg-primary" />
+                    Recognition Category 0{idx + 1}
+                  </div>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight">
+                    {aw.t}
+                  </h2>
+                  {aw.st && <p className="text-xl text-foreground/40 font-bold italic">&ldquo;{aw.st}&rdquo;</p>}
+                  <div className="text-lg text-foreground/70 font-medium leading-relaxed whitespace-pre-wrap">
+                    {aw.d}
+                  </div>
+                  <div className="flex flex-wrap gap-4 pt-4">
                     {aw.b1t && (
-                      <Link href={aw.b1l || '#'} className="inline-flex items-center gap-2 bg-amber-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-amber-700 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300">
-                        {aw.b1t} <CheckCircle2 size={18} />
-                      </Link>
+                      <Button variant="primary" size="lg" className="rounded-full shadow-2xl shadow-primary/20">
+                        {aw.b1t} <CheckCircle2 className="ml-2" size={18} />
+                      </Button>
                     )}
                     {aw.b2t && (
-                      <Link href={aw.b2l || '#'} className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 font-bold px-8 py-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-colors">
+                      <Button variant="outline" size="lg" className="rounded-full">
                         {aw.b2t}
-                      </Link>
+                      </Button>
                     )}
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* 3. INFO BLOCKS: WHY RECOGNITION MATTERS */}
-      {(page.why_title || page.why_description) && (
-        <section className="py-24 bg-slate-50 border-y border-slate-200">
-          <div className="container mx-auto px-6 max-w-4xl text-center">
-            <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
-              <Target size={32} />
-            </div>
-            <h2 className="text-4xl font-black text-slate-900 mb-8">{page.why_title}</h2>
-            <div className="prose prose-lg text-slate-600 font-medium leading-relaxed whitespace-pre-wrap mx-auto">{page.why_description}</div>
-          </div>
-        </section>
-      )}
-
-      {/* 4. PROCESS STEPS */}
+      {/* 3. PROCESS STEPS */}
       {steps.length > 0 && (
-        <section className="py-24 bg-white">
-          <div className="container mx-auto px-6 max-w-6xl text-center">
-            <h2 className="text-4xl font-black text-slate-900 mb-16">{page.process_title}</h2>
+        <Section background="dark">
+          <Container className="text-center">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-20">{page.process_title || 'Application Process'}</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((st, i) => {
                 const Icon = st.icon;
                 return (
-                  <div key={i} className="relative">
-                    <div className="bg-slate-50 border border-slate-100 p-8 rounded-3xl h-full shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
-                      <div className="w-16 h-16 bg-amber-500 text-white rounded-full flex items-center justify-center font-black text-xl mb-6 shadow-xl shadow-amber-500/20">
-                        {i + 1}
-                      </div>
-                      <Icon className="text-amber-500 mb-4" size={32} />
-                      <h3 className="text-xl font-bold text-slate-800">{st.title}</h3>
+                  <Card key={i} variant="glass" className="p-10 hover:bg-white transition-all group flex flex-col items-center border-white/5">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all mb-8 shadow-xl">
+                      <Icon size={28} />
                     </div>
-                  </div>
+                    <div className="text-white/20 font-black text-6xl mb-4 tabular-nums">0{i + 1}</div>
+                    <h3 className="text-xl font-black text-white group-hover:text-foreground">{st.title}</h3>
+                  </Card>
                 );
               })}
             </div>
-          </div>
-        </section>
+          </Container>
+        </Section>
+      )}
+
+      {/* 4. WHY RECOGNITION MATTERS */}
+      {(page.why_title || page.why_description) && (
+        <Section background="white" className="text-center">
+          <Container className="max-w-4xl space-y-10">
+            <NatureIcon name="Award" variant="primary" className="mx-auto scale-150 mb-6" />
+            <h2 className="text-4xl md:text-5xl font-black text-foreground">{page.why_title}</h2>
+            <div className="text-lg md:text-xl text-foreground/60 font-medium leading-relaxed whitespace-pre-wrap max-w-3xl mx-auto">
+              {page.why_description}
+            </div>
+          </Container>
+        </Section>
       )}
 
       {/* 5. CTA */}
-      {(page.cta_title || page.button_text) && (
-        <section className="py-32 bg-amber-900 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 pointer-events-none" />
-          <div className="container mx-auto px-6 relative z-10 max-w-4xl">
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">{page.cta_title}</h2>
-            {page.cta_description && <p className="text-xl text-amber-100 max-w-2xl mx-auto mb-10 font-medium">{page.cta_description}</p>}
-            {page.button_text && (
-              <Link href={page.button_link || '#'} className="inline-flex items-center gap-2 bg-white text-amber-900 font-black px-10 py-5 rounded-2xl hover:bg-amber-50 hover:scale-105 transition-all shadow-2xl">
-                {page.button_text} <ArrowRight size={20} />
-              </Link>
-            )}
-          </div>
-        </section>
-      )}
+      <Section background="nature" className="text-center">
+        <Container className="max-w-4xl space-y-10">
+          <Sparkles className="w-16 h-16 text-primary mx-auto animate-pulse" />
+          <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
+            {page.cta_title || 'Submit Your Nomination'}
+          </h2>
+          {page.cta_description && (
+            <p className="text-xl md:text-2xl text-foreground/60 font-medium">
+              {page.cta_description}
+            </p>
+          )}
+          {page.button_text && (
+            <Button variant="primary" size="xl" className="rounded-full shadow-2xl shadow-primary/20">
+              {page.button_text} <ArrowRight className="ml-2" />
+            </Button>
+          )}
+        </Container>
+      </Section>
+
     </div>
   );
 }
@@ -175,3 +183,4 @@ export async function generateMetadata() {
     keywords: page.meta_keywords,
   };
 }
+

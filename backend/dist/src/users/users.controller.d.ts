@@ -2,6 +2,14 @@ import { UsersService } from './users.service';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
+    createUser(body: any): Promise<{
+        id: string;
+        createdAt: Date;
+        name: string;
+        email: string;
+        role: import("@prisma/client").$Enums.Role;
+        isActive: boolean;
+    }>;
     getUsers(): Promise<{
         id: string;
         createdAt: Date;

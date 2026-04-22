@@ -1,5 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://localhost:4000');
+  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://127.0.0.1:4000');
 
 /**
  * Core fetch wrapper with auth support

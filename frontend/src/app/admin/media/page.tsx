@@ -39,7 +39,7 @@ export default function MediaPage() {
     try {
       // NOTE: Using native fetch to fix issues where apiFetch might drop body FormData properly
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4000/upload', {
+      const res = await fetch('http://127.0.0.1:4000/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
