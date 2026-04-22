@@ -205,7 +205,7 @@ function PublicProgramCard({ program }: { program: any }) {
               Active Enrollment
             </div>
           </div>
-          <Button variant="primary" size="icon" className="rounded-2xl group-hover:scale-110 shadow-xl shadow-primary/20">
+          <Button variant="primary" size="md" className="w-12 h-12 p-0 rounded-2xl group-hover:scale-110 shadow-xl shadow-primary/20">
              <ArrowRight size={20} />
           </Button>
         </div>
