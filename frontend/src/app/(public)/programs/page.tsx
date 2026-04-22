@@ -172,7 +172,7 @@ export default function ProgramsPage() {
 
 function PublicProgramCard({ program }: { program: any }) {
   return (
-    <Card variant="white" className="p-0 overflow-hidden group h-full flex flex-col border-none shadow-premium hover:shadow-2xl transition-all duration-500 rounded-[3rem]">
+    <Card variant="default" className="p-0 overflow-hidden group h-full flex flex-col border-none shadow-premium hover:shadow-2xl transition-all duration-500 rounded-[3rem]">
       <div className="relative h-64 overflow-hidden">
         {program.image ? (
           <img src={program.image} alt={program.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />

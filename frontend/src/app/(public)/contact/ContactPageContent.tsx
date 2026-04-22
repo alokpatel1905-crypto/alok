@@ -116,7 +116,7 @@ export function ContactPageContent({ config }: { config: any }) {
 
             {/* Contact Form */}
             <div className="lg:col-span-7">
-              <Card variant="white" className="p-10 md:p-16 rounded-[4rem] border-none shadow-premium relative overflow-hidden">
+              <Card variant="default" className="p-10 md:p-16 rounded-[4rem] border-none shadow-premium relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
                 <div className="relative z-10 space-y-10">
                   <div className="space-y-4">

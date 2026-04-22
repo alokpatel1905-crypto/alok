@@ -115,7 +115,7 @@ export default async function RankingsPage() {
         <Container>
           <div className="grid lg:grid-cols-2 gap-10">
             {page.why_title && (
-              <Card variant="white" className="p-12 md:p-16 rounded-[4rem] border-none shadow-premium space-y-8">
+              <Card variant="default" className="p-12 md:p-16 rounded-[4rem] border-none shadow-premium space-y-8">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                   <Target size={32} />
                 </div>
@@ -126,7 +126,7 @@ export default async function RankingsPage() {
               </Card>
             )}
             {page.methodology_title && (
-              <Card variant="white" className="p-12 md:p-16 rounded-[4rem] border-none shadow-premium space-y-8">
+              <Card variant="default" className="p-12 md:p-16 rounded-[4rem] border-none shadow-premium space-y-8">
                 <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
                   <FileText size={32} />
                 </div>

@@ -132,7 +132,7 @@ export default function MediaPage() {
                     transition={{ delay: idx * 0.05 }}
                     key={idx}
                   >
-                    <Card variant="white" className="p-0 overflow-hidden group h-full flex flex-col border-none shadow-premium hover:shadow-2xl transition-all duration-500 rounded-[3rem]">
+                    <Card variant="default" className="p-0 overflow-hidden group h-full flex flex-col border-none shadow-premium hover:shadow-2xl transition-all duration-500 rounded-[3rem]">
                       <div className="relative h-64 overflow-hidden">
                         <img 
                           src={item.image} 
