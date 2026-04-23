@@ -57,31 +57,30 @@ const Navbar = () => {
       {/* 1. TOP BRAND SECTION (Hidden when scrolled & sticky) */}
       <div className={cn(
         "transition-all duration-500 overflow-hidden",
-        isScrolled ? "h-0 opacity-0" : "py-8 lg:py-12 opacity-100"
+        isScrolled ? "h-0 opacity-0" : "py-4 lg:py-12 opacity-100"
       )}>
         <Container>
-          <div className="flex flex-col items-center text-center space-y-4">
-
+          <div className="flex flex-col items-center text-center space-y-3 lg:space-y-4">
             {/* TITLES */}
-            <div className="space-y-1">
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-gray-900 uppercase">
+            <div className="space-y-0.5 lg:space-y-1">
+              <h1 className="text-xl lg:text-4xl font-black tracking-tight text-gray-900 uppercase">
                 Green <span className="text-[#16a34a]">Mentors</span>
               </h1>
-              <p className="text-xs lg:text-sm font-bold tracking-[0.2em] text-gray-500 uppercase">
+              <p className="text-[9px] lg:text-sm font-bold tracking-[0.1em] lg:tracking-[0.2em] text-gray-500 uppercase">
                 Global Responsible Education Network
               </p>
             </div>
 
             {/* UN BADGE */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100 shadow-sm transition-all hover:bg-green-100">
-              <Globe className="text-[#16a34a]" size={14} />
-              <span className="text-[10px] lg:text-[11px] font-bold text-[#16a34a] uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 bg-green-50 rounded-full border border-green-100 shadow-sm transition-all hover:bg-green-100">
+              <Globe className="text-[#16a34a]" size={12} />
+              <span className="text-[8px] lg:text-[11px] font-bold text-[#16a34a] uppercase tracking-wider">
                 Special Consultative Status with the United Nations ECOSOC
               </span>
             </div>
 
-            {/* TAGLINE */}
-            <p className="text-[10px] font-medium text-gray-400 italic">
+            {/* TAGLINE (Hidden on Mobile) */}
+            <p className="hidden lg:block text-[10px] font-medium text-gray-400 italic">
               "Education for a climate-conscious and sustainable future"
             </p>
           </div>
@@ -92,8 +91,8 @@ const Navbar = () => {
       <nav className={cn(
         "w-full z-50 transition-all duration-500 ease-in-out",
         isScrolled 
-          ? "fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl px-4 py-2 bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-black/5" 
-          : "relative py-4 bg-white border-y border-gray-100"
+          ? "fixed top-2 lg:top-4 left-1/2 -translate-x-1/2 w-[98%] lg:w-[95%] max-w-7xl px-3 lg:px-4 py-1.5 lg:py-2 bg-white/60 backdrop-blur-2xl rounded-xl lg:rounded-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-black/5" 
+          : "relative py-2.5 lg:py-4 bg-white border-y border-gray-100"
       )}>
         <Container>
           <div className="flex items-center justify-between lg:justify-center relative">
@@ -130,45 +129,50 @@ const Navbar = () => {
         </Container>
       </nav>
 
-      {/* 3. MOBILE MENU OVERLAY (Glass) */}
+      {/* 3. MOBILE MENU OVERLAY (Compact Glass Card) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-4 top-24 bottom-auto bg-white/80 backdrop-blur-3xl z-[60] rounded-[2.5rem] border border-white shadow-2xl lg:hidden overflow-hidden flex flex-col"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            className="fixed inset-x-4 top-20 bottom-10 lg:hidden bg-white/90 backdrop-blur-3xl z-[60] rounded-3xl border border-white/50 shadow-2xl flex flex-col overflow-hidden max-h-[65vh]"
           >
             {/* ATMOSPHERIC GRAIN */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" 
                  style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png")` }} />
             
-            <div className="p-8 space-y-6 relative z-10 flex-grow overflow-y-auto">
-              <div className="flex flex-col space-y-2">
+            <div className="p-5 flex flex-col h-full relative z-10">
+              <div className="flex-grow overflow-y-auto pr-2 space-y-1 scrollbar-hide">
                 {menuItems.map((item, i) => (
                   <motion.div
                     key={item.id || item.href}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
+                    transition={{ delay: i * 0.03 }}
                   >
                     <Link
                       href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        "block py-4 text-sm font-black uppercase tracking-[0.2em] transition-all border-b border-gray-100/50",
-                        pathname === item.href ? "text-[#16a34a]" : "text-gray-400 hover:text-gray-900"
+                        "flex items-center justify-between py-3 px-4 rounded-xl transition-all",
+                        pathname === item.href 
+                          ? "bg-[#16a34a]/10 text-[#16a34a]" 
+                          : "text-gray-500 hover:bg-gray-50"
                       )}
                     >
-                      {item.name}
+                      <span className="text-[11px] font-black uppercase tracking-[0.15em]">{item.name}</span>
+                      {pathname === item.href && <div className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" />}
                     </Link>
                   </motion.div>
                 ))}
               </div>
               
-              <Button className="w-full bg-[#16a34a] hover:bg-green-700 text-white mt-8 rounded-2xl py-8 font-black uppercase tracking-widest shadow-xl shadow-green-200">
-                Get Started
-              </Button>
+              <div className="pt-4 mt-2 border-t border-gray-100">
+                <Button className="w-full bg-[#16a34a] hover:bg-green-700 text-white rounded-xl py-5 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-green-100">
+                  Get Started
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
