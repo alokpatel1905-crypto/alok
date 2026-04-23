@@ -42,6 +42,7 @@ const support_page_module_1 = require("./support-page/support-page.module");
 const contact_page_module_1 = require("./contact-page/contact-page.module");
 const media_page_module_1 = require("./media-page/media-page.module");
 const home_page_module_1 = require("./home-page/home-page.module");
+const menu_module_1 = require("./menu/menu.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -80,6 +81,7 @@ exports.AppModule = AppModule = __decorate([
             contact_page_module_1.ContactPageModule,
             media_page_module_1.MediaPageModule,
             home_page_module_1.HomePageModule,
+            menu_module_1.MenuModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

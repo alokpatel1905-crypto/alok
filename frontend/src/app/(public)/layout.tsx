@@ -8,329 +8,166 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Section';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api';
 
-const NAV_GROUPS = [
-  { 
-    label: 'Mission', 
-    icon: Leaf,
-    links: [
-      { label: 'About', href: '/about' },
-      { label: 'Impact', href: '/impact' },
-      { label: 'Milestones', href: '/milestones' }
-    ]
-  },
-  { 
-    label: 'Education', 
-    icon: Globe,
-    links: [
-      { label: 'Programs', href: '/programs' },
-      { label: 'Accreditation', href: '/accreditation' },
-      { label: 'Rankings', href: '/rankings' }
-    ]
-  },
-  { 
-    label: 'Updates', 
-    icon: Mail,
-    links: [
-      { label: 'Events', href: '/events' },
-      { label: 'Media', href: '/media' },
-      { label: 'Blog', href: '/blog' }
-    ]
-  },
-  { 
-    label: 'Join', 
-    icon: Heart,
-    links: [
-      { label: 'Support Us', href: '/support' },
-      { label: 'Contact', href: '/contact' }
-    ]
-  }
-];
-
-const Navbar = ({ 
-  isMobileMenuOpen, 
-  setIsMobileMenuOpen 
-}: { 
-  isMobileMenuOpen: boolean; 
-  setIsMobileMenuOpen: (val: boolean) => void;
-}) => {
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [menuItems, setMenuItems] = useState([
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Impact', href: '/impact' },
+    { name: 'Milestones', href: '/milestones' },
+    { name: 'Accreditation', href: '/accreditation' },
+    { name: 'Rankings', href: '/rankings' },
+    { name: 'Events', href: '/events' },
+    { name: 'Awards', href: '/awards' },
+    { name: 'Networks', href: '/networks' },
+    { name: 'Support Us', href: '/support' },
+    { name: 'Media', href: '/media' },
+    { name: 'Contact', href: '/contact' },
+  ]);
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 150);
     window.addEventListener('scroll', handleScroll);
+    
+    const fetchMenu = async () => {
+      try {
+        const data = await apiFetch('/menu');
+        if (data && data.length > 0) setMenuItems(data);
+      } catch (err) {
+        console.error('Failed to fetch menu:', err);
+      }
+    };
+    fetchMenu();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center p-3 lg:p-5 pointer-events-none">
-      {/* 0. TOP SHADOW OVERLAY FOR VISIBILITY */}
-      <div className="absolute top-0 left-0 right-0 h-24 lg:h-32 bg-gradient-to-b from-black/20 via-black/5 to-transparent pointer-events-none" />
+    <header className="w-full bg-white relative">
+      {/* 1. TOP BRAND SECTION (Hidden when scrolled & sticky) */}
+      <div className={cn(
+        "transition-all duration-500 overflow-hidden",
+        isScrolled ? "h-0 opacity-0" : "py-8 lg:py-12 opacity-100"
+      )}>
+        <Container>
+          <div className="flex flex-col items-center text-center space-y-4">
 
-      <motion.nav 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          "pointer-events-auto flex items-center justify-between px-5 lg:px-8 py-2.5 lg:py-3 rounded-[1.5rem] lg:rounded-[2rem] transition-all duration-700 relative",
-          isScrolled 
-            ? "w-[98%] lg:w-[90%] max-w-6xl bg-primary/90 backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.4)] border border-white/10" 
-            : "w-[98%] lg:w-[92%] max-w-[1200px] bg-white/20 backdrop-blur-2xl border border-white/30 shadow-[0_20px_40px_rgba(0,0,0,0.1)]"
-        )}
-      >
-        {/* 1. LOGO & STATUS */}
-        <div className="flex items-center gap-4 lg:gap-8">
-          <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
-            <div className="w-9 h-9 lg:w-11 lg:h-11 bg-flora rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-all duration-500 ring-2 lg:ring-4 ring-white/10">
-              <Leaf className="text-primary" size={20} />
+            {/* TITLES */}
+            <div className="space-y-1">
+              <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-gray-900 uppercase">
+                Green <span className="text-[#16a34a]">Mentors</span>
+              </h1>
+              <p className="text-xs lg:text-sm font-bold tracking-[0.2em] text-gray-500 uppercase">
+                Global Responsible Education Network
+              </p>
             </div>
-            <div className="flex flex-col">
-              <span className={cn(
-                "text-lg lg:text-xl font-black tracking-tighter leading-none transition-colors drop-shadow-sm text-white"
-              )}>
-                Green <span className="text-flora">Mentors</span>
+
+            {/* UN BADGE */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100 shadow-sm transition-all hover:bg-green-100">
+              <Globe className="text-[#16a34a]" size={14} />
+              <span className="text-[10px] lg:text-[11px] font-bold text-[#16a34a] uppercase tracking-wider">
+                Special Consultative Status with the United Nations ECOSOC
               </span>
-              <div className="hidden lg:flex items-center gap-1.5 mt-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-flora animate-pulse" />
-                <span className={cn(
-                  "text-[8px] font-black uppercase tracking-[0.3em] opacity-50 text-white"
-                )}>
-                  Eco-Live 2026
-                </span>
-              </div>
             </div>
-          </Link>
-        </div>
 
-        {/* 2. DESKTOP NAVIGATION (Centered) */}
-        <div className="hidden xl:flex items-center bg-black/5 dark:bg-white/5 p-1.5 rounded-full border border-black/5">
-          <ul className="flex items-center gap-2">
-            <li 
-              className="relative"
-              onMouseEnter={() => setActiveGroup('Home')}
-              onMouseLeave={() => setActiveGroup(null)}
-            >
-              <Link 
-                href="/"
-                className={cn(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-500 cursor-pointer relative group/btn",
-                  isScrolled 
-                    ? (pathname === "/" ? "text-flora" : "text-white hover:text-flora") 
-                    : (pathname === "/" ? "text-white" : "text-white hover:text-white")
-                )}
-              >
-                <Home size={16} className={cn(
-                  "transition-all duration-500 group-hover/btn:scale-125 drop-shadow-sm", 
-                  isScrolled 
-                    ? (pathname === "/" ? "text-flora" : "text-flora") 
-                    : (pathname === "/" ? "text-white" : "text-white")
-                )} />
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] drop-shadow-sm">Home</span>
-                
-                <AnimatePresence>
-                  {activeGroup === 'Home' && (
-                    <motion.div 
-                      layoutId="navbar-pill"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className={cn(
-                        "absolute inset-0 rounded-full shadow-lg border border-white/20",
-                        isScrolled ? "bg-white/10 shadow-flora/10" : "bg-white/20"
-                      )}
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                </AnimatePresence>
-              </Link>
-            </li>
+            {/* TAGLINE */}
+            <p className="text-[10px] font-medium text-gray-400 italic">
+              "Education for a climate-conscious and sustainable future"
+            </p>
+          </div>
+        </Container>
+      </div>
 
-            {NAV_GROUPS.map((group) => (
-              <li 
-                key={group.label}
-                onMouseEnter={() => setActiveGroup(group.label)}
-                onMouseLeave={() => setActiveGroup(null)}
-                className="relative"
-              >
-                <div className={cn(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-500 cursor-pointer relative group/btn",
-                  isScrolled 
-                    ? "text-white hover:text-flora" 
-                    : "text-white hover:text-white"
-                )}>
-                  <group.icon size={16} className={cn("transition-all duration-500 group-hover/btn:scale-125 drop-shadow-sm", isScrolled ? "text-flora" : "text-white")} />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] drop-shadow-sm">{group.label}</span>
-                  
-                  {/* SLIDING PILL BACKGROUND */}
-                  <AnimatePresence>
-                    {activeGroup === group.label && (
-                      <motion.div 
-                        layoutId="navbar-pill"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className={cn(
-                          "absolute inset-0 rounded-full shadow-lg border border-white/20",
-                          isScrolled ? "bg-white/10 shadow-flora/10" : "bg-white/20"
-                        )}
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
+      {/* 2. MAIN NAVIGATION (Glass Sticky) */}
+      <nav className={cn(
+        "w-full z-50 transition-all duration-500 ease-in-out",
+        isScrolled 
+          ? "fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl px-4 py-2 bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-black/5" 
+          : "relative py-4 bg-white border-y border-gray-100"
+      )}>
+        <Container>
+          <div className="flex items-center justify-between lg:justify-center relative">
+            {/* DESKTOP MENU */}
+            <ul className="hidden lg:flex items-center gap-1">
+              {menuItems.map((item) => (
+                <li key={item.id || item.href}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "px-5 py-2 text-[11px] font-black uppercase tracking-widest transition-all relative group",
+                      pathname === item.href ? "text-[#16a34a]" : "text-gray-600 hover:text-[#16a34a]"
                     )}
-                  </AnimatePresence>
-                </div>
+                  >
+                    <span className="relative z-10">{item.name}</span>
+                    {/* ACTIVE UNDERLINE */}
+                    <span className={cn(
+                      "absolute bottom-0 left-5 right-5 h-0.5 bg-[#16a34a] transition-all duration-300",
+                      pathname === item.href ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0 group-hover:opacity-50 group-hover:scale-x-75"
+                    )} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
 
-                {/* DROPDOWN MENU */}
-                <AnimatePresence>
-                  {activeGroup === group.label && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 15, rotateX: -15 }}
-                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                      exit={{ opacity: 0, y: 10, rotateX: -15 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-72 perspective-1000"
-                    >
-                      <div className={cn(
-                        "rounded-[2.5rem] p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] border border-white relative overflow-hidden",
-                        isScrolled ? "bg-primary/95 backdrop-blur-3xl" : "bg-white/95 backdrop-blur-2xl"
-                      )}>
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-flora" />
-                        {group.links.map((link) => (
-                          <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                              "flex items-center justify-between px-6 py-5 rounded-[1.5rem] text-sm font-black transition-all group/link",
-                              pathname === link.href 
-                                ? "bg-flora text-primary shadow-lg shadow-flora/20" 
-                                : (isScrolled ? "text-white/60 hover:bg-white/10 hover:text-white" : "text-foreground/60 hover:bg-primary/5 hover:text-primary")
-                            )}
-                          >
-                            {link.label}
-                            <div className={cn(
-                              "w-8 h-8 rounded-full flex items-center justify-center transition-all",
-                              pathname === link.href ? "bg-primary/20" : (isScrolled ? "bg-white/10 group-hover/link:bg-white/20" : "bg-primary/5 group-hover/link:bg-primary/10")
-                            )}>
-                              <ArrowRight size={14} className={cn(
-                                "transition-transform duration-500",
-                                pathname === link.href ? (isScrolled ? "text-primary" : "text-primary") : (isScrolled ? "text-white" : "text-primary group-hover/link:translate-x-1")
-                              )} />
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </li>
-            ))}
-          </ul>
-        </div>
+            {/* MOBILE TOGGLE */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:text-[#16a34a] transition-all ml-auto"
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </Container>
+      </nav>
 
-        {/* 3. CTA & MOBILE TOGGLE */}
-        <div className="flex items-center gap-6">
-          <Button 
-            variant="primary" 
-            size="xl" 
-            className="hidden md:flex rounded-full bg-gradient-to-r from-primary to-flora hover:scale-110 shadow-2xl px-8 py-4 text-sm font-black uppercase tracking-widest border-none"
-          >
-            Get Started
-          </Button>
-          
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={cn(
-              "xl:hidden w-12 h-12 rounded-xl flex items-center justify-center transition-all shadow-lg",
-              isScrolled ? "bg-primary/10 text-primary" : "bg-white/20 text-white backdrop-blur-md border border-white/20"
-            )}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </motion.nav>
-
-      {/* 4. MOBILE MENU OVERLAY */}
+      {/* 3. MOBILE MENU OVERLAY (Glass) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 z-[60] xl:hidden"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-4 top-24 bottom-auto bg-white/80 backdrop-blur-3xl z-[60] rounded-[2.5rem] border border-white shadow-2xl lg:hidden overflow-hidden flex flex-col"
           >
-            <div className="absolute inset-0 bg-primary/95 backdrop-blur-3xl" />
+            {/* ATMOSPHERIC GRAIN */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" 
+                 style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png")` }} />
             
-            <div className="relative h-full flex flex-col p-8 pt-24 overflow-y-auto">
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="absolute top-8 right-8 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white"
-              >
-                <X size={24} />
-              </button>
-
-              <div className="space-y-12 mb-20">
-                {NAV_GROUPS.map((group, i) => (
-                  <motion.div 
-                    key={group.label}
+            <div className="p-8 space-y-6 relative z-10 flex-grow overflow-y-auto">
+              <div className="flex flex-col space-y-2">
+                {menuItems.map((item, i) => (
+                  <motion.div
+                    key={item.id || item.href}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <div className="flex items-center gap-4 text-flora font-black uppercase tracking-[0.5em] text-[10px] mb-6">
-                      <div className="w-10 h-[2px] bg-flora rounded-full" /> {group.label}
-                    </div>
-                    <ul className="space-y-6">
-                      {group.links.map((link, j) => (
-                        <motion.li 
-                          key={link.href}
-                          initial={{ opacity: 0, x: 30 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: (i * 0.1) + (j * 0.05) }}
-                        >
-                          <Link 
-                            href={link.href}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className={cn(
-                              "text-5xl font-black transition-all leading-none tracking-tighter inline-block",
-                              pathname === link.href 
-                                ? "text-flora" 
-                                : "text-white/30 hover:text-white"
-                            )}
-                          >
-                            {link.label}.
-                          </Link>
-                        </motion.li>
-                      ))}
-                    </ul>
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "block py-4 text-sm font-black uppercase tracking-[0.2em] transition-all border-b border-gray-100/50",
+                        pathname === item.href ? "text-[#16a34a]" : "text-gray-400 hover:text-gray-900"
+                      )}
+                    >
+                      {item.name}
+                    </Link>
                   </motion.div>
                 ))}
               </div>
-
-              <div className="mt-auto pt-12 border-t border-white/5 space-y-10">
-                <Button 
-                  size="xl" 
-                  className="w-full rounded-2xl py-10 text-xl font-black uppercase tracking-widest shadow-3d bg-flora text-primary" 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Join Movement <ArrowRight className="ml-4" />
-                </Button>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-6 text-white/20">
-                    {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                      <Icon key={i} size={24} className="hover:text-flora transition-colors cursor-pointer" />
-                    ))}
-                  </div>
-                  <div className="text-[9px] font-black text-white/20 uppercase tracking-widest">
-                    &copy; 2026 Green Mentors
-                  </div>
-                </div>
-              </div>
+              
+              <Button className="w-full bg-[#16a34a] hover:bg-green-700 text-white mt-8 rounded-2xl py-8 font-black uppercase tracking-widest shadow-xl shadow-green-200">
+                Get Started
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </header>
   );
 };
 
@@ -338,7 +175,7 @@ const Footer = () => (
   <footer className="relative bg-[#061B14] text-white pt-20 lg:pt-32 pb-10 lg:pb-16 overflow-hidden border-t border-white/5">
     {/* SUBTLE BACKGROUND GRID */}
     <div className="absolute inset-0 opacity-[0.02] lg:opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-    
+
     {/* VIBRANT ACCENT BLOBS */}
     <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full -tr-40" />
     <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-flora/5 blur-[100px] rounded-full -bl-40" />
@@ -360,9 +197,9 @@ const Footer = () => (
           </p>
           <div className="flex gap-5">
             {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-              <Link 
-                key={i} 
-                href="#" 
+              <Link
+                key={i}
+                href="#"
                 className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center hover:bg-flora hover:text-primary transition-all duration-300"
               >
                 <Icon size={20} />
@@ -375,15 +212,14 @@ const Footer = () => (
         <div className="lg:col-span-2 space-y-8">
           <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-flora/60">Ecosystem</h4>
           <ul className="space-y-4">
-            {NAV_GROUPS[0].links.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-white/50 hover:text-white transition-colors text-sm font-bold flex items-center gap-2 group">
-                  <div className="w-1 h-1 rounded-full bg-flora opacity-0 group-hover:opacity-100 transition-all" />
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            {NAV_GROUPS[1].links.map((link) => (
+            {[
+              { label: 'About', href: '/about' },
+              { label: 'Impact', href: '/impact' },
+              { label: 'Milestones', href: '/milestones' },
+              { label: 'Programs', href: '/programs' },
+              { label: 'Accreditation', href: '/accreditation' },
+              { label: 'Rankings', href: '/rankings' }
+            ].map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="text-white/50 hover:text-white transition-colors text-sm font-bold flex items-center gap-2 group">
                   <div className="w-1 h-1 rounded-full bg-flora opacity-0 group-hover:opacity-100 transition-all" />
@@ -406,8 +242,8 @@ const Footer = () => (
               Special Consultative Status with the United Nations Economic and Social Council since 2021.
             </p>
             <div className="flex items-center justify-between">
-               <div className="px-3 py-1 rounded-full bg-flora/10 text-flora text-[8px] font-black uppercase tracking-widest">Certified</div>
-               <ArrowRight size={14} className="text-white/20" />
+              <div className="px-3 py-1 rounded-full bg-flora/10 text-flora text-[8px] font-black uppercase tracking-widest">Certified</div>
+              <ArrowRight size={14} className="text-white/20" />
             </div>
           </div>
         </div>
@@ -420,9 +256,9 @@ const Footer = () => (
               Join 50k+ eco-educators receiving our weekly insights.
             </p>
             <div className="space-y-3">
-              <input 
-                type="email" 
-                placeholder="Email address" 
+              <input
+                type="email"
+                placeholder="Email address"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-flora transition-all text-sm font-medium"
               />
               <Button className="w-full rounded-2xl bg-flora text-primary font-black uppercase tracking-widest py-6 hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
@@ -451,58 +287,21 @@ const Footer = () => (
 );
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const pathname = usePathname();
-
   return (
     <div className="flex flex-col min-h-screen relative">
       {/* GLOBAL BACKGROUND BLOOMS */}
       <div className="fixed top-0 left-0 w-[50vw] h-[50vw] bg-primary/3 blur-[150px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
       <div className="fixed bottom-0 right-0 w-[40vw] h-[40vw] bg-flora/3 blur-[120px] rounded-full translate-x-1/3 translate-y-1/3 pointer-events-none z-0" />
 
-      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-      
-      <main className="flex-grow pb-24 xl:pb-0 relative z-10">
+      <Navbar />
+
+      <main className={cn(
+        "flex-grow relative z-10 transition-all duration-700"
+      )}>
         <div className="max-w-[1440px] mx-auto bg-white/40 shadow-[0_0_100px_-20px_rgba(0,0,0,0.05)] border-x border-white/20">
           {children}
         </div>
       </main>
-
-      {/* MOBILE BOTTOM NAV - NATIVE APP FEEL */}
-      <div className="xl:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-primary/90 backdrop-blur-2xl rounded-2xl z-50 flex justify-around items-center border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] px-2">
-        {[
-          { icon: Home, label: 'Home', href: '/' },
-          { icon: GraduationCap, label: 'Programs', href: '/programs' },
-          { icon: TrendingUp, label: 'Impact', href: '/impact' },
-          { icon: isMobileMenuOpen ? X : Menu, label: 'More', action: () => setIsMobileMenuOpen(!isMobileMenuOpen) }
-        ].map((item, i) => (
-          item.href ? (
-            <Link 
-              key={i} 
-              href={item.href}
-              className={cn(
-                "flex flex-col items-center gap-1 transition-all",
-                pathname === item.href ? "text-flora scale-110" : "text-white/40 hover:text-white"
-              )}
-            >
-              <item.icon size={20} />
-              <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
-            </Link>
-          ) : (
-            <button 
-              key={i} 
-              onClick={item.action}
-              className={cn(
-                "flex flex-col items-center gap-1 transition-all",
-                isMobileMenuOpen ? "text-flora scale-110" : "text-white/40 hover:text-white"
-              )}
-            >
-              <item.icon size={20} />
-              <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
-            </button>
-          )
-        ))}
-      </div>
 
       <Footer />
     </div>

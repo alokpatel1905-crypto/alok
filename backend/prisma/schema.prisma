@@ -1172,4 +1172,14 @@ model HomePage {
   created_at           DateTime @default(now())
 }
 
+model MenuItem {
+  id        String   @id @default(cuid())
+  name      String
+  href      String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
