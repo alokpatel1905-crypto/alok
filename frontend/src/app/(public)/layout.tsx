@@ -10,10 +10,16 @@ import { Container } from '@/components/ui/Section';
 import { cn } from '@/lib/utils';
 import { apiFetch } from '@/lib/api';
 
+interface MenuItem {
+  id?: string;
+  name: string;
+  href: string;
+}
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [menuItems, setMenuItems] = useState([
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Impact', href: '/impact' },
