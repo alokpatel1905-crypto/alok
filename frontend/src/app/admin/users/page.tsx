@@ -22,7 +22,8 @@ import {
   ChevronRight,
   Fingerprint,
   Activity,
-  Award
+  Award,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { apiFetch } from '@/lib/api';
