@@ -23,7 +23,8 @@ import {
   Activity,
   AlertCircle,
   ExternalLink,
-  Edit3
+  Edit3,
+  Sparkles
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { cn } from '@/lib/utils';
