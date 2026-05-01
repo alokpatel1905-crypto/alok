@@ -84,6 +84,48 @@ let RankingsService = class RankingsService {
             });
         }
     }
+    async findAll(page = 1, limit = 10, category) {
+        const skip = (page - 1) * limit;
+        const where = {};
+        if (category)
+            where.category = category;
+        const [data, total] = await Promise.all([
+            this.prisma.ranking.findMany({
+                where,
+                skip,
+                take: limit,
+                orderBy: [{ year: 'desc' }, { rank: 'asc' }],
+                include: { institution: { select: { name: true, type: true } } },
+            }),
+            this.prisma.ranking.count({ where }),
+        ]);
+        return { data, total, page, limit };
+    }
+    async findOne(id) {
+        const ranking = await this.prisma.ranking.findUnique({
+            where: { id },
+            include: { institution: { select: { name: true, type: true } } },
+        });
+        if (!ranking)
+            throw new common_1.NotFoundException('Ranking record not found');
+        return ranking;
+    }
+    async create(data) {
+        return this.prisma.ranking.create({
+            data,
+        });
+    }
+    async update(id, data) {
+        return this.prisma.ranking.update({
+            where: { id },
+            data,
+        });
+    }
+    async remove(id) {
+        return this.prisma.ranking.delete({
+            where: { id },
+        });
+    }
 };
 exports.RankingsService = RankingsService;
 exports.RankingsService = RankingsService = __decorate([

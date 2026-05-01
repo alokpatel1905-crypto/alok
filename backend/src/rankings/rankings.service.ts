@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -81,5 +81,54 @@ export class RankingsService {
         data: cleanedData,
       });
     }
+  }
+
+  // --- Rankings Data CRUD ---
+
+  async findAll(page = 1, limit = 10, category?: string) {
+    const skip = (page - 1) * limit;
+    const where: any = {};
+    if (category) where.category = category;
+
+    const [data, total] = await Promise.all([
+      this.prisma.ranking.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ year: 'desc' }, { rank: 'asc' }],
+        include: { institution: { select: { name: true, type: true } } },
+      }),
+      this.prisma.ranking.count({ where }),
+    ]);
+
+    return { data, total, page, limit };
+  }
+
+  async findOne(id: string) {
+    const ranking = await this.prisma.ranking.findUnique({
+      where: { id },
+      include: { institution: { select: { name: true, type: true } } },
+    });
+    if (!ranking) throw new NotFoundException('Ranking record not found');
+    return ranking;
+  }
+
+  async create(data: any) {
+    return this.prisma.ranking.create({
+      data,
+    });
+  }
+
+  async update(id: string, data: any) {
+    return this.prisma.ranking.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.ranking.delete({
+      where: { id },
+    });
   }
 }

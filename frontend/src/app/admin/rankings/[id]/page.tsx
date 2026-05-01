@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Trophy, 
@@ -13,13 +13,17 @@ import {
   Activity,
   Layers,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  RefreshCcw
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-export default function CreateRankingPage() {
+export default function EditRankingPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
+
   const [institutions, setInstitutions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -29,24 +33,35 @@ export default function CreateRankingPage() {
   const [form, setForm] = useState({
     category: '',
     rank: '',
-    year: new Date().getFullYear().toString(),
+    year: '',
     score: '',
     institutionId: '',
   });
 
   useEffect(() => {
-    const fetchInstitutions = async () => {
+    const fetchData = async () => {
       try {
-        const res = await apiFetch('/institutions');
-        setInstitutions(res.data || []);
-      } catch (err) {
-        console.error(err);
+        const [instRes, rankingRes] = await Promise.all([
+          apiFetch('/institutions'),
+          apiFetch(`/rankings/${id}`)
+        ]);
+        
+        setInstitutions(instRes.data || []);
+        setForm({
+          category: rankingRes.category,
+          rank: rankingRes.rank.toString(),
+          year: rankingRes.year.toString(),
+          score: rankingRes.score?.toString() || '',
+          institutionId: rankingRes.institutionId,
+        });
+      } catch (err: any) {
+        setError(err.message || 'Failed to load ranking details');
       } finally {
         setLoading(false);
       }
     };
-    fetchInstitutions();
-  }, []);
+    fetchData();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,8 +69,8 @@ export default function CreateRankingPage() {
     setError(null);
 
     try {
-      await apiFetch('/rankings', {
-        method: 'POST',
+      await apiFetch(`/rankings/${id}`, {
+        method: 'PATCH',
         body: JSON.stringify({
           ...form,
           rank: +form.rank,
@@ -68,7 +83,7 @@ export default function CreateRankingPage() {
         router.push('/admin/rankings');
       }, 1500);
     } catch (err: any) {
-      setError(err.message || 'Failed to create ranking record');
+      setError(err.message || 'Failed to update ranking record');
       setSaving(false);
     }
   };
@@ -80,7 +95,7 @@ export default function CreateRankingPage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
       <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
-      <p className="text-sm font-bold text-foreground/40 uppercase tracking-widest">Initialising Form...</p>
+      <p className="text-sm font-bold text-foreground/40 uppercase tracking-widest">Loading Record Details...</p>
     </div>
   );
 
@@ -98,16 +113,26 @@ export default function CreateRankingPage() {
           </Link>
           <h1 className="text-3xl font-black text-foreground tracking-tighter flex items-center gap-3">
             <Trophy className="w-8 h-8 text-sun" />
-            New Ranking Position
+            Update Ranking
           </h1>
-          <p className="text-foreground/60 text-sm font-medium">Record a new institutional achievement in our global sustainability index.</p>
+          <p className="text-foreground/60 text-sm font-medium">Modifying institutional achievement record for {form.category}.</p>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 animate-shake">
-          <AlertCircle size={20} />
-          <p className="text-sm font-bold">{error}</p>
+        <div className="p-8 bg-red-50 border border-red-100 rounded-[2.5rem] flex flex-col items-center gap-6 text-red-600 text-center animate-shake">
+          <AlertCircle size={48} />
+          <div>
+            <h3 className="text-lg font-black tracking-tight">Sync Failure</h3>
+            <p className="text-sm font-medium opacity-80 mt-1">{error}</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2 bg-red-600 text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest"
+          >
+            <RefreshCcw size={14} />
+            Try Refreshing
+          </button>
         </div>
       )}
 
@@ -115,15 +140,15 @@ export default function CreateRankingPage() {
         <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-3xl flex flex-col items-center gap-4 text-emerald-600 text-center shadow-xl shadow-emerald-500/10 animate-bounce-subtle">
           <CheckCircle2 size={48} className="animate-in zoom-in duration-500" />
           <div>
-            <h3 className="text-xl font-black tracking-tight">Ranking Saved!</h3>
-            <p className="text-sm font-medium opacity-80 mt-1">Redirecting to your updated leaderboard...</p>
+            <h3 className="text-xl font-black tracking-tight">Changes Applied!</h3>
+            <p className="text-sm font-medium opacity-80 mt-1">Returning to your leaderboard...</p>
           </div>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className={cn(
         "bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] shadow-premium p-10 space-y-10 transition-all",
-        success && "opacity-20 scale-95 pointer-events-none grayscale"
+        (success || error) && "opacity-20 scale-95 pointer-events-none grayscale"
       )}>
         <div className="grid md:grid-cols-2 gap-10">
           {/* Category */}
@@ -228,7 +253,6 @@ export default function CreateRankingPage() {
                 className="w-full bg-white/80 border border-primary/10 rounded-2xl py-4 px-5 text-sm focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold placeholder:text-foreground/20"
               />
             </div>
-            <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-tighter">Scores are used to calculate the sustainability progress bar.</p>
           </div>
         </div>
 
@@ -237,7 +261,7 @@ export default function CreateRankingPage() {
             href="/admin/rankings"
             className="px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest text-foreground/40 hover:text-foreground/60 transition-all active:scale-95"
           >
-            Discard
+            Cancel
           </Link>
           <button 
             type="submit" 
@@ -247,7 +271,7 @@ export default function CreateRankingPage() {
             {saving ? (
               <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             ) : <Save size={18} />}
-            {saving ? 'Processing...' : 'Save Ranking'}
+            {saving ? 'Saving...' : 'Update Record'}
           </button>
         </div>
       </form>

@@ -24,7 +24,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
       headers,
     });
   } catch (error: any) {
-    console.error(`[apiFetch NETWORK ERROR] url: ${API_URL}${endpoint}, message:`, error.message);
+    console.warn(`[apiFetch NETWORK ERROR] url: ${API_URL}${endpoint}, message:`, error.message);
     // Return a graceful dummy failure object to prevent SSG compiler crashes
     return null; 
   }
@@ -38,7 +38,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
       }
     }
     const errorData = await res.json().catch(() => ({}));
-    console.error(`[apiFetch ERROR] url: ${API_URL}${endpoint}, status: ${res.status}, body:`, errorData);
+    console.warn(`[apiFetch ERROR] url: ${API_URL}${endpoint}, status: ${res.status}, body:`, errorData);
     throw new Error(errorData.message || `API Error: ${res.status}`);
   }
 
@@ -64,13 +64,13 @@ export async function getPageData(slug: string) {
 
     if (!res.ok) {
       if (res.status === 404) return null;
-      console.error(`Failed to fetch page data (${slug}): ${res.status}`);
+      console.warn(`Failed to fetch page data (${slug}): ${res.status}`);
       return null;
     }
 
     return res.json();
   } catch (error) {
-    console.error(`Network or fetch error for page (${slug}):`, error);
+    console.warn(`Network or fetch error for page (${slug}):`, error);
     return null; // Return null gracefully to prevent Vercel Build crashes
   }
 }

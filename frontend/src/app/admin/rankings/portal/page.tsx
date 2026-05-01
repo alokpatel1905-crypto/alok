@@ -2,7 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { 
+  ShieldCheck, 
+  Send, 
+  Search, 
+  Filter, 
+  CheckCircle2, 
+  Clock, 
+  ExternalLink,
+  ChevronRight,
+  School,
+  Activity,
+  Calendar,
+  AlertCircle,
+  FileSearch,
+  Sparkles
+} from 'lucide-react';
 import { apiFetch } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 export default function RankingPortalPage() {
   const [activeTab, setActiveTab] = useState<'submissions' | 'submit'>('submissions');
@@ -14,7 +31,7 @@ export default function RankingPortalPage() {
     setLoading(true);
     try {
       const data = await apiFetch('/rankings/submissions');
-      setSubmissions(data);
+      setSubmissions(data || []);
     } catch (err: any) {
       console.error(err);
       if (err.message === 'Unauthorized') router.push('/login');
@@ -42,94 +59,155 @@ export default function RankingPortalPage() {
     }
   };
 
-  if (loading && activeTab === 'submissions') return <div style={{ padding: 40 }}>Opening the Global Ranking Vault...</div>;
-
   return (
-    <div style={{ padding: '20px 0' }}>
-      <h1 style={{ marginBottom: 30, fontSize: '1.8rem' }}>Global Ranking Portal 🌍</h1>
-
-      <div style={{ display: 'flex', gap: 20, borderBottom: '1px solid #333', marginBottom: 30 }}>
-        <TabButton active={activeTab === 'submissions'} onClick={() => setActiveTab('submissions')}>Reviewer Evaluation Interface</TabButton>
-        <TabButton active={activeTab === 'submit'} onClick={() => setActiveTab('submit')}>Institutional Submission Portal</TabButton>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-black text-foreground tracking-tighter flex items-center gap-3">
+            <ShieldCheck className="w-8 h-8 text-primary" />
+            Global Ranking Portal
+          </h1>
+          <p className="text-foreground/60 mt-1 text-sm font-medium">Verify institutional data and manage sustainability submissons.</p>
+        </div>
+        <div className="flex items-center gap-2 p-1 bg-primary/5 rounded-2xl border border-primary/10 self-start">
+          <button 
+            onClick={() => setActiveTab('submissions')}
+            className={cn(
+              "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+              activeTab === 'submissions' ? "bg-white text-primary shadow-sm" : "text-foreground/40 hover:text-primary"
+            )}
+          >
+            Evaluations
+          </button>
+          <button 
+            onClick={() => setActiveTab('submit')}
+            className={cn(
+              "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+              activeTab === 'submit' ? "bg-white text-primary shadow-sm" : "text-foreground/40 hover:text-primary"
+            )}
+          >
+            Submissions
+          </button>
+        </div>
       </div>
 
       {activeTab === 'submissions' ? (
-        <div style={{ background: '#1a1a1a', borderRadius: 12, border: '1px solid #333', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead style={{ background: '#222' }}>
-              <tr style={{ textAlign: 'left' }}>
-                <Th>Institution</Th>
-                <Th>Category / Year</Th>
-                <Th>Auto-Score</Th>
-                <Th>Status</Th>
-                <Th style={{ textAlign: 'right' }}>Actions</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissions.map((sub) => (
-                <tr key={sub.id} style={{ borderTop: '1px solid #333' }}>
-                  <Td style={{ fontWeight: '600' }}>{sub.institution.name}</Td>
-                  <Td>{sub.category} ({sub.year})</Td>
-                  <Td>
-                    <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>{sub.score || 'PENDING'}</span>
-                  </Td>
-                  <Td><Badge status={sub.status}>{sub.status}</Badge></Td>
-                  <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                    <button 
-                      onClick={() => handleEvaluate(sub.id)}
-                      style={{ padding: '6px 12px', fontSize: '0.8rem', background: '#0070f3', color: '#fff', borderRadius: 4, border: 'none', cursor: 'pointer' }}
-                    >
-                      Evaluate & Verify
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {submissions.length === 0 && (
-                <tr><td colSpan={5} style={{ padding: 40, textAlign: 'center', color: '#666' }}>No active submissions for review</td></tr>
-              )}
-            </tbody>
-          </table>
+        <div className="space-y-6">
+          {/* Submissions Table */}
+          <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] shadow-premium overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-primary/5 text-foreground/40 text-[11px] font-black uppercase tracking-[0.2em]">
+                    <th className="px-8 py-6">Institution</th>
+                    <th className="px-8 py-6">Evaluation Category</th>
+                    <th className="px-8 py-6">Auto-Score</th>
+                    <th className="px-8 py-6">Status</th>
+                    <th className="px-8 py-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-primary/5">
+                  {submissions.map((sub) => (
+                    <tr key={sub.id} className="hover:bg-primary/5 transition-all group">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary/40 font-bold text-xs uppercase">
+                            {sub.institution?.name?.charAt(0) || <School size={14} />}
+                          </div>
+                          <span className="text-[15px] font-black text-foreground group-hover:text-primary transition-colors">
+                            {sub.institution?.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-foreground/80">{sub.category}</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mt-0.5">{sub.year} Cycle</span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-2">
+                          <Activity size={14} className="text-water" />
+                          <span className="text-sm font-black text-water uppercase tracking-tighter">
+                            {sub.score || 'Calculating...'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className={cn(
+                          "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter border",
+                          sub.status === 'APPROVED' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                          sub.status === 'UNDER_REVIEW' ? "bg-sun/10 text-sun border-sun/20" :
+                          "bg-primary/5 text-primary border-primary/10"
+                        )}>
+                          {sub.status === 'APPROVED' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                        <button 
+                          onClick={() => handleEvaluate(sub.id)}
+                          className="px-6 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                        >
+                          Evaluate
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {loading && (
+              <div className="p-32 text-center space-y-4">
+                <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-black text-foreground/30 uppercase tracking-[0.2em]">Opening the Ranking Vault...</p>
+              </div>
+            )}
+
+            {!loading && submissions.length === 0 && (
+              <div className="p-32 text-center">
+                <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-primary/5">
+                  <FileSearch className="w-10 h-10 text-primary/20" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">No Active Submissions</h3>
+                <p className="text-foreground/40 font-medium max-w-xs mx-auto text-sm">We couldn't find any institutional data awaiting evaluation.</p>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
-        <div style={{ background: '#1a1a1a', padding: 40, borderRadius: 12, border: '1px solid #333', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 20 }}>🏛️</div>
-          <h2 style={{ marginBottom: 15 }}>Ready to join the Global Rankings?</h2>
-          <p style={{ color: '#888', maxWidth: 600, margin: '0 auto 30px auto', lineHeight: '1.6' }}>
-            This portal allows institutions to submit their sustainability data directly. 
-            Our <strong>Automated Ranking Score Calculation</strong> engine will instantly analyze your data against global standards.
-          </p>
-          <button style={{ padding: '12px 30px', background: '#0070f3', color: 'white', borderRadius: 8, border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>
-            Start New Data Submission
-          </button>
+        <div className="max-w-3xl mx-auto py-20 text-center space-y-10 animate-in zoom-in-95 duration-700">
+          <div className="relative inline-block">
+            <div className="w-32 h-32 bg-primary/5 rounded-[3rem] flex items-center justify-center mx-auto border border-primary/5 relative z-10">
+              <Send className="w-12 h-12 text-primary" />
+            </div>
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-sun/10 rounded-full flex items-center justify-center animate-bounce-subtle z-0">
+              <Sparkles className="w-6 h-6 text-sun" />
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-black text-foreground tracking-tighter">Ready to join the Global Rankings?</h2>
+            <p className="text-foreground/60 font-medium max-w-xl mx-auto leading-relaxed">
+              This portal allows institutions to submit their sustainability data directly. 
+              Our <span className="text-primary font-bold">Automated Ranking Score Calculation</span> engine will instantly analyze your data against global standards.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center gap-4 pt-4">
+            <button className="flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-[2rem] text-sm font-black uppercase tracking-widest transition-all shadow-2xl shadow-primary/30 active:scale-95 group">
+              Start New Data Submission
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] flex items-center gap-2">
+              <ShieldCheck size={12} className="text-emerald-500" />
+              Secure Institutional Verification
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
-}
-
-function TabButton({ children, active, onClick }: any) {
-  return (
-    <button onClick={onClick} style={{
-      padding: '12px 20px',
-      background: 'transparent',
-      border: 'none',
-      color: active ? '#0070f3' : '#666',
-      borderBottom: active ? '2px solid #0070f3' : '2px solid transparent',
-      cursor: 'pointer',
-      fontWeight: '600'
-    }}>{children}</button>
-  );
-}
-
-function Th({ children }: any) {
-  return <th style={{ padding: '16px 20px', color: '#888', fontSize: '0.8rem', fontWeight: '500' }}>{children}</th>;
-}
-
-function Td({ children, style }: any) {
-  return <td style={{ padding: '16px 20px', fontSize: '0.9rem', ...style }}>{children}</td>;
-}
-
-function Badge({ children, status }: any) {
-  const colors = status === 'SUBMITTED' ? { bg: '#2196F322', text: '#2196F3' } : { bg: '#FFC10722', text: '#FFC107' };
-  return <span style={{ padding: '4px 8px', borderRadius: 4, fontSize: '0.7rem', fontWeight: 'bold', background: colors.bg, color: colors.text }}>{children}</span>;
 }

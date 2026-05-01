@@ -9,10 +9,19 @@ import {
   Globe2, 
   Network, 
   Target, 
-  Sparkles 
+  Sparkles,
+  FileText,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Section, Container } from '@/components/ui/Section';
+
+const iconMap: Record<string, any> = {
+  Network,
+  FileText,
+  Users,
+  Globe2,
+};
 
 export default function NetworksClient({ page, networks, steps }: { page: any, networks: any[], steps: any[] }) {
   return (
@@ -150,7 +159,7 @@ export default function NetworksClient({ page, networks, steps }: { page: any, n
             <h2 className="text-5xl md:text-7xl font-black text-white mb-24 tracking-tighter text-shadow-3d">{page.process_title || 'Joining Protocol'}</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
               {steps.map((st, i) => {
-                const Icon = st.icon;
+                const Icon = iconMap[st.iconName] || Network;
                 return (
                   <motion.div 
                     key={i} 

@@ -2,7 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { 
+  Calendar, 
+  MapPin, 
+  Building, 
+  Search, 
+  Plus, 
+  Trash2, 
+  Edit2, 
+  XCircle, 
+  CheckCircle2,
+  Clock,
+  Filter,
+  MoreVertical,
+  CalendarDays,
+  Map,
+  ArrowRight,
+  Activity
+} from 'lucide-react';
 import { apiFetch } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 type Event = {
   id: string;
@@ -18,12 +37,12 @@ export default function EventsPage() {
   const [data, setData] = useState<{ data: Event[]; total: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
       setError(null);
-      
       const result = await apiFetch('/events');
       setData(result);
     } catch (err: any) {
@@ -52,7 +71,6 @@ export default function EventsPage() {
       fetchEvents();
     } catch (err) {
       console.error(err);
-      alert('Error deleting event');
     }
   }
 
@@ -66,143 +84,176 @@ export default function EventsPage() {
       fetchEvents();
     } catch (err) {
       console.error(err);
-      alert('Error updating status');
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'UPCOMING': return { bg: '#2196F322', text: '#2196F3' };
-      case 'ONGOING': return { bg: '#4CAF5022', text: '#4CAF50' };
-      case 'COMPLETED': return { bg: '#8882', text: '#888' };
-      case 'CANCELLED': return { bg: '#F4433622', text: '#F44336' };
-      default: return { bg: '#333', text: '#888' };
-    }
-  };
+  const filteredEvents = data?.data?.filter(event => 
+    event.title.toLowerCase().includes(search.toLowerCase()) ||
+    event.location?.toLowerCase().includes(search.toLowerCase()) ||
+    event.institution?.name?.toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
-  if (loading) return <div style={{ padding: 40 }}>Loading events...</div>;
-  if (error) return <div style={{ padding: 40, color: '#ff4444' }}>Error: {error}</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+      <p className="text-sm font-bold text-foreground/40 uppercase tracking-widest italic">Syncing Global Events...</p>
+    </div>
+  );
 
   return (
-    <div style={{ padding: '20px 0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
-        <h1 style={{ fontSize: '2rem', margin: 0 }}>Events 📅</h1>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-foreground tracking-tighter flex items-center gap-3">
+            <CalendarDays className="w-10 h-10 text-primary" />
+            Events Management
+          </h1>
+          <p className="text-foreground/60 mt-1 font-medium italic">Orchestrating global sustainability summits and institutional gatherings.</p>
+        </div>
         <Link 
-          href="/events/create"
-          style={{ 
-            background: '#0070f3', 
-            color: 'white', 
-            padding: '10px 20px', 
-            borderRadius: 8, 
-            textDecoration: 'none',
-            fontWeight: '600',
-            transition: 'background 0.2s'
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.background = '#0060df')}
-          onMouseOut={(e) => (e.currentTarget.style.background = '#0070f3')}
+          href="/admin/events/create"
+          className="flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 group"
         >
-          + Add Event
+          <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+          Schedule Event
         </Link>
       </div>
 
-      <div style={{
-        background: '#1a1a1a',
-        borderRadius: 12,
-        border: '1px solid #333',
-        overflow: 'hidden'
-      }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #333', background: '#222' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: 0 }}>All Events</h2>
+      {/* Analytics/Summary Cards (Visual only) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Upcoming', count: filteredEvents.filter(e => e.status === 'UPCOMING').length, icon: Clock, color: 'text-primary' },
+          { label: 'Ongoing', count: filteredEvents.filter(e => e.status === 'ONGOING').length, icon: Activity, color: 'text-emerald-500' },
+          { label: 'Completed', count: filteredEvents.filter(e => e.status === 'COMPLETED').length, icon: CheckCircle2, color: 'text-foreground/40' },
+          { label: 'Cancelled', count: filteredEvents.filter(e => e.status === 'CANCELLED').length, icon: XCircle, color: 'text-red-500' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white/40 backdrop-blur-md border border-primary/5 p-4 rounded-2xl flex items-center justify-between shadow-sm">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30">{stat.label}</p>
+              <h4 className={cn("text-xl font-black mt-1", stat.color)}>{stat.count}</h4>
+            </div>
+            <stat.icon className={cn("w-5 h-5 opacity-20", stat.color)} />
+          </div>
+        ))}
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/30" size={18} />
+          <input 
+            type="text"
+            placeholder="Search by title, location or institution..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/60 backdrop-blur-xl border border-primary/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-medium text-sm shadow-sm"
+          />
         </div>
-        
-        <div style={{ padding: 20, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <button className="flex items-center gap-2 bg-white/60 backdrop-blur-xl border border-primary/10 px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-foreground/60 hover:text-primary transition-all shadow-sm">
+          <Filter size={16} />
+          Filters
+        </button>
+      </div>
+
+      {/* Data Table */}
+      <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] shadow-premium overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
             <thead>
-              <tr>
-                <th style={thStyle}>Title</th>
-                <th style={thStyle}>Date</th>
-                <th style={thStyle}>Location</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Institution</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Actions</th>
+              <tr className="bg-primary/5 text-foreground/40 text-[11px] font-black uppercase tracking-[0.2em]">
+                <th className="px-8 py-6">Event Details</th>
+                <th className="px-8 py-6">Schedule</th>
+                <th className="px-8 py-6">Location</th>
+                <th className="px-8 py-6">Host Entity</th>
+                <th className="px-8 py-6">Status</th>
+                <th className="px-8 py-6 text-right">Management</th>
               </tr>
             </thead>
-            <tbody>
-              {data?.data && Array.isArray(data.data) && data.data.map((item) => {
-                const colors = getStatusColor(item.status);
-                return (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #222' }}>
-                    <td style={tdStyle}>
-                      <div style={{ fontWeight: '600' }}>{item.title}</div>
-                    </td>
-                    <td style={tdStyle}>{new Date(item.startDate).toLocaleDateString()}</td>
-                    <td style={tdStyle}>{item.location || 'N/A'}</td>
-                    <td style={tdStyle}>
-                      <span style={{
-                        padding: '4px 8px',
-                        borderRadius: 4,
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                        background: colors.bg,
-                        color: colors.text,
-                        textTransform: 'uppercase'
-                      }}>
-                        {item.status}
+            <tbody className="divide-y divide-primary/5">
+              {filteredEvents.map((item) => (
+                <tr key={item.id} className="group hover:bg-primary/5 transition-all duration-300">
+                  <td className="px-8 py-6">
+                    <div className="flex flex-col">
+                      <span className="text-[15px] font-black text-foreground group-hover:text-primary transition-colors tracking-tight">
+                        {item.title}
                       </span>
-                    </td>
-                    <td style={tdStyle}>{item.institution?.name || 'Global'}</td>
-                    <td style={{ ...tdStyle, textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                        <button 
-                          onClick={() => toggleCancel(item)}
-                          style={{ 
-                            background: 'transparent', 
-                            border: '1px solid #444', 
-                            color: '#aaa',
-                            padding: '4px 8px',
-                            borderRadius: 4,
-                            cursor: 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                        >
-                          {item.status === 'CANCELLED' ? 'Restore' : 'Cancel'}
-                        </button>
-                        <Link 
-                          href={`/events/${item.id}`} 
-                          style={{ 
-                            color: '#2196F3', 
-                            textDecoration: 'none', 
-                            fontSize: '0.8rem',
-                            border: '1px solid #2196F344',
-                            padding: '4px 8px',
-                            borderRadius: 4
-                          }}
-                        >
-                          Edit
-                        </Link>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          style={{ 
-                            background: 'transparent', 
-                            border: '1px solid #F4433644', 
-                            color: '#F44336',
-                            padding: '4px 8px',
-                            borderRadius: 4,
-                            cursor: 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-              {(!data || !data.data || data.data.length === 0) && (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mt-1 italic">
+                        ID: {item.id.slice(0, 8)}...
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground/60">
+                      <Clock size={14} className="text-primary/40" />
+                      {new Date(item.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground/60">
+                      <MapPin size={14} className="text-water" />
+                      {item.location || <span className="italic opacity-40">Virtual Session</span>}
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground/60">
+                      <Building size={14} className="text-sun" />
+                      {item.institution?.name || <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">Global HQ</span>}
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <span className={cn(
+                      "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter border",
+                      item.status === 'UPCOMING' && "bg-primary/5 text-primary border-primary/10",
+                      item.status === 'ONGOING' && "bg-emerald-50 text-emerald-600 border-emerald-100 animate-pulse",
+                      item.status === 'COMPLETED' && "bg-foreground/5 text-foreground/40 border-foreground/10 grayscale",
+                      item.status === 'CANCELLED' && "bg-red-50 text-red-600 border-red-100 shadow-inner"
+                    )}>
+                      {item.status === 'UPCOMING' && <Clock size={10} />}
+                      {item.status === 'ONGOING' && <Activity size={10} />}
+                      {item.status === 'COMPLETED' && <CheckCircle2 size={10} />}
+                      {item.status === 'CANCELLED' && <XCircle size={10} />}
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                      <button 
+                        onClick={() => toggleCancel(item)}
+                        title={item.status === 'CANCELLED' ? 'Restore Event' : 'Cancel Event'}
+                        className={cn(
+                          "p-3 rounded-xl transition-all border shadow-sm",
+                          item.status === 'CANCELLED' 
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100" 
+                            : "bg-white/80 text-foreground/40 border-primary/10 hover:text-red-500 hover:border-red-100"
+                        )}
+                      >
+                        {item.status === 'CANCELLED' ? <ArrowRight className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                      </button>
+                      <Link 
+                        href={`/admin/events/${item.id}`}
+                        className="p-3 bg-white/80 hover:bg-white rounded-xl text-foreground/40 hover:text-primary transition-all border border-primary/10 shadow-sm"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Link>
+                      <button 
+                        onClick={() => handleDelete(item.id)}
+                        className="p-3 bg-white/80 hover:bg-white rounded-xl text-foreground/40 hover:text-red-600 transition-all border border-primary/10 shadow-sm hover:border-red-100"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filteredEvents.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: 40, color: '#666' }}>
-                    No events found
+                  <td colSpan={6} className="px-8 py-32 text-center">
+                    <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-primary/5">
+                      <Calendar className="w-10 h-10 text-primary/20" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">No Scheduled Events</h3>
+                    <p className="text-foreground/40 font-medium max-w-xs mx-auto text-sm italic">"The best way to predict the future is to create it." - Schedule your first event now.</p>
                   </td>
                 </tr>
               )}
@@ -213,16 +264,3 @@ export default function EventsPage() {
     </div>
   );
 }
-
-const thStyle: React.CSSProperties = {
-  padding: '12px 8px',
-  borderBottom: '1px solid #333',
-  color: '#888',
-  fontSize: '0.85rem',
-  fontWeight: '500',
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: '16px 8px',
-  fontSize: '0.9rem',
-};

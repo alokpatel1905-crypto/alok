@@ -44,7 +44,7 @@ const Navbar = () => {
         const data = await apiFetch('/menu');
         if (data && data.length > 0) setMenuItems(data);
       } catch (err) {
-        console.error('Failed to fetch menu:', err);
+        console.warn('Failed to fetch menu:', err);
       }
     };
     fetchMenu();

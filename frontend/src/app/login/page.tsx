@@ -9,10 +9,16 @@ import {
   ArrowRight, 
   Loader2, 
   AlertCircle,
-  ChevronLeft
+  ChevronLeft,
+  Sparkles,
+  Fingerprint,
+  Zap,
+  Globe,
+  Activity,
+  Terminal,
+  Server
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 import { apiFetch } from '@/lib/api';
 
 export default function LoginPage() {
@@ -39,122 +45,168 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.message || 'Failed to connect to the authentication server');
+      setError(err.message || 'The secure authentication node rejected the credentials.');
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-900/20 blur-[120px] rounded-full -z-10" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-900/10 blur-[120px] rounded-full -z-10" />
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-primary selection:text-white">
+      {/* Dynamic Background Matrix */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[160px] rounded-full animate-pulse-slow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-water/10 blur-[160px] rounded-full animate-pulse-slow delay-1000" />
+        
+        {/* Subtle Grid Pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+             style={{ backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+      </div>
 
-      <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
-        {/* Back Link */}
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-emerald-500 text-sm font-medium transition-colors mb-8 group"
-        >
-          <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Homepage
-        </Link>
-
-        {/* Login Card */}
-        <div className="bg-[#111111] border border-white/5 rounded-[24px] p-8 shadow-2xl relative overflow-hidden">
-          {/* Accent Line */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-teal-600" />
-
-          {/* Header */}
-          <div className="text-center mb-10 mt-2">
-            <div className="w-14 h-14 bg-emerald-600/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-500/20">
-              <ShieldCheck className="w-8 h-8 text-emerald-500" />
-            </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Admin Portal</h1>
-            <p className="text-gray-500 text-sm mt-2">Enter your credentials to access the dashboard</p>
+      <div className="w-full max-w-lg z-10 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        {/* Portal Branding */}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <div className="relative">
+             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
+             <div className="relative w-20 h-20 bg-white/5 backdrop-blur-xl border border-primary/20 rounded-3xl flex items-center justify-center shadow-2xl group overflow-hidden">
+                <ShieldCheck className="w-10 h-10 text-primary group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+             </div>
           </div>
+          <div className="space-y-1">
+            <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+              Command <span className="text-primary italic">Node</span>
+            </h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Green Mentors Strategic Admin Portal</p>
+          </div>
+        </div>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
+        {/* Login Matrix Card */}
+        <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[3rem] p-12 shadow-2xl relative overflow-hidden group">
+          {/* Internal Glow */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20 transition-all duration-700" />
+          
+          <form onSubmit={handleLogin} className="space-y-8 relative z-10">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
-                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                <p className="text-sm font-medium">{error}</p>
+              <div className="bg-red-500/5 border border-red-500/20 text-red-400 p-6 rounded-2xl flex items-start gap-4 animate-in slide-in-from-top-4 duration-500">
+                <AlertCircle className="w-6 h-6 shrink-0 mt-0.5 opacity-50" />
+                <div>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest mb-1">Access Denied</h4>
+                  <p className="text-xs font-medium italic opacity-80">{error}</p>
+                </div>
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">
-                Email Address
-              </label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-emerald-500 transition-colors" />
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@greenmentors.com"
-                  className="w-full bg-[#161616] border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/40 transition-all placeholder:text-gray-700"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                  Password
+            {/* Credential Fields */}
+            <div className="space-y-6">
+              <div className="space-y-3 group/field">
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] ml-2 flex items-center gap-2 group-focus-within/field:text-primary transition-colors">
+                  <Fingerprint size={12} />
+                  Personnel Identity
                 </label>
-                <Link href="#" className="text-xs font-bold text-emerald-600 hover:text-emerald-500 transition-colors">
-                  Forgot?
-                </Link>
+                <div className="relative">
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within/field:text-primary transition-colors" />
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@greenmentors.com"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-white font-bold placeholder:text-white/10 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 transition-all text-sm tracking-tight"
+                    required
+                  />
+                </div>
               </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-emerald-500 transition-colors" />
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-[#161616] border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/40 transition-all placeholder:text-gray-700"
-                  required
-                />
+
+              <div className="space-y-3 group/field">
+                <div className="flex items-center justify-between ml-2 pr-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] flex items-center gap-2 group-focus-within/field:text-primary transition-colors">
+                    <Lock size={12} />
+                    Secure Passphrase
+                  </label>
+                  <button type="button" className="text-[9px] font-black text-primary/60 hover:text-primary uppercase tracking-widest transition-colors">
+                    Reset Protocol
+                  </button>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within/field:text-primary transition-colors" />
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-white font-bold placeholder:text-white/10 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 transition-all text-sm tracking-widest"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
+            {/* Action Trigger */}
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800/50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-600/10 flex items-center justify-center gap-2 group active:scale-95 mt-4"
+              className="w-full relative group/btn overflow-hidden"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                <>
-                  Access Dashboard
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
+              <div className="absolute inset-0 bg-primary blur-xl opacity-20 group-hover/btn:opacity-40 transition-opacity" />
+              <div className="relative bg-primary hover:bg-primary/90 disabled:bg-primary/40 disabled:cursor-not-allowed text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-3 active:scale-95">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Synchronizing Session...
+                  </>
+                ) : (
+                  <>
+                    Initiate Connection
+                    <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </div>
             </button>
           </form>
 
-          {/* Footer Info */}
-          <div className="mt-10 pt-8 border-t border-white/5 text-center">
-            <p className="text-gray-600 text-sm">
-              Don't have an account? <Link href="#" className="text-emerald-600 font-bold hover:underline">Contact Support</Link>
+          {/* Infrastructure Metadata */}
+          <div className="mt-12 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-40 hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-4">
+               <div className="flex flex-col">
+                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Node Status</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-white/80 uppercase">Fully Operational</span>
+                  </div>
+               </div>
+               <div className="w-px h-8 bg-white/10 mx-2" />
+               <div className="flex flex-col">
+                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Identity Provider</span>
+                  <span className="text-[10px] font-black text-white/80 uppercase">GM SecureAuth</span>
+               </div>
+            </div>
+            <p className="text-[10px] font-black text-white/20 uppercase tracking-widest italic tracking-tighter">
+              v2.0 // Secured by deep forest
             </p>
           </div>
         </div>
 
-        {/* Security Badge */}
-        <div className="flex items-center justify-center gap-2 mt-8 text-gray-600">
-          <ShieldCheck className="w-4 h-4 text-emerald-900" />
-          <span className="text-xs font-medium uppercase tracking-widest">End-to-End Encrypted Session</span>
+        {/* Global Navigation Link */}
+        <div className="flex justify-center">
+          <Link 
+            href="/" 
+            className="group flex items-center gap-3 px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-primary transition-all duration-500 shadow-sm"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Exit to Public Matrix
+          </Link>
         </div>
+      </div>
+      
+      {/* Static Visual Enhancements */}
+      <div className="fixed top-12 left-12 flex items-center gap-4 opacity-10 pointer-events-none">
+        <Globe size={40} className="text-white" />
+        <div className="h-px w-24 bg-white" />
+        <Zap size={24} className="text-white" />
+      </div>
+      <div className="fixed bottom-12 right-12 opacity-10 pointer-events-none flex flex-col items-end">
+        <Activity size={40} className="text-white mb-4" />
+        <Terminal size={24} className="text-white" />
       </div>
     </div>
   );

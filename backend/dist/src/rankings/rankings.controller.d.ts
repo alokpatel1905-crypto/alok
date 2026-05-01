@@ -1,4 +1,6 @@
 import { RankingsService } from './rankings.service';
+import { CreateRankingDto } from './dto/create-ranking.dto';
+import { UpdateRankingDto } from './dto/update-ranking.dto';
 export declare class RankingsController {
     private readonly rankingsService;
     constructor(rankingsService: RankingsService);
@@ -141,5 +143,74 @@ export declare class RankingsController {
         meta_description: string | null;
         updated_at: Date;
         created_at: Date;
+    }>;
+}
+export declare class RankingsDataController {
+    private readonly rankingsService;
+    constructor(rankingsService: RankingsService);
+    findAll(page?: string, limit?: string, category?: string): Promise<{
+        data: ({
+            institution: {
+                type: import("@prisma/client").$Enums.InstitutionType;
+                name: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            year: number;
+            category: string;
+            rank: number;
+            score: number | null;
+            institutionId: string;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+    }>;
+    findOne(id: string): Promise<{
+        institution: {
+            type: import("@prisma/client").$Enums.InstitutionType;
+            name: string;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    create(createRankingDto: CreateRankingDto): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    update(id: string, updateRankingDto: UpdateRankingDto): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
     }>;
 }

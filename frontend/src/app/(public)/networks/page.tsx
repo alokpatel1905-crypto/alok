@@ -35,10 +35,10 @@ export default async function NetworksPage() {
   ].filter((s) => s.t);
 
   const steps = [
-    { title: page.step1, icon: Network },
-    { title: page.step2, icon: FileText },
-    { title: page.step3, icon: Users },
-    { title: page.step4, icon: Globe2 },
+    { title: page.step1, iconName: 'Network' },
+    { title: page.step2, iconName: 'FileText' },
+    { title: page.step3, iconName: 'Users' },
+    { title: page.step4, iconName: 'Globe2' },
   ].filter((s) => s.title);
 
   return <NetworksClient page={page} networks={networks} steps={steps} />;

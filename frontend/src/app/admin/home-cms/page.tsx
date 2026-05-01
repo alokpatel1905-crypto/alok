@@ -2,14 +2,36 @@
 
 import React, { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
-import { ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { 
+  ExternalLink, 
+  Image as ImageIcon, 
+  Save, 
+  Layout, 
+  Info, 
+  BarChart3, 
+  Briefcase, 
+  HelpCircle, 
+  Wind, 
+  Calendar, 
+  MessageSquare, 
+  Rocket, 
+  Search, 
+  Eye, 
+  ChevronRight,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2
+} from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function ManageHomeCMSPage() {
   const [formData, setFormData] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
     fetchData();
@@ -38,6 +60,7 @@ export default function ManageHomeCMSPage() {
         body: JSON.stringify(formData)
       });
       setMessage('✅ Home page configuration saved successfully!');
+      setTimeout(() => setMessage(''), 3000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       alert("Failed to save: " + err.message);
@@ -51,14 +74,16 @@ export default function ManageHomeCMSPage() {
   };
 
   const Field = ({ label, field, type = 'text', placeholder = '' }: any) => (
-    <div className="mb-5 flex flex-col">
-      <label className="text-sm font-semibold text-slate-700 mb-2">{label}</label>
+    <div className="space-y-2 group">
+      <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest flex items-center gap-2 group-focus-within:text-primary transition-colors">
+        {label}
+      </label>
       {type === 'textarea' ? (
         <textarea
           value={formData[field] || ''}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-md shadow-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm min-h-[100px]"
+          className="w-full px-5 py-4 bg-primary/5 border border-primary/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all text-sm font-medium min-h-[120px] italic placeholder:text-foreground/20"
         />
       ) : (
         <input
@@ -66,229 +91,239 @@ export default function ManageHomeCMSPage() {
           value={formData[field] || ''}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-md shadow-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm"
+          className="w-full px-5 py-4 bg-primary/5 border border-primary/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all text-sm font-bold placeholder:text-foreground/20"
         />
       )}
     </div>
   );
 
-  if (loading) return <div className="p-8">Loading configuration...</div>;
+  const sections = [
+    { id: 'hero', label: 'Hero Narrative', icon: Layout, color: 'text-primary' },
+    { id: 'about', label: 'Genesis Story', icon: Info, color: 'text-emerald-500' },
+    { id: 'stats', label: 'Impact Pulse', icon: BarChart3, color: 'text-sun' },
+    { id: 'programs', label: 'Strategic Programs', icon: Briefcase, color: 'text-purple-500' },
+    { id: 'framework', label: 'Five Elements', icon: Wind, color: 'text-water' },
+    { id: 'events', label: 'Active Events', icon: Calendar, color: 'text-cyan-500' },
+    { id: 'seo', label: 'Global SEO', icon: Search, color: 'text-indigo-500' },
+  ];
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+      <p className="text-sm font-bold text-foreground/40 uppercase tracking-widest italic tracking-tighter">Accessing CMS Matrix...</p>
+    </div>
+  );
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 fade-in">
-      <div className="mb-6 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Manage Home Page</h1>
-          <p className="text-sm text-slate-500 mt-1 font-medium">Update the comprehensive landing page content fields.</p>
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-black text-foreground tracking-tighter flex items-center gap-4">
+            <Sparkles className="w-10 h-10 text-sun" />
+            Home CMS Master
+          </h1>
+          <p className="text-foreground/60 font-medium italic">Orchestrating the first impression of the global sustainability movement.</p>
         </div>
-        <Link href="/" target="_blank" className="text-sm bg-slate-50 text-slate-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-100 transition-colors border border-slate-200">
-          Preview Live <ExternalLink size={16} />
+        <Link 
+          href="/" 
+          target="_blank" 
+          className="flex items-center gap-3 bg-white/60 backdrop-blur-xl border border-primary/10 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-primary transition-all shadow-sm group"
+        >
+          <Eye size={16} className="group-hover:scale-110 transition-transform" />
+          Live Preview
         </Link>
       </div>
 
       {message && (
-        <div className="mb-6 p-4 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-bold text-sm shadow-sm flex items-center gap-2 animate-in slide-in-from-top-2">
-          {message}
+        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3 text-emerald-600 animate-in zoom-in-95 duration-300">
+          <CheckCircle2 size={20} />
+          <p className="text-sm font-bold">{message}</p>
         </div>
       )}
 
-      <form onSubmit={handleSave} className="space-y-6">
-        
-        {/* SECTION 1: HERO */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">1</div>
-            Hero Section
-          </h2>
-          <Field label="Hero Title" field="hero_title" placeholder="Transforming Education for a Sustainable Future" />
-          <Field label="Hero Subtitle" field="hero_subtitle" placeholder="Empowering Schools..." />
-          <Field label="Hero Description" field="hero_description" type="textarea" />
-          <div className="grid md:grid-cols-2 gap-6 p-4 bg-slate-50 border border-slate-100 rounded-xl mb-4">
-            <Field label="Button 1 Text" field="hero_button_1_text" placeholder="Get Started" />
-            <Field label="Button 1 Link" field="hero_button_1_link" placeholder="/about" />
-            <Field label="Button 2 Text" field="hero_button_2_text" placeholder="Join Us" />
-            <Field label="Button 2 Link" field="hero_button_2_link" placeholder="/contact" />
-          </div>
-          <Field label="Hero Background Image / Video URL" field="hero_image_url" placeholder="https://" />
-        </div>
-
-        {/* SECTION 2: ABOUT / INTRO */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">2</div>
-            About Summary
-          </h2>
-          <Field label="About Title" field="about_title" placeholder="About Green Mentors" />
-          <Field label="About Description" field="about_description" type="textarea" />
-          <div className="grid md:grid-cols-2 gap-6">
-            <Field label="Button Text" field="about_button_text" placeholder="Read More" />
-            <Field label="Button Link" field="about_button_link" placeholder="/about" />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sticky Sidebar Navigation */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8 space-y-2 bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-4 shadow-premium">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={cn(
+                  "w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all group",
+                  activeSection === section.id 
+                    ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                    : "hover:bg-primary/5 text-foreground/40 hover:text-primary"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon size={18} className={cn("transition-colors", activeSection === section.id ? "text-white" : section.color)} />
+                  <span className="text-[11px] font-black uppercase tracking-widest">{section.label}</span>
+                </div>
+                <ChevronRight size={14} className={cn("transition-transform", activeSection === section.id ? "translate-x-1" : "opacity-0")} />
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* SECTION 3: STATISTICS */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">3</div>
-            Our Impact Stats
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-              <Field label="Stat 1 Title" field="stat_1_title" placeholder="Schools Transformed" />
-              <Field label="Stat 1 Value" field="stat_1_value" placeholder="8000+" />
+        {/* Content Form */}
+        <form onSubmit={handleSave} className="lg:col-span-3 space-y-8">
+          
+          {/* HERO SECTION */}
+          {activeSection === 'hero' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Layout className="text-primary" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Hero Narrative</h2>
+              </div>
+              <div className="space-y-8">
+                <Field label="Main Title" field="hero_title" placeholder="Transforming Education for a Sustainable Future" />
+                <Field label="Sub-Header" field="hero_subtitle" placeholder="Empowering Schools..." />
+                <Field label="Executive Summary" field="hero_description" type="textarea" />
+                <div className="grid md:grid-cols-2 gap-8 p-8 bg-primary/5 border border-primary/5 rounded-[2rem]">
+                  <Field label="Primary Action Text" field="hero_button_1_text" />
+                  <Field label="Primary Action Link" field="hero_button_1_link" />
+                  <Field label="Secondary Action Text" field="hero_button_2_text" />
+                  <Field label="Secondary Action Link" field="hero_button_2_link" />
+                </div>
+                <Field label="Atmospheric Media URL (Img/Vid)" field="hero_image_url" placeholder="https://" />
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-              <Field label="Stat 2 Title" field="stat_2_title" placeholder="Educators Trained" />
-              <Field label="Stat 2 Value" field="stat_2_value" placeholder="50,000+" />
+          )}
+
+          {/* ABOUT SECTION */}
+          {activeSection === 'about' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Info className="text-emerald-500" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Genesis Story</h2>
+              </div>
+              <div className="space-y-8">
+                <Field label="Story Title" field="about_title" placeholder="About Green Mentors" />
+                <Field label="Story Narrative" field="about_description" type="textarea" />
+                <div className="grid md:grid-cols-2 gap-8 p-8 bg-emerald-500/5 border border-emerald-500/5 rounded-[2rem]">
+                  <Field label="Discovery Link Text" field="about_button_text" />
+                  <Field label="Discovery Link URL" field="about_button_link" />
+                </div>
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-              <Field label="Stat 3 Title" field="stat_3_title" placeholder="Students Empowered" />
-              <Field label="Stat 3 Value" field="stat_3_value" placeholder="10 Million+" />
+          )}
+
+          {/* STATS SECTION */}
+          {activeSection === 'stats' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <BarChart3 className="text-sun" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Impact Pulse</h2>
+              </div>
+              <div className="grid md:grid-cols-2 gap-10">
+                {[1, 2, 3, 4].map((num) => (
+                  <div key={num} className="p-8 bg-sun/5 border border-sun/10 rounded-[2rem] space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-sun font-black text-xs shadow-sm">
+                        {num}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-sun/60">Metric {num}</span>
+                    </div>
+                    <Field label="Metric Title" field={`stat_${num}_title`} />
+                    <Field label="Metric Value" field={`stat_${num}_value`} />
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-              <Field label="Stat 4 Title" field="stat_4_title" placeholder="Countries Reached" />
-              <Field label="Stat 4 Value" field="stat_4_value" placeholder="45+" />
+          )}
+
+          {/* PROGRAMS SECTION */}
+          {activeSection === 'programs' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Briefcase className="text-purple-500" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Strategic Programs</h2>
+              </div>
+              <Field label="Master Header" field="programs_title" />
+              <div className="space-y-8 mt-10">
+                {[1, 2, 3, 4].map((num) => (
+                  <div key={num} className="p-8 bg-purple-500/5 border border-purple-500/10 rounded-[2rem] space-y-6 group">
+                    <h3 className="text-sm font-black text-purple-500 uppercase tracking-widest">Program Protocol {num}</h3>
+                    <Field label="Title" field={`program_${num}_title`} />
+                    <Field label="Mission Parameters" field={`program_${num}_desc`} type="textarea" />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* SECTION 4: PROGRAMS */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">4</div>
-            Programs / Services
-          </h2>
-          <Field label="Section Title" field="programs_title" placeholder="Our Programs" />
-          <div className="space-y-4">
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <Field label="Program 1 Title" field="program_1_title" />
-              <Field label="Program 1 Description" field="program_1_desc" type="textarea" />
+          {/* FRAMEWORK SECTION */}
+          {activeSection === 'framework' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Wind className="text-water" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Five Elements</h2>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {['Soil', 'Water', 'Air', 'Energy', 'Spaces'].map((elem) => (
+                  <div key={elem} className="p-8 bg-water/5 border border-water/10 rounded-[2rem] space-y-6">
+                    <h3 className="text-sm font-black text-water uppercase tracking-widest">{elem}</h3>
+                    <Field label="Element Label" field={`element_${elem.toLowerCase()}_title`} />
+                    <Field label="Element Insight" field={`element_${elem.toLowerCase()}_desc`} />
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <Field label="Program 2 Title" field="program_2_title" />
-              <Field label="Program 2 Description" field="program_2_desc" type="textarea" />
+          )}
+
+          {/* EVENTS SECTION */}
+          {activeSection === 'events' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Calendar className="text-cyan-500" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Active Events</h2>
+              </div>
+              <Field label="Banner Title" field="events_title" />
+              <Field label="Banner Insight" field="events_description" type="textarea" />
+              <div className="grid md:grid-cols-2 gap-8 p-8 bg-cyan-500/5 border border-cyan-500/10 rounded-[2rem]">
+                <Field label="Call-to-Action Text" field="events_button_text" />
+                <Field label="Call-to-Action Link" field="events_button_link" />
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <Field label="Program 3 Title" field="program_3_title" />
-              <Field label="Program 3 Description" field="program_3_desc" type="textarea" />
+          )}
+
+          {/* SEO SECTION */}
+          {activeSection === 'seo' && (
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-6">
+                <Search className="text-indigo-500" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter">Global SEO</h2>
+              </div>
+              <div className="space-y-8">
+                <Field label="Search Title Meta" field="meta_title" />
+                <Field label="Crawler Keywords" field="meta_keywords" placeholder="keyword1, keyword2" />
+                <Field label="Search Snippet" field="meta_description" type="textarea" />
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <Field label="Program 4 Title" field="program_4_title" />
-              <Field label="Program 4 Description" field="program_4_desc" type="textarea" />
-            </div>
-          </div>
-        </div>
+          )}
 
-        {/* SECTION 5: WHY CHOOSE US */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-           <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">5</div>
-            Why Choose Us
-          </h2>
-          <Field label="Title" field="why_title" />
-          <Field label="Description (Bullet points with hyphens)" field="why_description" type="textarea" />
-        </div>
-
-        {/* SECTION 6: FIVE ELEMENTS FRAMEWORK */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-           <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-bold">6</div>
-            Five Elements Framework
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 rounded-lg"><Field label="Soil Title" field="element_soil_title" /><Field label="Soil Desc" field="element_soil_desc" /></div>
-            <div className="p-4 bg-slate-50 rounded-lg"><Field label="Water Title" field="element_water_title" /><Field label="Water Desc" field="element_water_desc" /></div>
-            <div className="p-4 bg-slate-50 rounded-lg"><Field label="Air Title" field="element_air_title" /><Field label="Air Desc" field="element_air_desc" /></div>
-            <div className="p-4 bg-slate-50 rounded-lg"><Field label="Energy Title" field="element_energy_title" /><Field label="Energy Desc" field="element_energy_desc" /></div>
-            <div className="p-4 bg-slate-50 rounded-lg md:col-span-2"><Field label="Spaces Title" field="element_spaces_title" /><Field label="Spaces Desc" field="element_spaces_desc" /></div>
-          </div>
-        </div>
-
-        {/* SECTION 7: EVENTS */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-           <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold">7</div>
-            Events & Initiatives
-          </h2>
-          <Field label="Section Title" field="events_title" />
-          <Field label="Description" field="events_description" type="textarea" />
-          <div className="grid md:grid-cols-2 gap-6">
-            <Field label="Button Text" field="events_button_text" />
-            <Field label="Button Link" field="events_button_link" />
-          </div>
-        </div>
-
-        {/* SECTION 8: TESTIMONIALS */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-           <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center font-bold">8</div>
-            Testimonials
-          </h2>
-          <Field label="Testimonial Title" field="testimonial_title" />
-          <Field label="Quote" field="testimonial_quote" type="textarea" />
-          <Field label="Author" field="testimonial_author" />
-        </div>
-
-        {/* SECTION 9: CTA */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-           <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center font-bold">9</div>
-            Call To Action
-          </h2>
-          <Field label="CTA Title" field="cta_title" />
-          <Field label="CTA Description" field="cta_description" type="textarea" />
-          <div className="grid md:grid-cols-2 gap-6 p-4 bg-slate-50 border border-slate-100 rounded-xl">
-            <Field label="Button 1 Text" field="cta_button_1_text" />
-            <Field label="Button 1 Link" field="cta_button_1_link" />
-            <Field label="Button 2 Text" field="cta_button_2_text" />
-            <Field label="Button 2 Link" field="cta_button_2_link" />
-          </div>
-        </div>
-
-        {/* SECTION 10: SEO */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">10</div>
-            SEO Settings
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Field label="Meta Title" field="meta_title" />
-            <Field label="Meta Keywords" field="meta_keywords" placeholder="keyword1, keyword2" />
-          </div>
-          <Field label="Meta Description" field="meta_description" type="textarea" />
-        </div>
-
-        {/* SECTION 11: STATUS */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-          <h2 className="text-lg font-black text-slate-800 mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gray-50 text-gray-600 flex items-center justify-center font-bold">11</div>
-            Status
-          </h2>
-          <div className="mb-5 flex flex-col w-64">
-            <label className="text-sm font-semibold text-slate-700 mb-2">Publish Status</label>
-            <select
-              value={formData.status || 'Active'}
-              onChange={(e) => handleChange('status', e.target.value)}
-              className="px-4 py-2.5 bg-white border border-slate-300 rounded-md shadow-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm"
+          {/* Sticky Action Footer */}
+          <div className="sticky bottom-8 z-10">
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full flex items-center justify-center gap-3 py-6 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale group"
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+              {saving ? (
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Save size={18} className="group-hover:rotate-12 transition-transform" />
+                  Synchronize Changes
+                </>
+              )}
+            </button>
           </div>
-        </div>
 
-        {/* FORM CONTROLS */}
-        <div className="sticky bottom-4 z-10 flex items-center gap-4 bg-white/80 backdrop-blur-lg p-4 rounded-2xl border border-slate-200 shadow-xl">
-          <button
-            type="submit"
-            disabled={saving}
-            className="flex-1 py-4 bg-slate-900 text-white text-sm font-black uppercase tracking-wider rounded-xl hover:bg-slate-800 shadow-sm transition-all active:scale-[0.98]"
-          >
-            {saving ? 'Saving...' : 'Save Configuration'}
-          </button>
-        </div>
-
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

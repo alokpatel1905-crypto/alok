@@ -142,4 +142,69 @@ export declare class RankingsService {
         updated_at: Date;
         created_at: Date;
     }>;
+    findAll(page?: number, limit?: number, category?: string): Promise<{
+        data: ({
+            institution: {
+                type: import("@prisma/client").$Enums.InstitutionType;
+                name: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            year: number;
+            category: string;
+            rank: number;
+            score: number | null;
+            institutionId: string;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+    }>;
+    findOne(id: string): Promise<{
+        institution: {
+            type: import("@prisma/client").$Enums.InstitutionType;
+            name: string;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    create(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    update(id: string, data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        year: number;
+        category: string;
+        rank: number;
+        score: number | null;
+        institutionId: string;
+    }>;
 }

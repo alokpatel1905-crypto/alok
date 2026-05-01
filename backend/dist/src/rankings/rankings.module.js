@@ -17,7 +17,7 @@ exports.RankingsModule = RankingsModule;
 exports.RankingsModule = RankingsModule = __decorate([
     (0, common_1.Module)({
         imports: [prisma_module_1.PrismaModule],
-        controllers: [rankings_controller_1.RankingsController],
+        controllers: [rankings_controller_1.RankingsController, rankings_controller_1.RankingsDataController],
         providers: [rankings_service_1.RankingsService],
     })
 ], RankingsModule);

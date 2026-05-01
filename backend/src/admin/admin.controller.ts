@@ -10,7 +10,7 @@ export class AdminController {
 
   @Get('dashboard')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN')
+  @Roles('SUPER_ADMIN', 'PROGRAM_MANAGER', 'CONTENT_EDITOR')
   async getDashboard() {
     const stats = await this.adminService.getDashboardStats();
 
