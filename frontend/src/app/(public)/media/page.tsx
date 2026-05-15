@@ -1,204 +1,180 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getMedia } from '@/lib/api';
-import { Newspaper, FileText, Image as ImageIcon, ArrowRight, Video, Filter, Megaphone, Search, Zap, Globe, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { 
+  Newspaper, PlayCircle, ExternalLink, ArrowRight, Globe, 
+  Leaf, Zap, Download, FileText, Share2, ArrowUpRight 
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
-import { NatureIcon } from '@/components/ui/NatureIcon';
 
-type MediaItem = {
-  title: string;
-  category: string;
-  description: string;
-  image: string;
-  date: string;
-  link: string;
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
 };
 
-const CATEGORY_ICONS: Record<string, any> = {
-  "All": Filter,
-  "News": Newspaper,
-  "Press": Megaphone,
-  "Publications": FileText,
-  "Gallery": ImageIcon,
-  "Video": Video
-};
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
+
+import { getMediaPageConfig, getMediaPosts, apiFetch } from '@/lib/api';
 
 export default function MediaPage() {
   const [config, setConfig] = useState<any>(null);
-  const [items, setItems] = useState<MediaItem[]>([]);
-  const [filteredItems, setFilteredItems] = useState<MediaItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [isLoading, setIsLoading] = useState(true);
-
-  const categories = ["All", ...Array.from(new Set(items.map(i => i.category)))];
+  const [posts, setPosts] = useState<any[]>([]);
+  const [publications, setPublications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const response = await getMedia();
-        setConfig(response);
-        const fetchedItems = response?.items ?? [];
-        setItems(fetchedItems);
-        setFilteredItems(fetchedItems);
-      } catch (error) {
-        console.error("Failed to load media items:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
+    const loadAll = async () => {
+       try {
+          const [cfg, pts, pubs] = await Promise.all([
+             getMediaPageConfig(),
+             getMediaPosts(),
+             apiFetch('/publications')
+          ]);
+          if (cfg) setConfig(cfg);
+          if (pts) setPosts(pts);
+          if (pubs?.data) setPublications(pubs.data);
+       } catch (e) {
+          console.error(e);
+       } finally {
+          setLoading(false);
+       }
+    };
+    loadAll();
   }, []);
 
-  const handleFilter = (cat: string) => {
-    setActiveCategory(cat);
-    if (cat === "All") {
-      setFilteredItems(items);
-    } else {
-      setFilteredItems(items.filter((i) => i.category === cat));
-    }
-  };
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-12 h-12 border-4 border-[#21D469]/20 border-t-[#21D469] rounded-full animate-spin" />
+    </div>
+  );
+
+  const NEWS = posts.filter(p => p.isActive);
 
   return (
-    <div className="overflow-x-hidden bg-background min-h-screen">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[50vh] flex items-center pt-32 pb-20 overflow-hidden bg-foreground">
-        <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full -ml-40 -mt-40 animate-blob" />
-        <Container className="relative z-10 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary-foreground text-xs font-black uppercase tracking-[0.2em] mb-8">
-            <Newspaper size={14} />
-            {config?.subtitle || 'Our Global Impact'}
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-none tracking-tighter">
-            {config?.page_title || 'Media Center'}
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-32 px-8 lg:px-16 overflow-hidden bg-[#F8FAFC]">
+        <div className="max-w-[1800px] mx-auto">
+          <SectionLabel text="GLOBAL ARCHIVES" />
+          <h1 className="text-[clamp(50px,8vw,120px)] leading-[0.85] font-display font-black uppercase mb-16">
+            {config?.page_title?.split(' ')[0] || 'Media'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">{config?.page_title?.split(' ').slice(1).join(' ') || 'and strategic Insights.'}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed font-medium">
-            {config?.intro_description || 'Explore our latest news, press releases, environmental publications, and gallery highlights covering global sustainability in education.'}
+          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-[#0F172A]/80 max-w-2xl">
+            {config?.subtitle || "Stay connected with the latest breakthroughs, strategic dialogues, and publications from the global Green Mentors ecosystem."}
           </p>
-        </Container>
+          {config?.intro_description && (
+             <p className="text-lg font-medium opacity-40 mt-12 max-w-2xl leading-relaxed">{config.intro_description}</p>
+          )}
+        </div>
       </section>
 
-      {/* 2. FILTERS */}
-      <Section background="white" className="py-12 border-b border-black/5 sticky top-20 z-40 bg-white/80 backdrop-blur-md">
-        <Container>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {categories.map((cat) => {
-              const Icon = CATEGORY_ICONS[cat] || Filter;
-              const isActive = activeCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => handleFilter(cat)}
-                  className={cn(
-                    "flex items-center gap-3 px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 border-2",
-                    isActive 
-                      ? "bg-foreground border-foreground text-white shadow-xl shadow-black/10 scale-105" 
-                      : "bg-transparent border-black/5 text-foreground/40 hover:border-primary/40 hover:text-primary"
-                  )}
-                >
-                  <Icon size={14} />
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 3. MEDIA GRID */}
-      <Section background="off-white">
-        <Container>
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                 <div key={i} className="h-[500px] bg-black/5 rounded-[3rem] animate-pulse" />
+      {/* Featured News */}
+      {NEWS.length > 0 && (
+        <section className="py-40 px-8 lg:px-16">
+          <div className="max-w-[1800px] mx-auto">
+            <div className="grid lg:grid-cols-3 gap-12">
+              {NEWS.map((item, i) => (
+                <div key={i} className="relative h-[600px] rounded-[4rem] overflow-hidden shadow-premium">
+                  <img 
+                    src={item.image || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80'} 
+                    className="w-full h-full object-cover" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/20 to-transparent" />
+                  <div className="absolute bottom-12 left-12 right-12 text-white">
+                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-[#21D469] mb-4">
+                      <span>{item.category}</span>
+                      <span>{item.date}</span>
+                    </div>
+                    <h3 className="text-3xl font-display font-black uppercase tracking-tighter leading-tight mb-4 group-hover:text-[#21D469] transition-colors">{item.title}</h3>
+                    <p className="text-sm font-medium italic opacity-60 group-hover:opacity-100 transition-all duration-700 h-0 group-hover:h-auto overflow-hidden leading-relaxed">
+                      {item.description || item.desc}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
-          ) : filteredItems.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-              <AnimatePresence mode="popLayout">
-                {filteredItems.map((item, idx) => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ delay: idx * 0.05 }}
-                    key={idx}
-                  >
-                    <Card variant="default" className="p-0 overflow-hidden group h-full flex flex-col border-none shadow-premium hover:shadow-2xl transition-all duration-500 rounded-[3rem]">
-                      <div className="relative h-64 overflow-hidden">
-                        <img 
-                          src={item.image} 
-                          alt={item.title} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                        />
-                        <div className="absolute top-6 left-6">
-                          <div className="glass px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-foreground shadow-2xl border-white/40">
-                            {item.category}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-10 flex-grow flex flex-col">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">
-                           {item.date}
-                        </div>
-                        <h3 className="text-2xl font-black text-foreground mb-4 group-hover:text-primary transition-colors leading-tight">
-                          {item.title}
-                        </h3>
-                        <p className="text-foreground/50 text-sm font-medium leading-relaxed mb-10 line-clamp-3">
-                          {item.description}
-                        </p>
-                        <div className="mt-auto pt-8 border-t border-black/5">
-                           {item.link && (
-                             <Link href={item.link} className="inline-flex items-center gap-2 text-foreground font-black text-xs uppercase tracking-widest hover:text-primary transition-colors group/link">
-                               Read Full Story <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
-                             </Link>
-                           )}
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Publications */}
+      <section className="py-40 px-8 lg:px-16 bg-[#0F172A] text-white">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="grid lg:grid-cols-12 gap-24 items-center">
+            <div className="lg:col-span-7 space-y-12">
+              <SectionLabel text="STRATEGIC PUBLICATIONS" />
+              <h2 className="text-6xl md:text-8xl leading-[0.9] font-display font-black uppercase">
+                Global <br />
+                <span className="font-serif italic lowercase font-normal text-[#21D469]">white paper</span> <br />
+                Library.
+              </h2>
+              <p className="text-xl font-medium italic opacity-60 leading-relaxed max-w-xl">
+                Access our library of white papers, research journals, and nature-inspired pedagogical frameworks.
+              </p>
+              
+              <div className="space-y-4">
+                {(publications.length > 0 ? publications : [
+                  { title: 'Zero Carbon Roadmap for Schools 2026' },
+                  { title: 'Nature-Mimicry in Educational Architecture' },
+                  { title: 'Global Sustainability Ranking Report 2024' },
+                  { title: 'Teacher Empowerment Handbook' }
+                ]).map((pub, i) => (
+                  <div key={i} className="flex items-center justify-between p-8 bg-white/[0.03] border border-white/5 rounded-3xl group hover:bg-[#21D469] hover:text-[#0F172A] transition-all cursor-pointer">
+                    <div className="flex items-center gap-6">
+                       <FileText size={24} className="text-[#21D469] group-hover:text-[#0F172A]" />
+                       <span className="text-xl font-display font-black uppercase tracking-tighter">{pub.title}</span>
+                    </div>
+                    <Download size={20} className="opacity-20 group-hover:opacity-100" />
+                  </div>
                 ))}
-              </AnimatePresence>
-            </div>
-          ) : (
-            <div className="text-center py-32 bg-white rounded-[4rem] border border-black/5 shadow-2xl shadow-black/5">
-              <div className="w-24 h-24 bg-background rounded-full flex items-center justify-center mx-auto mb-8 border border-black/5">
-                <Newspaper className="text-foreground/10" size={40} />
               </div>
-              <h3 className="text-3xl font-black text-foreground mb-4">No content found</h3>
-              <p className="text-foreground/40 font-medium text-lg">There are no media items available in this category yet.</p>
             </div>
-          )}
-        </Container>
-      </Section>
 
-      {/* 4. CTA SECTION */}
-      <Section background="nature" className="text-center">
-        <Container className="max-w-4xl space-y-10">
-          <Sparkles className="w-16 h-16 text-primary mx-auto opacity-50" />
-          <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-            {config?.cta_title || 'Media Inquiries'}
-          </h2>
-          <p className="text-xl md:text-2xl text-foreground/60 font-medium">
-            {config?.cta_description || 'For press kits, interviews, and media partnerships, please connect with our public relations department.'}
-          </p>
-          {(config?.cta_button_text || config?.cta_button_link) && (
-            <Button variant="primary" size="xl" className="rounded-full shadow-2xl shadow-primary/20">
-               {config?.cta_button_text || 'Contact Media Team'} <ArrowRight className="ml-2" />
-            </Button>
-          )}
-        </Container>
-      </Section>
+            <div className="lg:col-span-5 relative">
+              <div className="aspect-square bg-white text-[#0F172A] rounded-[4rem] p-16 flex flex-col justify-center items-center text-center">
+                 <Zap size={80} className="text-[#21D469] mb-12" />
+                 <h3 className="text-4xl font-display font-black uppercase tracking-tighter mb-8 leading-tight">Access the <br /> Green Library</h3>
+                 <button className="bg-[#0F172A] text-white px-12 py-6 rounded-3xl text-xs font-black uppercase tracking-widest hover:bg-[#21D469] transition-all">
+                    Request Credentials
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Join the Dialogue */}
+      <section className="py-40 px-8 lg:px-16">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="bg-[#F8FAFC] rounded-[4rem] p-12 lg:p-24 border border-black/5 flex flex-col lg:flex-row justify-between items-center gap-12">
+            <div className="space-y-6 max-w-xl">
+               <h2 className="text-6xl font-display font-black uppercase tracking-tighter leading-none">Join the <br /> <span className="text-[#21D469]">Dialogue.</span></h2>
+               <p className="text-xl font-medium italic opacity-40 leading-relaxed">Follow our daily pulse of sustainability on social networks and join the conversation with 50,000+ eco-educators.</p>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 justify-center">
+               {['Instagram', 'Linkedin', 'Twitter', 'Facebook'].map(social => (
+                 <div key={social} className="px-10 py-6 bg-white rounded-full border border-black/5 shadow-premium hover:border-[#21D469] transition-all cursor-pointer flex items-center gap-4 group">
+                    <Share2 size={18} className="text-[#21D469]" />
+                    <span className="text-sm font-black uppercase tracking-widest">{social}</span>
+                    <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-all" />
+                 </div>
+               ))}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-

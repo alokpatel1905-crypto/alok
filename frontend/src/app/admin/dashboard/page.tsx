@@ -45,10 +45,12 @@ const BAR_DATA = [
 import { apiFetch } from '@/lib/api';
 
 export default function DashboardPage() {
+  const [isClient, setIsClient] = useState(false);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setIsClient(true);
     apiFetch('/admin/dashboard')
       .then((res) => {
         setData(res.stats);
@@ -132,40 +134,42 @@ export default function DashboardPage() {
           <p className="text-xs text-foreground/40 font-bold uppercase tracking-wider mb-8">Performance & Engagement</p>
           
           <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-              <AreaChart data={CHART_DATA}>
-                <defs>
-                  <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#064E3B" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#064E3B" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#064E3B10" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 500 }} 
-                  dy={10}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 500 }}
-                />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #064E3B10', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="students" 
-                  stroke="#064E3B" 
-                  strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorStudents)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {isClient && (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={CHART_DATA}>
+                  <defs>
+                    <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#064E3B" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#064E3B" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#064E3B10" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 500 }} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 500 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #064E3B10', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="students" 
+                    stroke="#064E3B" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorStudents)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -175,27 +179,29 @@ export default function DashboardPage() {
           <p className="text-xs text-foreground/40 font-bold uppercase tracking-wider mb-8">Distribution by Type</p>
           
           <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-              <BarChart data={BAR_DATA} layout="vertical" margin={{ left: -20 }}>
-                <XAxis type="number" hide />
-                <YAxis 
-                  dataKey="name" 
-                  type="category" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 600 }}
-                />
-                <Tooltip 
-                  cursor={{ fill: '#064E3B05' }}
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #064E3B10', borderRadius: '12px' }}
-                />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-                  {BAR_DATA.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4ADE80' : '#0EA5E9'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {isClient && (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={BAR_DATA} layout="vertical" margin={{ left: -20 }}>
+                  <XAxis type="number" hide />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#0F172A60', fontSize: 12, fontWeight: 600 }}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: '#064E3B05' }}
+                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #064E3B10', borderRadius: '12px' }}
+                  />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
+                    {BAR_DATA.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4ADE80' : '#0EA5E9'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>

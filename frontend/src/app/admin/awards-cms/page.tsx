@@ -19,7 +19,10 @@ import {
   Layout,
   MousePointer2,
   ListChecks,
-  Eye
+  Eye,
+  ArrowRight,
+  Star,
+  Target
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -55,7 +58,7 @@ export default function ManageAwardsPage() {
         method: 'POST',
         body: JSON.stringify(formData),
       });
-      setMessage('✅ Awards page configuration saved successfully!');
+      setMessage('✅ Awards protocols synchronized successfully!');
       setTimeout(() => setMessage(''), 3000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
@@ -71,7 +74,7 @@ export default function ManageAwardsPage() {
 
   const Field = ({ label, field, type = 'text', placeholder = '' }: any) => (
     <div className="space-y-2 group">
-      <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest flex items-center gap-2 group-focus-within:text-sun transition-colors">
+      <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest flex items-center gap-2 group-focus-within:text-primary transition-colors">
         {label}
       </label>
       {type === 'textarea' ? (
@@ -79,7 +82,7 @@ export default function ManageAwardsPage() {
           value={formData[field] || ''}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          className="w-full px-5 py-4 bg-sun/5 border border-sun/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-sun/5 focus:border-sun/30 transition-all text-sm font-medium min-h-[140px] italic placeholder:text-foreground/20"
+          className="w-full px-5 py-4 bg-primary/5 border border-primary/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all text-sm font-medium min-h-[140px] italic placeholder:text-foreground/20"
         />
       ) : (
         <input
@@ -87,26 +90,26 @@ export default function ManageAwardsPage() {
           value={formData[field] || ''}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          className="w-full px-5 py-4 bg-sun/5 border border-sun/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-sun/5 focus:border-sun/30 transition-all text-sm font-bold placeholder:text-foreground/20"
+          className="w-full px-5 py-4 bg-primary/5 border border-primary/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all text-sm font-bold placeholder:text-foreground/20"
         />
       )}
     </div>
   );
 
   const AwardBlock = ({ prefix, title, icon: Icon }: { prefix: string; title: string; icon: any }) => (
-    <div className="bg-white/60 backdrop-blur-xl border border-sun/10 rounded-[2.5rem] p-10 space-y-8 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
-      <div className="flex items-center gap-3 border-b border-sun/5 pb-6">
-        <Icon className="text-sun" size={24} />
-        <h2 className="text-2xl font-black text-foreground tracking-tighter">{title}</h2>
+    <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="flex items-center gap-4 border-b border-primary/5 pb-8">
+        <Icon className="text-primary" size={24} />
+        <h2 className="text-2xl font-black text-foreground tracking-tighter uppercase">{title}</h2>
       </div>
       
       <div className="grid md:grid-cols-2 gap-8">
-        <Field label="Protocol Title" field={`${prefix}_title`} />
-        <Field label="Sub-Header" field={`${prefix}_subtitle`} />
+        <Field label="Protocol Identity" field={`${prefix}_title`} />
+        <Field label="Subtitle Narrative" field={`${prefix}_subtitle`} />
       </div>
       <Field label="Mission Parameters" field={`${prefix}_description`} type="textarea" />
       
-      <div className="grid md:grid-cols-2 gap-8 p-8 bg-sun/5 border border-sun/10 rounded-[2rem]">
+      <div className="grid md:grid-cols-2 gap-8 p-10 bg-primary/5 border border-primary/10 rounded-[2.5rem]">
         <div className="space-y-6">
           <Field label="Primary Action Text" field={`${prefix}_button_1_text`} />
           <Field label="Primary Action Link" field={`${prefix}_button_1_link`} />
@@ -117,12 +120,12 @@ export default function ManageAwardsPage() {
         </div>
       </div>
       
-      <Field label="Visual Asset URL (Logo/Img)" field={`${prefix}_image`} placeholder="https://" />
+      <Field label="Institutional Asset URL" field={`${prefix}_image`} placeholder="https://" />
     </div>
   );
 
   const sections = [
-    { id: 'intro', label: 'Genesis Intro', icon: Info },
+    { id: 'intro', label: 'Genesis Intro', icon: Layout },
     { id: 'school', label: 'Green School', icon: School },
     { id: 'university', label: 'Green University', icon: Trophy },
     { id: 'teacher', label: 'Green Teacher', icon: Users },
@@ -134,26 +137,28 @@ export default function ManageAwardsPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-      <div className="w-12 h-12 border-4 border-sun/10 border-t-sun rounded-full animate-spin" />
-      <p className="text-sm font-bold text-foreground/40 uppercase tracking-widest italic tracking-tighter">Harvesting Recognition Data...</p>
+      <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+      <p className="text-sm font-black uppercase tracking-widest text-foreground/40 animate-pulse">Syncing Awards Matrix...</p>
     </div>
   );
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
+    <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-black text-foreground tracking-tighter flex items-center gap-4">
-            <Trophy className="w-10 h-10 text-sun" />
-            Awards CMS Master
-          </h1>
-          <p className="text-foreground/60 font-medium italic">Orchestrating the global recognition protocols for sustainable excellence.</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white/40 backdrop-blur-xl border border-primary/5 rounded-[3rem] p-10 shadow-premium">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+             <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-primary" />
+             </div>
+             <h1 className="text-4xl font-display font-black text-foreground tracking-tighter uppercase">Awards Master CMS</h1>
+          </div>
+          <p className="text-foreground/40 font-medium italic pl-1">Orchestrating the global recognition protocols for sustainable excellence.</p>
         </div>
         <Link 
           href="/awards" 
           target="_blank" 
-          className="flex items-center gap-3 bg-white/60 backdrop-blur-xl border border-sun/10 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-sun transition-all shadow-sm group"
+          className="flex items-center gap-3 bg-white/60 backdrop-blur-xl border border-primary/10 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-primary transition-all shadow-sm group"
         >
           <Eye size={16} className="group-hover:scale-110 transition-transform" />
           Live Preview
@@ -161,16 +166,16 @@ export default function ManageAwardsPage() {
       </div>
 
       {message && (
-        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3 text-emerald-600 animate-in zoom-in-95 duration-300">
-          <CheckCircle2 size={20} />
-          <p className="text-sm font-bold">{message}</p>
+        <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-center gap-3 text-primary animate-in zoom-in-95 duration-300 font-bold text-xs uppercase tracking-widest">
+          <CheckCircle2 size={16} />
+          {message}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Sticky Sidebar Navigation */}
         <div className="lg:col-span-1">
-          <div className="sticky top-8 space-y-2 bg-white/60 backdrop-blur-xl border border-sun/10 rounded-[2.5rem] p-4 shadow-premium">
+          <div className="sticky top-8 space-y-2 bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-6 shadow-premium">
             {sections.map((section) => (
               <button
                 key={section.id}
@@ -178,12 +183,12 @@ export default function ManageAwardsPage() {
                 className={cn(
                   "w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all group",
                   activeSection === section.id 
-                    ? "bg-sun text-white shadow-lg shadow-sun/20" 
-                    : "hover:bg-sun/5 text-foreground/40 hover:text-sun"
+                    ? "bg-primary text-white shadow-xl shadow-primary/20" 
+                    : "hover:bg-primary/5 text-foreground/40 hover:text-primary"
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <section.icon size={18} className={cn("transition-colors", activeSection === section.id ? "text-white" : "text-sun/60")} />
+                <div className="flex items-center gap-4">
+                  <section.icon size={18} className={cn("transition-colors", activeSection === section.id ? "text-white" : "text-primary/60")} />
                   <span className="text-[11px] font-black uppercase tracking-widest">{section.label}</span>
                 </div>
                 <ChevronRight size={14} className={cn("transition-transform", activeSection === section.id ? "translate-x-1" : "opacity-0")} />
@@ -193,14 +198,14 @@ export default function ManageAwardsPage() {
         </div>
 
         {/* Content Form */}
-        <form onSubmit={handleSave} className="lg:col-span-3 space-y-8">
+        <form onSubmit={handleSave} className="lg:col-span-3 space-y-10">
           
           {/* INTRO SECTION */}
           {activeSection === 'intro' && (
-            <div className="bg-white/60 backdrop-blur-xl border border-sun/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="flex items-center gap-3 border-b border-sun/5 pb-6">
-                <Layout className="text-sun" size={24} />
-                <h2 className="text-2xl font-black text-foreground tracking-tighter">Genesis Intro</h2>
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-4 border-b border-primary/5 pb-8">
+                <Layout className="text-primary" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter uppercase">Genesis Intro</h2>
               </div>
               <div className="grid md:grid-cols-2 gap-8">
                 <Field label="Manifesto Title" field="page_title" />
@@ -219,17 +224,17 @@ export default function ManageAwardsPage() {
 
           {/* PROCESS SECTION */}
           {activeSection === 'process' && (
-            <div className="bg-white/60 backdrop-blur-xl border border-sun/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="flex items-center gap-3 border-b border-sun/5 pb-6">
-                <ListChecks className="text-sun" size={24} />
-                <h2 className="text-2xl font-black text-foreground tracking-tighter">Awards Process</h2>
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-4 border-b border-primary/5 pb-8">
+                <ListChecks className="text-primary" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter uppercase">Awards Process Flow</h2>
               </div>
-              <Field label="Protocol Header" field="process_title" />
+              <Field label="Process Protocol Header" field="process_title" />
               <div className="grid md:grid-cols-2 gap-8 mt-10">
                 {[1, 2, 3, 4].map((num) => (
-                  <div key={num} className="p-8 bg-sun/5 border border-sun/10 rounded-[2rem] space-y-4">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-sun/40">Phase 0{num}</span>
-                    <Field label={`Step ${num} Label`} field={`step${num}`} />
+                  <div key={num} className="p-8 bg-primary/5 border border-primary/10 rounded-[2rem] space-y-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/40">Phase 0{num}</span>
+                    <Field label={`Step ${num} Parameter`} field={`step${num}`} />
                   </div>
                 ))}
               </div>
@@ -238,15 +243,36 @@ export default function ManageAwardsPage() {
 
           {/* SEO SECTION */}
           {activeSection === 'seo' && (
-            <div className="bg-white/60 backdrop-blur-xl border border-sun/10 rounded-[2.5rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="flex items-center gap-3 border-b border-sun/5 pb-6">
-                <Search className="text-sun" size={24} />
-                <h2 className="text-2xl font-black text-foreground tracking-tighter">Global SEO</h2>
+            <div className="bg-white/60 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-12 space-y-10 shadow-premium animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-4 border-b border-primary/5 pb-8">
+                <Search className="text-primary" size={24} />
+                <h2 className="text-2xl font-black text-foreground tracking-tighter uppercase">Global SEO</h2>
               </div>
               <div className="space-y-8">
                 <Field label="Search Title Meta" field="meta_title" />
                 <Field label="Crawler Keywords" field="meta_keywords" placeholder="keyword1, keyword2" />
-                <Field label="Search Snippet" field="meta_description" type="textarea" />
+                <Field label="Search Snippet Narrative" field="meta_description" type="textarea" />
+              </div>
+
+              <div className="pt-10 border-t border-primary/5">
+                 <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest flex items-center gap-2 mb-4">Institutional Visibility Status</label>
+                 <div className="flex items-center gap-4">
+                    {['Active', 'Inactive'].map((status) => (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => handleChange('status', status)}
+                        className={cn(
+                          "px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                          formData.status === status 
+                            ? "bg-primary text-white border-primary shadow-xl shadow-primary/20" 
+                            : "bg-white/40 text-foreground/40 border-primary/10 hover:border-primary/40"
+                        )}
+                      >
+                        {status} Protocol
+                      </button>
+                    ))}
+                 </div>
               </div>
             </div>
           )}
@@ -256,14 +282,15 @@ export default function ManageAwardsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full flex items-center justify-center gap-3 py-6 bg-sun text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-2xl shadow-sun/30 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale group"
+              className="w-full flex items-center justify-center gap-4 py-7 bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-3xl shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale group"
             >
               {saving ? (
                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <Save size={18} className="group-hover:rotate-12 transition-transform" />
+                  <Save size={20} className="group-hover:rotate-12 transition-transform" />
                   Synchronize Awards Protocol
+                  <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                 </>
               )}
             </button>

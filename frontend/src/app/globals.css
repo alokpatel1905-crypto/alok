@@ -1,57 +1,74 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #064E3B; /* Deep Forest */
-  --color-secondary: #10B981; /* Emerald */
-  --color-accent: #A16207; /* Ochre/Soil */
+  --color-primary: #1C2B1A; /* Deep Olive Black */
+  --color-secondary: #7CB87A; /* Sage Green */
+  --color-accent: #C4873A; /* Warm Amber */
   
   /* New Nature Accents */
-  --color-earth: #8D6E63;
-  --color-water: #0EA5E9;
-  --color-flora: #4ADE80;
-  --color-sun: #F59E0B;
+  --color-earth: #8B6914;
+  --color-water: #5C8F3F;
+  --color-flora: #7CB87A;
+  --color-sun: #D4A853;
   
-  --color-background: #FDFCF0;
-  --color-foreground: #0F172A;
+  --color-background: #F5F0E8;
+  --color-foreground: #1E2B1C;
   
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-poppins), sans-serif;
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-serif: var(--font-playfair), serif;
 
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-3xl: 24px;
   --radius-4xl: 3rem;
 
-  --shadow-premium: 0 10px 40px -10px rgba(6, 78, 59, 0.15);
+  --shadow-premium: 0 10px 40px -10px rgba(44, 62, 45, 0.15);
   --shadow-3d: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
 }
 
 @layer base {
   :root {
-    --background: #FDFCF0;
-    --foreground: #0F172A;
+    --background: #f7faf7;
+    --foreground: #132018;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--background);
+    background:
+      linear-gradient(180deg, #fbfdf9 0%, #f3f7f1 42%, #f8faf6 100%);
     color: var(--foreground);
     @apply font-sans antialiased selection:bg-primary/20 selection:text-primary relative overflow-x-hidden;
+    isolation: isolate;
   }
 
-  /* PREMIUM CANVAS GRAIN OVERLAY */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
-    opacity: 0.2;
+    opacity: 0.14;
     pointer-events: none;
-    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
-    filter: contrast(120%) brightness(100%);
+    background-image:
+      linear-gradient(rgba(19, 32, 24, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(19, 32, 24, 0.035) 1px, transparent 1px);
+    background-size: 80px 80px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold tracking-tight;
+    @apply font-display font-bold;
+    letter-spacing: 0;
+  }
+
+  .font-display {
+    font-family: var(--font-space-grotesk), sans-serif;
+  }
+
+  .font-serif {
+    font-family: var(--font-playfair), serif;
   }
 }
 
@@ -66,7 +83,7 @@
   }
 
   .glass {
-    @apply bg-white/40 backdrop-blur-xl border border-white/30 shadow-3d;
+    @apply bg-white/70 backdrop-blur-xl border border-white/70 shadow-premium;
   }
   
   .glass-dark {
@@ -94,7 +111,7 @@
   }
 
   .depth-card {
-    @apply bg-white border border-white/50 shadow-premium;
+    @apply bg-white border border-black/5 shadow-premium;
     transform: translateZ(20px);
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
@@ -125,7 +142,18 @@
   }
 
   .section-spacing {
-    @apply py-16 lg:py-40;
+    @apply py-16 lg:py-28;
+  }
+
+  .soft-grid {
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
@@ -168,13 +196,152 @@
   @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
 }
 .glass {
-  @apply bg-white/10 backdrop-blur-md border border-white/20;
+  @apply bg-white/70 backdrop-blur-md border border-white/70;
 }
 
 .glass-dark {
-  @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+  @apply bg-black/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.24)];
 }
 
 .shadow-3d {
-  @apply shadow-[0_20px_50px_rgba(0,0,0,0.2)];
+  @apply shadow-[0_18px_44px_rgba(15,32,24,0.14)];
+}
+
+/* Site-wide polish for the existing route utilities. */
+.rounded-2xl,
+.rounded-3xl,
+.rounded-\[2rem\],
+.rounded-\[2\.5rem\],
+.rounded-\[3rem\],
+.rounded-\[4rem\],
+.rounded-\[32px\] {
+  border-radius: 0.5rem !important;
+}
+
+.tracking-tighter,
+.tracking-tight,
+.tracking-\[-0\.05em\],
+.tracking-\[-0\.02em\] {
+  letter-spacing: 0 !important;
+}
+
+.tracking-\[0\.5em\],
+.tracking-\[0\.4em\],
+.tracking-\[0\.3em\],
+.tracking-\[0\.26em\],
+.tracking-\[0\.24em\],
+.tracking-\[0\.2em\],
+.tracking-\[0\.16em\],
+.tracking-\[0\.14em\] {
+  letter-spacing: 0.08em !important;
+}
+
+[class*="blur-[80px]"],
+[class*="blur-[100px]"],
+[class*="blur-[120px]"],
+[class*="blur-[150px]"],
+.animate-blob {
+  display: none !important;
+}
+
+[class*="text-[clamp"],
+.text-9xl,
+.text-8xl,
+.text-7xl {
+  font-size: 4.75rem !important;
+  line-height: 0.96 !important;
+}
+
+.text-6xl {
+  font-size: 3.75rem !important;
+  line-height: 1 !important;
+}
+
+@media (min-width: 640px) {
+  .sm\:text-7xl {
+    font-size: 4.5rem !important;
+    line-height: 0.98 !important;
+  }
+
+  .sm\:text-6xl {
+    font-size: 3.75rem !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:text-8xl {
+    font-size: 4.75rem !important;
+    line-height: 0.96 !important;
+  }
+
+  .md\:text-6xl {
+    font-size: 3.75rem !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:text-9xl,
+  .lg\:text-8xl {
+    font-size: 5rem !important;
+    line-height: 0.96 !important;
+  }
+
+  .lg\:text-6xl {
+    font-size: 3.9rem !important;
+    line-height: 1 !important;
+  }
+}
+
+.max-w-\[1800px\] {
+  max-width: 1280px !important;
+}
+
+.py-40 {
+  padding-top: 7rem !important;
+  padding-bottom: 7rem !important;
+}
+
+.pt-40 {
+  padding-top: 8rem !important;
+}
+
+.pb-32 {
+  padding-bottom: 6rem !important;
+}
+
+input,
+select,
+textarea {
+  border-radius: 0.5rem !important;
+}
+
+button,
+a {
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  [class*="text-[clamp"],
+  .text-9xl,
+  .text-8xl,
+  .text-7xl,
+  .text-6xl {
+    font-size: 3rem !important;
+    line-height: 1.02 !important;
+  }
+
+  .py-40 {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  .pt-40 {
+    padding-top: 7rem !important;
+  }
+
+  .pb-32 {
+    padding-bottom: 4rem !important;
+  }
 }

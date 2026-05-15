@@ -31,6 +31,12 @@ export class PublicationsService {
     return this.prisma.publication.update({ where: { id }, data });
   }
 
+  async findOnePublication(id: string) {
+    const pub = await this.prisma.publication.findUnique({ where: { id } });
+    if (!pub) throw new NotFoundException('Publication not found');
+    return pub;
+  }
+
   async removePublication(id: string) {
     return this.prisma.publication.delete({ where: { id } });
   }
@@ -38,6 +44,12 @@ export class PublicationsService {
   // Press Releases
   async createPressRelease(data: any) {
     return this.prisma.pressRelease.create({ data });
+  }
+
+  async findOnePressRelease(id: string) {
+    const pr = await this.prisma.pressRelease.findUnique({ where: { id } });
+    if (!pr) throw new NotFoundException('Press Release not found');
+    return pr;
   }
 
   async findAllPressReleases(page = 1, limit = 10) {

@@ -3,128 +3,123 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CalendarDays, Award, Star, History, Target, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
-import { NatureIcon } from '@/components/ui/NatureIcon';
+import { ArrowRight, CalendarDays, Award, Star, History, Target, ChevronRight, Zap } from 'lucide-react';
+
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
+};
+
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
 
 export default function MilestonesClient({ page, list }: { page: any, list: any[] }) {
-  const activeMilestones = list.filter((m: any) => m.status === 'Active');
+  const activeMilestones = list.filter((m: any) => !m.status || m.status === 'Active' || m.status === 'PUBLISHED');
 
   return (
-    <div className="overflow-x-hidden bg-[#F2FDF5] perspective-1000">
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
       
-      {/* 1. HERO SECTION - Flora Theme */}
-      <section className="relative min-h-[75vh] flex items-center pt-32 pb-20 overflow-hidden bg-gradient-to-br from-flora/20 via-background to-primary/10">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-flora/10 blur-[150px] rounded-full animate-blob" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full animate-blob animation-delay-2000" />
-        
-        <Container className="relative z-10">
-          <div className="max-w-5xl space-y-12">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-4 px-8 py-3 rounded-full bg-white/50 backdrop-blur-md border border-white text-primary text-[10px] font-black uppercase tracking-[0.4em] shadow-premium"
-            >
-              <div className="w-2.5 h-2.5 rounded-full bg-flora animate-pulse" /> {page.subtitle || 'Historic Growth'}
-            </motion.div>
-            
-            <h1 className="text-7xl md:text-9xl lg:text-[10rem] font-black text-foreground tracking-tighter leading-[0.8] drop-shadow-sm">
-              {page.page_title || 'Our'} <span className="text-flora">Journey</span>.
-            </h1>
-            
-            {page.intro_description && (
-              <p className="text-2xl md:text-3xl text-foreground/70 max-w-3xl leading-tight font-medium border-l-8 border-flora pl-12 py-2">
-                {page.intro_description}
-              </p>
-            )}
-          </div>
-        </Container>
+      {/* Hero */}
+      <section className="relative pt-40 pb-24 px-8 lg:px-16 bg-[#F8FAFC] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#21D469]/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="max-w-[1800px] mx-auto relative z-10">
+          <SectionLabel text="OUR JOURNEY" />
+          <h1 className="text-[clamp(50px,10vw,150px)] leading-[0.85] font-display font-black uppercase mb-12 tracking-tighter">
+            {page.page_title || 'Historic'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">Milestones.</span>
+          </h1>
+          {page.intro_description && (
+            <p className="text-2xl font-serif italic text-[#0F172A]/60 leading-relaxed max-w-3xl border-l-4 border-[#21D469] pl-12">
+              {page.intro_description}
+            </p>
+          )}
+        </div>
       </section>
 
-      {/* 2. TIMELINE SECTION - 3D Perspective Nodes */}
-      <Section className="relative z-10 overflow-visible">
-        <Container className="max-w-6xl">
+      {/* Timeline Section */}
+      <section className="py-32 px-8 lg:px-16 overflow-hidden">
+        <div className="max-w-[1800px] mx-auto relative">
           {activeMilestones.length === 0 ? (
-            <div className="text-center py-40 bg-white rounded-[4rem] shadow-3d border border-white">
-              <History className="w-24 h-24 text-flora/20 mx-auto mb-10" />
-              <h3 className="text-4xl font-black text-foreground/40 tracking-tighter">Growth in progress.</h3>
+            <div className="text-center py-40 bg-[#F8FAFC] rounded-[4rem] border border-black/5">
+              <History size={80} strokeWidth={0.5} className="mx-auto mb-8 opacity-20" />
+              <h3 className="text-3xl font-display font-black uppercase opacity-20 tracking-tighter">Journey in Progress</h3>
             </div>
           ) : (
             <div className="relative">
-              {/* Vertical line with 3D shadow */}
-              <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-2 bg-gradient-to-b from-flora via-primary to-flora rounded-full md:-translate-x-1/2 opacity-20" />
+              {/* Vertical line */}
+              <div className="absolute left-6 lg:left-1/2 top-0 bottom-0 w-[1px] bg-black/5 lg:-translate-x-1/2" />
               
               <div className="space-y-40 relative z-10">
                 {activeMilestones.map((milestone: any, index: number) => {
                   const isEven = index % 2 === 0;
                   return (
-                    <motion.div 
+                    <div 
                       key={milestone.id} 
-                      whileInView={{ opacity: 1, y: 0 }}
-                      initial={{ opacity: 0, y: 50 }}
-                      viewport={{ once: true }}
-                      className={`relative flex flex-col md:flex-row items-center gap-12 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''}`}
+                      className={`relative flex flex-col lg:flex-row items-center gap-12 lg:gap-0 ${isEven ? 'lg:flex-row-reverse' : ''}`}
                     >
-                      {/* 3D Animated Node */}
-                      <motion.div 
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 4, repeat: Infinity }}
-                        className="absolute left-6 md:left-1/2 top-0 md:top-1/2 transform -translate-x-1/2 md:-translate-y-1/2 w-12 h-12 bg-white rounded-full border-4 border-flora shadow-3d z-30 flex items-center justify-center"
-                      >
-                         <div className="w-4 h-4 bg-flora rounded-full" />
-                      </motion.div>
+                      {/* Node */}
+                      <div className="absolute left-6 lg:left-1/2 top-0 lg:top-1/2 transform -translate-x-1/2 lg:-translate-y-1/2 w-4 h-4 bg-white border-2 border-[#21D469] rounded-full z-30 shadow-3d" />
 
-                      {/* Content side with 3D Float */}
-                      <div className={`w-full md:w-1/2 pl-16 md:pl-0 ${isEven ? 'md:pl-20' : 'md:pr-20'}`}>
-                        <motion.div
-                          whileHover={{ rotateY: isEven ? -10 : 10, translateZ: 50 }}
-                          className="preserve-3d"
-                        >
-                          <Card className={cn(
-                            "p-16 rounded-[4rem] border-none shadow-3d group transition-all duration-700",
-                            isEven ? "bg-white hover:bg-flora/5" : "bg-white hover:bg-primary/5"
-                          )}>
-                            <div className="flex items-center justify-between mb-8">
-                              <div className={cn("text-6xl font-black tracking-tighter", isEven ? "text-flora" : "text-primary")}>
-                                {milestone.year}
-                              </div>
-                              <NatureIcon name={isEven ? 'Award' : 'Target'} className={cn("scale-150", isEven ? "text-flora" : "text-primary")} />
+                      {/* Content */}
+                      <div className={`w-full lg:w-1/2 pl-16 lg:pl-0 ${isEven ? 'lg:pl-24' : 'lg:pr-24'}`}>
+                        <div className="group p-12 lg:p-16 bg-white border border-black/5 rounded-[4rem] shadow-premium hover:border-[#21D469] transition-all duration-700">
+                          <div className="flex items-center justify-between mb-8">
+                            <div className="text-6xl font-display font-black tracking-tighter text-[#21D469]">
+                              {milestone.year}
                             </div>
-                            {milestone.title && <h3 className="text-4xl font-black text-foreground mb-8 tracking-tighter leading-none">{milestone.title}</h3>}
-                            <p className="text-xl text-foreground/60 font-medium leading-relaxed">{milestone.description}</p>
-                          </Card>
-                        </motion.div>
+                            <Zap size={40} strokeWidth={1} className="opacity-20 group-hover:opacity-100 group-hover:text-[#FACC15] transition-all" />
+                          </div>
+                          {milestone.title && (
+                            <h3 className="text-3xl font-display font-black uppercase tracking-tighter mb-8 leading-none">
+                              {milestone.title}
+                            </h3>
+                          )}
+                          <p className="text-xl font-medium italic opacity-60 leading-relaxed">
+                            {milestone.description}
+                          </p>
+                        </div>
                       </div>
 
-                      {/* Spacer side */}
-                      <div className="hidden md:block md:w-1/2" />
-                    </motion.div>
+                      {/* Spacer for desktop */}
+                      <div className="hidden lg:block lg:w-1/2" />
+                    </div>
                   );
                 })}
               </div>
             </div>
           )}
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* 3. CTA - Forest Depth */}
-      <Section className="relative overflow-hidden bg-primary">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-flora/20 blur-[150px] rounded-full animate-blob" />
-        <Container className="relative z-10 text-center space-y-16 py-20">
-          <History className="w-32 h-32 text-flora mx-auto opacity-30 animate-float" />
-          <h2 className="text-7xl md:text-[8rem] font-black text-white tracking-tighter leading-[0.85]">
-            Redesigning <br/> <span className="text-flora">History</span>.
+      {/* Final CTA */}
+      <section className="py-40 px-8 lg:px-16 bg-[#0F172A] text-white text-center relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[400px] font-black text-white/[0.02] select-none pointer-events-none font-display">
+          GROW
+        </div>
+        <div className="max-w-4xl mx-auto relative z-10 space-y-12">
+          <SectionLabel text="JOIN THE EVOLUTION" color={COLORS.sage} />
+          <h2 className="text-6xl md:text-9xl leading-[0.8] font-display font-black uppercase">
+            Write the <br />
+            <span className="text-[#21D469]">Future.</span>
           </h2>
-          <div className="flex flex-wrap justify-center gap-10">
-            <Button variant="primary" size="xl" className="rounded-full shadow-3d bg-flora hover:bg-white hover:text-flora px-16 py-10 text-2xl font-black transition-all">
-               {page.button_text || 'Join Now'} <ArrowRight className="ml-4" size={32} />
-            </Button>
+          <p className="text-2xl font-serif italic opacity-60 max-w-2xl mx-auto leading-relaxed">
+            Become part of the global movement transitioning education toward environmental resilience.
+          </p>
+          <div className="flex justify-center pt-8">
+            <button className="bg-[#21D469] text-[#0F172A] px-16 py-8 rounded-3xl text-xs font-black uppercase tracking-[0.4em] hover:bg-white transition-all shadow-3d">
+              {page.button_text || 'Register Protocol'}
+            </button>
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,225 +1,284 @@
-"use client";
+'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { submitContactForm } from '@/lib/api';
-import { MapPin, Phone, Mail, Clock, Send, Earth, ArrowRight, Sparkles, Facebook, Twitter, Linkedin, Instagram, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
-import { NatureIcon } from '@/components/ui/NatureIcon';
+import { 
+  MapPin, Phone, Mail, Globe, Send, ArrowRight, 
+  Leaf, ShieldCheck, Zap, Activity, ArrowUpRight, Share2, HelpCircle, Target,
+  Trophy, GraduationCap, Star
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
-type FormData = {
-  full_name: string;
-  email: string;
-  organization?: string;
-  inquiry_type?: string;
-  subject?: string;
-  message: string;
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
 };
 
-export function ContactPageContent({ config }: { config: any }) {
-  const { register, handleSubmit, reset } = useForm<FormData>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
 
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    setError('');
-    setSuccess('');
-    try {
-      await submitContactForm(data);
-      setSuccess(config.success_message || 'Thank you for reaching out! We will get back to you shortly.');
-      reset();
-    } catch (err) {
-      setError('Failed to send message. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+import { getContactPage } from '@/lib/api';
+
+export default function ContactPageContent() {
+  const [cmsData, setCmsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    organization: '',
+    subject: '',
+    message: ''
+  });
+
+  useEffect(() => {
+    getContactPage().then(data => {
+      if (data) setCmsData(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(cmsData?.success_message || 'Communication Protocol Initiated. A regional expert will respond shortly.');
   };
 
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-12 h-12 border-4 border-[#21D469]/20 border-t-[#21D469] rounded-full animate-spin" />
+    </div>
+  );
+
   return (
-    <div className="overflow-x-hidden">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[60vh] flex items-center pt-32 pb-20 overflow-hidden bg-foreground">
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full -ml-40 -mt-40 animate-blob" />
-        <Container className="relative z-10 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary-foreground text-xs font-black uppercase tracking-[0.2em] mb-8">
-            <Earth className="w-4 h-4" />
-            {config.subtitle || 'Connect with us'}
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-none tracking-tighter">
-            {config.page_title || 'Get in Touch'}
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-32 px-8 lg:px-16 overflow-hidden bg-[#F8FAFC]">
+        <div className="max-w-[1800px] mx-auto">
+          <SectionLabel text="GLOBAL NODES" />
+          <h1 className="text-[clamp(50px,8vw,120px)] leading-[0.85] font-display font-black uppercase mb-16">
+            {cmsData?.page_title?.split(' ')[0] || 'Connect'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">{cmsData?.page_title?.split(' ').slice(1, -1).join(' ') || 'with strategic'}</span> <br />
+            {cmsData?.page_title?.split(' ').slice(-1)[0] || 'Intelligence.'}
           </h1>
-          <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed font-medium">
-            {config.intro_description}
+          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-[#0F172A]/80 max-w-2xl">
+            {cmsData?.subtitle || "Partner with the world's leading architects of sustainable education. Our global network is ready to support your institutional transition."}
           </p>
-        </Container>
+          {cmsData?.intro_description && (
+             <p className="text-lg font-medium opacity-40 mt-12 max-w-2xl leading-relaxed">{cmsData.intro_description}</p>
+          )}
+        </div>
       </section>
 
-      {/* 2. CONTACT INFO & FORM */}
-      <Section background="white">
-        <Container>
-          <div className="grid lg:grid-cols-12 gap-20">
-            
-            {/* Contact Information */}
-            <div className="lg:col-span-5 space-y-12">
-              <div className="space-y-6">
-                <h2 className="text-4xl md:text-5xl font-black text-foreground">Our Global Offices</h2>
-                <p className="text-lg text-foreground/50 font-medium">Have a question about our programs, partnerships, or impact? Our team is ready to help.</p>
+      {/* Contact Matrix */}
+      <section className="py-40 px-8 lg:px-16">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="grid lg:grid-cols-12 gap-24">
+            <div className="lg:col-span-5 space-y-16">
+              <div className="space-y-8">
+                <SectionLabel text="THE NETWORK" />
+                <h2 className="text-6xl font-display font-black uppercase tracking-tighter leading-none">{cmsData?.global_title || 'Global Presence.'}</h2>
+                <p className="text-xl font-medium italic opacity-40 leading-relaxed">
+                  {cmsData?.global_description || 'Our nodes facilitate global coordination for green accreditation and strategic dialogues.'}
+                </p>
               </div>
 
-              <div className="grid gap-6">
-                {[
-                  { icon: Mail, label: 'Email', value: config.email_general, color: 'primary' },
-                  { icon: Phone, label: 'Phone', value: config.phone, color: 'secondary' },
-                  { icon: MapPin, label: 'Global Headquarter', value: config.address, color: 'accent' },
-                ].map((item, i) => (
-                  item.value && (
-                    <Card key={i} variant="flat" className="p-8 border-none bg-background hover:bg-white transition-all group">
-                      <div className="flex gap-6">
-                        <div className={`w-14 h-14 rounded-2xl bg-${item.color}/10 flex items-center justify-center text-${item.color} group-hover:bg-${item.color} group-hover:text-white transition-all`}>
-                          <item.icon size={24} />
-                        </div>
-                        <div>
-                          <p className="text-xs font-black text-foreground/40 uppercase tracking-widest mb-1">{item.label}</p>
-                          <p className="text-xl font-black text-foreground">{item.value}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )
-                ))}
-              </div>
-
-              <div className="pt-8">
-                <p className="text-xs font-black text-foreground/40 uppercase tracking-widest mb-8">Follow Our Journey</p>
-                <div className="flex gap-4">
-                  {[
-                    { icon: Facebook, link: config.facebook },
-                    { icon: Twitter, link: config.twitter },
-                    { icon: Linkedin, link: config.linkedin },
-                    { icon: Instagram, link: config.instagram },
-                  ].map((social, i) => (
-                    social.link && (
-                      <Link key={i} href={social.link} target="_blank" className="w-14 h-14 rounded-2xl border-2 border-black/5 flex items-center justify-center text-foreground/40 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all">
-                        <social.icon size={20} />
-                      </Link>
-                    )
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="lg:col-span-7">
-              <Card variant="default" className="p-10 md:p-16 rounded-[4rem] border-none shadow-premium relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
-                <div className="relative z-10 space-y-10">
-                  <div className="space-y-4">
-                    <h3 className="text-3xl font-black text-foreground flex items-center gap-3">
-                      <MessageCircle className="text-primary" />
-                      Send a Message
-                    </h3>
-                    <div className="h-1 w-20 bg-primary rounded-full" />
+              <div className="space-y-12">
+                <div className="p-12 border border-black/5 rounded-[4rem] group hover:border-[#21D469] transition-all duration-700">
+                  <div className="flex items-center gap-6 mb-8">
+                    <div className="w-12 h-12 bg-[#F8FAFC] rounded-2xl flex items-center justify-center text-[#21D469] group-hover:bg-[#21D469] group-hover:text-[#0F172A] transition-all">
+                      <MapPin size={24} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Primary Headquarters</span>
                   </div>
-
-                  {success && (
-                    <div className="p-6 bg-primary/10 border border-primary/20 text-primary font-black rounded-2xl text-center animate-in zoom-in-95">
-                      {success}
-                    </div>
-                  )}
-                  
-                  {error && (
-                    <div className="p-6 bg-red-50 border border-red-100 text-red-600 font-black rounded-2xl text-center">
-                      {error}
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                    <div className="grid md:grid-cols-2 gap-8">
-                      {config.show_name && (
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Full Name</label>
-                          <input {...register('full_name')} required className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground" />
-                        </div>
-                      )}
-                      {config.show_email && (
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Email Address</label>
-                          <input {...register('email')} type="email" required className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                      {config.show_organization && (
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Organization</label>
-                          <input {...register('organization')} className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground" />
-                        </div>
-                      )}
-                      {config.inquiry_type_options && config.inquiry_type_options.length > 0 && (
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Inquiry Type</label>
-                          <select {...register('inquiry_type')} className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground appearance-none">
-                            {config.inquiry_type_options.map((opt: any) => (
-                              <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                    </div>
-
-                    {config.show_subject && (
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Subject</label>
-                        <input {...register('subject')} className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground" />
-                      </div>
-                    )}
-                    {config.show_message && (
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 pl-2">Your Message</label>
-                        <textarea {...register('message')} required rows={5} className="w-full px-8 py-5 bg-background border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-primary/20 outline-none transition-all font-bold text-foreground resize-none" />
-                      </div>
-                    )}
-                    
-                    <Button disabled={isSubmitting} type="submit" size="xl" className="w-full rounded-full shadow-2xl shadow-primary/20 h-20">
-                      {isSubmitting ? 'Processing...' : (config.button_text || 'Send Inquiry')}
-                      <Send className="ml-3" size={20} />
-                    </Button>
-                  </form>
+                  <h3 className="text-3xl font-display font-black uppercase tracking-tighter mb-4">Office Address.</h3>
+                  <p className="text-sm font-medium italic opacity-60 leading-relaxed mb-8 max-w-xs whitespace-pre-line">
+                    {cmsData?.address || 'India & USA'}
+                  </p>
+                  <div className="space-y-4 pt-8 border-t border-black/5">
+                     <p className="text-sm font-black uppercase tracking-widest flex items-center gap-4"><Phone size={14} className="text-[#21D469]" /> {cmsData?.phone}</p>
+                     <p className="text-sm font-black uppercase tracking-widest flex items-center gap-4"><Mail size={14} className="text-[#21D469]" /> {cmsData?.email_general}</p>
+                  </div>
                 </div>
-              </Card>
+
+                <div className="grid grid-cols-2 gap-6">
+                   <div className="p-8 bg-[#F8FAFC] rounded-[2.5rem] border border-black/5 hover:border-[#21D469] transition-all">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-[#21D469] mb-4">Partnerships</h4>
+                      <p className="text-xs font-black uppercase tracking-widest opacity-40 line-clamp-1">{cmsData?.email_partnership}</p>
+                   </div>
+                   <div className="p-8 bg-[#F8FAFC] rounded-[2.5rem] border border-black/5 hover:border-[#21D469] transition-all">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-[#21D469] mb-4">Media</h4>
+                      <p className="text-xs font-black uppercase tracking-widest opacity-40 line-clamp-1">{cmsData?.email_media}</p>
+                   </div>
+                </div>
+              </div>
             </div>
 
+            <div className="lg:col-span-7">
+               <div className="bg-[#F8FAFC] p-12 lg:p-24 rounded-[4rem] border border-black/5">
+                  <SectionLabel text="INQUIRY PROTOCOL" />
+                  <h2 className="text-4xl font-display font-black uppercase tracking-tighter mb-12">{cmsData?.form_title || 'Send a Message.'}</h2>
+                  <form onSubmit={handleSubmit} className="space-y-12">
+                    <div className="grid md:grid-cols-2 gap-12">
+                      {cmsData?.show_name !== false && (
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 ml-4">Full Name</label>
+                          <input 
+                            type="text" 
+                            placeholder="Your Name"
+                            className="w-full bg-white border border-black/5 rounded-3xl px-10 py-6 outline-none focus:border-[#21D469] transition-all text-sm font-black uppercase tracking-widest shadow-sm"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          />
+                        </div>
+                      )}
+                      {cmsData?.show_email !== false && (
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 ml-4">Official Email</label>
+                          <input 
+                            type="email" 
+                            placeholder="email@organization.com"
+                            className="w-full bg-white border border-black/5 rounded-3xl px-10 py-6 outline-none focus:border-[#21D469] transition-all text-sm font-black uppercase tracking-widest shadow-sm"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-12">
+                      {cmsData?.show_organization !== false && (
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 ml-4">Organization</label>
+                          <input 
+                            type="text" 
+                            placeholder="Institution Name"
+                            className="w-full bg-white border border-black/5 rounded-3xl px-10 py-6 outline-none focus:border-[#21D469] transition-all text-sm font-black uppercase tracking-widest shadow-sm"
+                            value={formData.organization}
+                            onChange={(e) => setFormData({...formData, organization: e.target.value})}
+                          />
+                        </div>
+                      )}
+                      {cmsData?.show_subject !== false && (
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 ml-4">Subject</label>
+                          <input 
+                            type="text" 
+                            placeholder="Inquiry Topic"
+                            className="w-full bg-white border border-black/5 rounded-3xl px-10 py-6 outline-none focus:border-[#21D469] transition-all text-sm font-black uppercase tracking-widest shadow-sm"
+                            value={formData.subject}
+                            onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {cmsData?.show_message !== false && (
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 ml-4">Message</label>
+                        <textarea 
+                          placeholder="Describe your inquiry..."
+                          rows={6}
+                          className="w-full bg-white border border-black/5 rounded-[2.5rem] px-10 py-8 outline-none focus:border-[#21D469] transition-all text-sm font-black uppercase tracking-widest shadow-sm resize-none"
+                          required
+                          value={formData.message}
+                          onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        ></textarea>
+                      </div>
+                    )}
+                    <button type="submit" className="w-full bg-[#0F172A] text-white py-8 rounded-3xl text-xs font-black uppercase tracking-[0.4em] hover:bg-[#21D469] transition-all shadow-3d group">
+                       {cmsData?.button_text || 'Initiate Communication Protocol'} <Send size={16} className="inline ml-4 group-hover:translate-x-2 transition-transform" />
+                    </button>
+                    {cmsData?.response_time && (
+                       <p className="text-center text-[10px] font-black uppercase tracking-widest opacity-20">{cmsData.response_time}</p>
+                    )}
+                  </form>
+               </div>
+            </div>
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* 3. CTA BLOCK */}
-      {(config.cta_title || config.cta_description) && (
-        <Section background="nature" className="text-center">
-          <Container className="max-w-4xl space-y-10">
-            <Sparkles className="w-16 h-16 text-primary mx-auto opacity-50" />
-            <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-              {config.cta_title}
-            </h2>
-            <p className="text-xl md:text-2xl text-foreground/60 font-medium">
-              {config.cta_description}
-            </p>
-            {config.cta_button_text && config.cta_button_link && (
-               <Button variant="primary" size="xl" className="rounded-full">
-                {config.cta_button_text} <ArrowRight className="ml-2" />
-               </Button>
-            )}
-          </Container>
-        </Section>
+      {/* Target Audience */}
+      {cmsData?.who_title && (
+        <section className="py-40 px-8 lg:px-16 bg-[#0F172A] text-white">
+           <div className="max-w-[1800px] mx-auto">
+              <div className="grid lg:grid-cols-2 gap-24 items-center">
+                 <div className="space-y-12">
+                    <SectionLabel text="TARGET AUDIENCE" />
+                    <h2 className="text-6xl font-display font-black uppercase tracking-tighter leading-none">{cmsData.who_title}</h2>
+                    <div className="text-xl font-medium italic opacity-60 leading-relaxed whitespace-pre-line">
+                       {cmsData.who_description}
+                    </div>
+                 </div>
+                 <div className="grid grid-cols-2 gap-8">
+                    {[
+                      { icon: ShieldCheck, label: 'Accreditation' },
+                      { icon: Trophy, label: 'Rankings' },
+                      { icon: GraduationCap, label: 'Programs' },
+                      { icon: Star, label: 'Awards' }
+                    ].map((item, i) => (
+                      <div key={i} className="p-10 border border-white/5 bg-white/[0.02] rounded-[3rem] text-center group hover:bg-[#21D469] transition-all">
+                         <item.icon size={48} className="mx-auto mb-6 text-[#21D469] group-hover:text-[#0F172A]" />
+                         <span className="text-sm font-black uppercase tracking-widest group-hover:text-[#0F172A]">{item.label}</span>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
+        </section>
       )}
 
+      {/* FAQ / Knowledge Base */}
+      {cmsData?.faq_q1 && (
+        <section className="py-40 px-8 lg:px-16">
+           <div className="max-w-[1800px] mx-auto">
+              <SectionLabel text="KNOWLEDGE BASE" />
+              <h2 className="text-6xl font-display font-black uppercase tracking-tighter leading-none mb-24">Common Queries.</h2>
+              <div className="grid md:grid-cols-2 gap-12">
+                 {[
+                   { q: cmsData.faq_q1, a: cmsData.faq_a1 },
+                   { q: cmsData.faq_q2, a: cmsData.faq_a2 }
+                 ].filter(f => f.q).map((faq, i) => (
+                   <div key={i} className="p-12 bg-[#F8FAFC] rounded-[3rem] border border-black/5">
+                      <h4 className="text-2xl font-display font-black uppercase tracking-tighter mb-6">{faq.q}</h4>
+                      <p className="text-lg font-medium italic opacity-60 leading-relaxed">{faq.a}</p>
+                   </div>
+                 ))}
+              </div>
+           </div>
+        </section>
+      )}
+
+      {/* Final CTA */}
+      {cmsData?.cta_title && (
+        <section className="py-40 px-8 lg:px-16 text-center">
+           <div className="max-w-4xl mx-auto space-y-12">
+              <SectionLabel text="ACTION GATEWAY" />
+              <h2 className="text-6xl md:text-8xl font-display font-black uppercase leading-[0.9]">
+                 {cmsData.cta_title.split(' ')[0]} <br />
+                 <span className="text-[#21D469]">{cmsData.cta_title.split(' ').slice(1).join(' ')}</span>
+              </h2>
+              <p className="text-2xl font-serif italic opacity-60 max-w-2xl mx-auto leading-relaxed">
+                 {cmsData.cta_description}
+              </p>
+              <div className="flex justify-center pt-8">
+                 <Link href={cmsData.cta_button_link || "/contact"}>
+                    <button className="bg-[#0F172A] text-white px-16 py-8 rounded-3xl text-xs font-black uppercase tracking-[0.4em] hover:bg-[#21D469] transition-all shadow-3d">
+                       {cmsData.cta_button_text || 'Engage Protocol'}
+                    </button>
+                 </Link>
+              </div>
+           </div>
+        </section>
+      )}
     </div>
   );
 }

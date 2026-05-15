@@ -17,6 +17,7 @@ const STANDARD_PAGES = [
   { slug: 'events', name: 'Events' },
   { slug: 'accreditation', name: 'Accreditation' },
   { slug: 'impact', name: 'Impact' },
+  { slug: 'milestones', name: 'Milestones' },
   { slug: 'home', name: 'Homepage' }
 ];
 
@@ -101,7 +102,21 @@ export default function AdminPagesList() {
                              <td className="px-6 py-5 text-right">
                                  {dbRecord ? (
                                      <Link 
-                                       href={stdPage.slug === 'about' ? '/admin/about' : `/admin/pages/${dbRecord.id}`}
+                                       href={
+                                         stdPage.slug === 'home' ? '/admin/home-cms' :
+                                         stdPage.slug === 'about' ? '/admin/about' :
+                                         stdPage.slug === 'impact' ? '/admin/impact' :
+                                         stdPage.slug === 'accreditation' ? '/admin/accreditations-cms' :
+                                         stdPage.slug === 'rankings' ? '/admin/rankings-cms' :
+                                         stdPage.slug === 'events' ? '/admin/events-cms' :
+                                         stdPage.slug === 'awards' ? '/admin/awards-cms' :
+                                         stdPage.slug === 'networks' ? '/admin/networks-cms' :
+                                         stdPage.slug === 'support' ? '/admin/support-cms' :
+                                         stdPage.slug === 'contact' ? '/admin/contact-cms' :
+                                         stdPage.slug === 'media' ? '/admin/media-cms' :
+                                         stdPage.slug === 'milestones' ? '/admin/milestones' :
+                                         `/admin/pages/${dbRecord.id}`
+                                       }
                                        className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-emerald-600 transition-all shadow-sm"
                                      >
                                          <Edit size={14} /> Edit Content

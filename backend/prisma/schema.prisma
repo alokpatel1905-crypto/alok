@@ -435,6 +435,49 @@ model AuditLog {
   user      User?    @relation(fields: [userId], references: [id])
 }
 
+enum AuditSubmissionStatus {
+  PENDING
+  UNDER_REVIEW
+  VISIT_SCHEDULED
+  COMPLETED
+  REJECTED
+}
+
+model AuditSubmission {
+  id              String                @id @default(cuid())
+  // School profile
+  schoolName      String
+  udise           String?
+  schoolCategory  String?
+  gradeLevels     String[]
+  medium          String?
+  board           String?
+  address         String?
+  village         String?
+  district        String?
+  taluka          String?
+  pinCode         String?
+  principalName   String?
+  mobile          String?
+  email           String?
+  yearEstablished String?
+  totalStudents   String?
+  totalTeachingStaff   String?
+  nonTeachingStaff     String?
+  // All 10 audit sections stored as JSON
+  sections        Json?
+  // Consent
+  submitterName   String?
+  designation     String?
+  submissionDate  String?
+  // Status & metadata
+  status          AuditSubmissionStatus @default(PENDING)
+  reviewNote      String?
+  submittedAt     DateTime?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
 model LoginHistory {
   id        String   @id @default(cuid())
   email     String

@@ -31,6 +31,18 @@ export declare class PublicationsController {
         page: number;
         limit: number;
     }>;
+    findOnePublication(id: string): Promise<{
+        id: string;
+        type: import("@prisma/client").$Enums.PublicationType;
+        createdAt: Date;
+        updatedAt: Date;
+        title: string;
+        image: string | null;
+        status: string;
+        content: string | null;
+        fileUrl: string | null;
+        author: string | null;
+    }>;
     updatePublication(id: string, body: any): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PublicationType;
@@ -79,6 +91,16 @@ export declare class PublicationsController {
         total: number;
         page: number;
         limit: number;
+    }>;
+    findOnePressRelease(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        title: string;
+        image: string | null;
+        status: string;
+        content: string;
+        date: Date;
     }>;
     updatePressRelease(id: string, body: any): Promise<{
         id: string;

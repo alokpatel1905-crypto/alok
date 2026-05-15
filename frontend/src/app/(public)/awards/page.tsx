@@ -1,186 +1,158 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Trophy, Award, Star, Zap, GraduationCap, School, Users, 
+  Search, ShieldCheck, ArrowRight, CheckCircle2, ListChecks, ArrowUpRight
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ArrowRight, Award, CheckCircle2, FileText, Search, Star, Target, Trophy, Sparkles } from 'lucide-react';
-import { apiFetch } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
-import { NatureIcon } from '@/components/ui/NatureIcon';
 
-export const dynamic = 'force-dynamic';
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
+};
 
-async function getAwardsData() {
-  return await apiFetch('/awards-page', { cache: 'no-store' });
-}
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
 
-export default async function AwardsPage() {
-  const page = await getAwardsData();
+import { getAwardsPage } from '@/lib/api';
 
-  if (!page) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-xl text-slate-500 font-medium">Awards page hasn&apos;t been configured yet.</p>
-      </div>
-    );
-  }
+export default function AwardsPage() {
+  const [cmsData, setCmsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const awards = [
-    { prefix: 'school', t: page.school_title, st: page.school_subtitle, d: page.school_description, b1t: page.school_button_1_text, b1l: page.school_button_1_link, b2t: page.school_button_2_text, b2l: page.school_button_2_link, img: page.school_image },
-    { prefix: 'university', t: page.university_title, st: page.university_subtitle, d: page.university_description, b1t: page.university_button_1_text, b1l: page.university_button_1_link, b2t: page.university_button_2_text, b2l: page.university_button_2_link, img: page.university_image },
-    { prefix: 'teacher', t: page.teacher_title, st: page.teacher_subtitle, d: page.teacher_description, b1t: page.teacher_button_1_text, b1l: page.teacher_button_1_link, b2t: page.teacher_button_2_text, b2l: page.teacher_button_2_link, img: page.teacher_image },
-    { prefix: 'graduate', t: page.graduate_title, st: page.graduate_subtitle, d: page.graduate_description, b1t: page.graduate_button_1_text, b1l: page.graduate_button_1_link, b2t: page.graduate_button_2_text, b2l: page.graduate_button_2_link, img: page.graduate_image },
-    { prefix: 'innovator', t: page.innovator_title, st: page.innovator_subtitle, d: page.innovator_description, b1t: page.innovator_button_1_text, b1l: page.innovator_button_1_link, b2t: page.innovator_button_2_text, b2l: page.innovator_button_2_link, img: page.innovator_image },
-    { prefix: 'curriculum', t: page.curriculum_title, st: page.curriculum_subtitle, d: page.curriculum_description, b1t: page.curriculum_button_1_text, b1l: page.curriculum_button_1_link, b2t: page.curriculum_button_2_text, b2l: page.curriculum_button_2_link, img: page.curriculum_image },
-  ].filter((s) => s.t);
+  useEffect(() => {
+    getAwardsPage().then(data => {
+      if (data) setCmsData(data);
+      setLoading(false);
+    });
+  }, []);
 
-  const steps = [
-    { title: page.step1, icon: FileText },
-    { title: page.step2, icon: Search },
-    { title: page.step3, icon: Star },
-    { title: page.step4, icon: Trophy },
-  ].filter((s) => s.title);
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-12 h-12 border-4 border-[#21D469]/20 border-t-[#21D469] rounded-full animate-spin" />
+    </div>
+  );
+
+  const AWARD_PROGRAMS = [
+    { prefix: 'school', title: cmsData?.school_title, subtitle: cmsData?.school_subtitle, desc: cmsData?.school_description, image: cmsData?.school_image, icon: School },
+    { prefix: 'university', title: cmsData?.university_title, subtitle: cmsData?.university_subtitle, desc: cmsData?.university_description, image: cmsData?.university_image, icon: Trophy },
+    { prefix: 'teacher', title: cmsData?.teacher_title, subtitle: cmsData?.teacher_subtitle, desc: cmsData?.teacher_description, image: cmsData?.teacher_image, icon: Users },
+    { prefix: 'graduate', title: cmsData?.graduate_title, subtitle: cmsData?.graduate_subtitle, desc: cmsData?.graduate_description, image: cmsData?.graduate_image, icon: GraduationCap },
+    { prefix: 'innovator', title: cmsData?.innovator_title, subtitle: cmsData?.innovator_subtitle, desc: cmsData?.innovator_description, image: cmsData?.innovator_image, icon: Zap },
+  ].filter(a => a.title);
 
   return (
-    <div className="overflow-x-hidden">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[60vh] flex items-center pt-32 pb-20 overflow-hidden bg-foreground text-white">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 blur-[120px] rounded-full -mr-40 -mt-40 animate-blob" />
-        <Container className="relative z-10 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary-foreground text-xs font-black uppercase tracking-[0.2em] mb-8">
-            <Trophy size={14} className="text-secondary" />
-            Recognizing Global Excellence
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-none tracking-tighter">
-            {page.page_title || 'Global Awards'}
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-32 px-8 lg:px-16 overflow-hidden bg-[#F8FAFC]">
+        <div className="max-w-[1800px] mx-auto">
+          <SectionLabel text="GLOBAL RECOGNITION" />
+          <h1 className="text-[clamp(50px,8vw,120px)] leading-[0.85] font-display font-black uppercase mb-16">
+            {cmsData?.page_title?.split(' ')[0] || 'Celebrating'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">{cmsData?.page_title?.split(' ').slice(1, -1).join(' ') || 'sustainable'}</span> <br />
+            {cmsData?.page_title?.split(' ').slice(-1)[0] || 'Excellence.'}
           </h1>
-          {page.intro_description && (
-            <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed font-medium">
-              {page.intro_description}
-            </p>
+          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-[#0F172A]/80 max-w-2xl">
+            {cmsData?.subtitle || "Green Mentors recognizes the visionaries and institutions leading the global transition toward nature-inspired responsibility."}
+          </p>
+          {cmsData?.intro_description && (
+             <p className="text-lg font-medium opacity-40 mt-12 max-w-2xl leading-relaxed">{cmsData.intro_description}</p>
           )}
-        </Container>
+        </div>
       </section>
 
-      {/* 2. AWARD CATEGORIES */}
-      <Section background="white">
-        <Container className="space-y-32">
-          {awards.map((aw, idx) => {
-            const isReversed = idx % 2 !== 0;
-            return (
-              <div key={idx} className={`grid lg:grid-cols-2 gap-20 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
-                <div className={`relative ${isReversed ? 'lg:order-2' : ''}`}>
-                  <div className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl border border-black/5 bg-slate-50 relative group">
-                    {aw.img ? (
-                      <img src={aw.img} alt={aw.t} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                        <Award className="w-24 h-24 text-primary/20" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-secondary/10 rounded-full blur-3xl" />
-                </div>
-
-                <div className={`space-y-8 ${isReversed ? 'lg:order-1' : ''}`}>
-                  <div className="flex items-center gap-3 text-primary font-black uppercase tracking-widest text-sm">
-                    <div className="w-10 h-0.5 bg-primary" />
-                    Recognition Category 0{idx + 1}
-                  </div>
-                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight">
-                    {aw.t}
-                  </h2>
-                  {aw.st && <p className="text-xl text-foreground/40 font-bold italic">&ldquo;{aw.st}&rdquo;</p>}
-                  <div className="text-lg text-foreground/70 font-medium leading-relaxed whitespace-pre-wrap">
-                    {aw.d}
-                  </div>
-                  <div className="flex flex-wrap gap-4 pt-4">
-                    {aw.b1t && (
-                      <Button variant="primary" size="lg" className="rounded-full shadow-2xl shadow-primary/20">
-                        {aw.b1t} <CheckCircle2 className="ml-2" size={18} />
-                      </Button>
-                    )}
-                    {aw.b2t && (
-                      <Button variant="outline" size="lg" className="rounded-full">
-                        {aw.b2t}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </Container>
-      </Section>
-
-      {/* 3. PROCESS STEPS */}
-      {steps.length > 0 && (
-        <Section background="dark">
-          <Container className="text-center">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-20">{page.process_title || 'Application Process'}</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {steps.map((st, i) => {
-                const Icon = st.icon;
-                return (
-                  <Card key={i} variant="glass" className="p-10 hover:bg-white transition-all group flex flex-col items-center border-white/5">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all mb-8 shadow-xl">
-                      <Icon size={28} />
+      {/* Awards Grid */}
+      <section className="py-40 px-8 lg:px-16">
+         <div className="max-w-[1800px] mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12">
+               {AWARD_PROGRAMS.map((award, i) => (
+                 <div key={i} className="relative h-[600px] rounded-[4rem] overflow-hidden shadow-premium bg-[#0F172A]">
+                    <img 
+                      src={award.image || "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80"} 
+                      className="w-full h-full object-cover opacity-50" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/20 to-transparent" />
+                    
+                    <div className="absolute top-12 left-12">
+                       <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-[#21D469] group-hover:bg-[#21D469] group-hover:text-[#0F172A] transition-all">
+                          <award.icon size={32} />
+                       </div>
                     </div>
-                    <div className="text-white/20 font-black text-6xl mb-4 tabular-nums">0{i + 1}</div>
-                    <h3 className="text-xl font-black text-white group-hover:text-foreground">{st.title}</h3>
-                  </Card>
-                );
-              })}
+
+                    <div className="absolute bottom-12 left-12 right-12 text-white space-y-6">
+                       <div className="space-y-2">
+                          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#21D469]">{award.subtitle || "Global Recognition"}</span>
+                          <h3 className="text-4xl font-display font-black uppercase tracking-tighter leading-none">{award.title}</h3>
+                       </div>
+                       <p className="text-lg font-medium italic opacity-60 leading-relaxed line-clamp-3 group-hover:opacity-100 transition-opacity">
+                          {award.desc}
+                       </p>
+                       <div className="pt-4 flex gap-8">
+                          <Link href="/accreditation" className="flex items-center gap-4 text-xs font-black uppercase tracking-widest hover:text-[#21D469] transition-colors">
+                             Nominate Now <ArrowUpRight size={14} />
+                          </Link>
+                       </div>
+                    </div>
+                 </div>
+               ))}
             </div>
-          </Container>
-        </Section>
+         </div>
+      </section>
+
+      {/* Process Section */}
+      {cmsData?.process_title && (
+        <section className="py-40 px-8 lg:px-16 bg-[#0F172A] text-white overflow-hidden relative">
+           <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[300px] font-black text-white/[0.01] select-none pointer-events-none font-display">
+              PROTOCOL
+           </div>
+           <div className="max-w-[1800px] mx-auto relative z-10">
+              <SectionLabel text="THE PROCESS" />
+              <h2 className="text-6xl md:text-8xl leading-[0.9] font-display font-black uppercase mb-24">
+                 {cmsData.process_title}
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+                 {[cmsData.step1, cmsData.step2, cmsData.step3, cmsData.step4].filter(Boolean).map((step, i) => (
+                   <div key={i} className="group space-y-8 p-12 bg-white/[0.02] border border-white/5 rounded-[3rem] hover:border-[#21D469] transition-all">
+                      <div className="text-6xl font-display font-black text-white/5 group-hover:text-[#21D469]/20 transition-colors">0{i+1}</div>
+                      <h4 className="text-2xl font-display font-black uppercase tracking-tighter leading-tight">{step}</h4>
+                   </div>
+                 ))}
+              </div>
+           </div>
+        </section>
       )}
 
-      {/* 4. WHY RECOGNITION MATTERS */}
-      {(page.why_title || page.why_description) && (
-        <Section background="white" className="text-center">
-          <Container className="max-w-4xl space-y-10">
-            <NatureIcon name="Award" variant="primary" className="mx-auto scale-150 mb-6" />
-            <h2 className="text-4xl md:text-5xl font-black text-foreground">{page.why_title}</h2>
-            <div className="text-lg md:text-xl text-foreground/60 font-medium leading-relaxed whitespace-pre-wrap max-w-3xl mx-auto">
-              {page.why_description}
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 5. CTA */}
-      <Section background="nature" className="text-center">
-        <Container className="max-w-4xl space-y-10">
-          <Sparkles className="w-16 h-16 text-primary mx-auto animate-pulse" />
-          <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-            {page.cta_title || 'Submit Your Nomination'}
-          </h2>
-          {page.cta_description && (
-            <p className="text-xl md:text-2xl text-foreground/60 font-medium">
-              {page.cta_description}
+      {/* Final CTA */}
+      <section className="py-40 px-8 lg:px-16 text-center">
+         <div className="max-w-4xl mx-auto space-y-12">
+            <SectionLabel text="ACTION GATEWAY" />
+            <h2 className="text-6xl md:text-9xl font-display font-black uppercase leading-[0.8]">
+               Ready to be <br />
+               <span className="text-[#21D469]">Honored?</span>
+            </h2>
+            <p className="text-2xl font-serif italic opacity-60 max-w-2xl mx-auto leading-relaxed">
+               Showcase your institution's sustainable journey and inspire the next generation of green leaders.
             </p>
-          )}
-          {page.button_text && (
-            <Button variant="primary" size="xl" className="rounded-full shadow-2xl shadow-primary/20">
-              {page.button_text} <ArrowRight className="ml-2" />
-            </Button>
-          )}
-        </Container>
-      </Section>
-
+            <div className="flex justify-center pt-8">
+               <Link href="/contact">
+                  <button className="bg-[#0F172A] text-white px-16 py-8 rounded-3xl text-xs font-black uppercase tracking-[0.4em] hover:bg-[#21D469] transition-all shadow-3d">
+                     Initiate Nomination
+                  </button>
+               </Link>
+            </div>
+         </div>
+      </section>
     </div>
   );
 }
-
-export async function generateMetadata() {
-  const page = await getAwardsData();
-  if (!page) return { title: 'Awards' };
-
-  return {
-    title: page.meta_title || page.page_title,
-    description: page.meta_description,
-    keywords: page.meta_keywords,
-  };
-}
-

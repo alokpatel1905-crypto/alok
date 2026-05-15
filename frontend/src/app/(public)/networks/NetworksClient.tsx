@@ -1,208 +1,168 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Globe2, 
-  Network, 
-  Target, 
-  Sparkles,
-  FileText,
-  Users
+  Globe, GraduationCap, School, Building2, Globe2, 
+  ArrowRight, CheckCircle2, Zap, Users, Share2, Network, ArrowUpRight 
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Section, Container } from '@/components/ui/Section';
 
-const iconMap: Record<string, any> = {
-  Network,
-  FileText,
-  Users,
-  Globe2,
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
 };
 
-export default function NetworksClient({ page, networks, steps }: { page: any, networks: any[], steps: any[] }) {
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
+
+import { getNetworksPage } from '@/lib/api';
+
+export default function NetworksClient() {
+  const [cmsData, setCmsData] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    getNetworksPage().then(data => {
+      if (data) setCmsData(data);
+    });
+  }, []);
+
+  const NETWORKS = [
+    {
+      title: cmsData?.school_title || 'Indo-American Green School Network',
+      subtitle: cmsData?.school_subtitle || 'Primary Ed Synergy',
+      desc: cmsData?.school_description || 'A collaborative platform for schools to share nature-inspired curriculum, pedagogy, and campus resource management best practices across borders.',
+      icon: School,
+      features: ['Eco-Curriculum Exchange', 'Teacher Mentorship', 'Student Climate Action', 'Verified Accreditation'],
+      link: cmsData?.school_button_1_link || '#'
+    },
+    {
+      title: cmsData?.university_title || 'Indo-American Green University Network',
+      subtitle: cmsData?.university_subtitle || 'Higher Ed Bridge',
+      desc: cmsData?.university_description || 'Connecting premier universities in India and the USA to foster research collaboration, student exchange, and shared sustainability architectural goals.',
+      icon: GraduationCap,
+      features: ['Research Exchange', 'Sustainability Audits', 'Shared Green Tech', 'Global Symposiums'],
+      link: cmsData?.university_button_1_link || '#'
+    },
+    {
+      title: cmsData?.innovator_title || 'Indo-American Green Innovator Network',
+      subtitle: cmsData?.innovator_subtitle || 'Innovation Hub',
+      desc: cmsData?.innovator_description || 'Empowering green innovators and entrepreneurs to scale sustainable solutions through cross-continental institutional support.',
+      icon: Zap,
+      features: ['Tech Incubation', 'Venture Mentorship', 'Global Scale-up', 'Resource Access'],
+      link: cmsData?.innovator_button_1_link || '#'
+    }
+  ];
+
   return (
-    <div className="overflow-x-hidden perspective-2000">
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
       
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[70vh] flex items-center pt-40 pb-20 overflow-hidden bg-[#061B14] text-white">
-        {/* Animated Blobs for Depth */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 blur-[120px] rounded-full -mr-40 -mt-40 animate-blob" />
-        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-water/10 blur-[100px] rounded-full -ml-40 -mb-40 animate-blob animation-delay-2000" />
-        
-        <Container className="relative z-10 text-center max-w-5xl preserve-3d">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-flora/10 border border-flora/20 text-flora text-xs font-black uppercase tracking-[0.4em] mb-10"
-          >
-            <Network size={14} className="animate-spin-slow" />
-            Global Collaborative Ecosystem
-          </motion.div>
-          
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-10 leading-[0.85] tracking-tighter text-shadow-3d">
-            {page.page_title || 'Global Networks'}.
+      {/* Hero */}
+      <section className="relative pt-40 pb-24 px-8 lg:px-16 bg-[#F8FAFC] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#21D469]/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="max-w-[1800px] mx-auto relative z-10">
+          <SectionLabel text="CROSS-CONTINENTAL SYNERGY" />
+          <h1 className="text-[clamp(50px,10vw,150px)] leading-[0.85] font-display font-black uppercase mb-12 tracking-tighter">
+            {cmsData?.page_title?.split(' ')[0] || 'Indo-American'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">{cmsData?.page_title?.split(' ').slice(1, -1).join(' ') || 'Green'}</span> {cmsData?.page_title?.split(' ').slice(-1)[0] || 'Networks.'}
           </h1>
-          
-          {page.intro_description && (
-            <p className="text-xl md:text-2xl text-white/50 max-w-3xl mx-auto leading-relaxed font-medium border-l-4 border-flora pl-8 text-left inline-block">
-              {page.intro_description}
-            </p>
-          )}
-        </Container>
+          <p className="text-2xl font-serif italic text-[#0F172A]/60 leading-relaxed max-w-3xl">
+            {cmsData?.subtitle || "Fostering deep collaboration between the world's two largest democracies to build a unified roadmap for global educational sustainability."}
+          </p>
+        </div>
       </section>
 
-      {/* 2. NETWORK CATEGORIES */}
-      <Section background="white" className="perspective-2000">
-        <Container className="space-y-40 preserve-3d">
-          {networks.map((net, idx) => {
-            const isReversed = idx % 2 !== 0;
-            return (
-              <div key={idx} className={`grid lg:grid-cols-2 gap-24 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
-                <div className={`relative preserve-3d ${isReversed ? 'lg:order-2' : ''}`}>
-                  <motion.div 
-                    whileHover={{ rotateY: isReversed ? 5 : -5, translateZ: 50 }}
-                    className="aspect-[4/3] rounded-[3.5rem] overflow-hidden depth-card relative group shadow-3d"
-                  >
-                    {net.img ? (
-                      <img src={net.img} alt={net.t} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                        <Network className="w-24 h-24 text-primary/20" />
+      {/* Networks Grid */}
+      <section className="py-32 px-8 lg:px-16">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="grid lg:grid-cols-3 gap-12">
+             {NETWORKS.map((net, i) => (
+               <div 
+                key={i}
+                className="group p-12 bg-white rounded-[4rem] border border-black/5 shadow-premium hover:border-[#21D469] transition-all duration-700 flex flex-col gap-12"
+               >
+                  <div className="w-20 h-20 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#21D469] group-hover:bg-[#21D469] group-hover:text-[#0F172A] transition-all shadow-3d">
+                    <net.icon size={40} />
+                  </div>
+                  <div className="space-y-6">
+                    <div className="text-[10px] font-black uppercase tracking-[0.4em] text-[#21D469]">{net.subtitle}</div>
+                    <h2 className="text-3xl font-display font-black uppercase tracking-tighter leading-tight">{net.title}</h2>
+                    <p className="text-xl font-medium italic opacity-60 leading-relaxed">{net.desc}</p>
+                  </div>
+                  <div className="space-y-4 flex-grow">
+                    {net.features.map((feat, j) => (
+                      <div key={j} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest opacity-40">
+                        <div className="w-1.5 h-1.5 bg-[#21D469] rounded-full" />
+                        {feat}
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </motion.div>
-                  <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-flora/5 rounded-full blur-3xl animate-pulse" />
-                </div>
+                    ))}
+                  </div>
+                  <div className="pt-8">
+                    <button className="w-full bg-[#0F172A] text-white py-6 rounded-3xl text-xs font-black uppercase tracking-[0.4em] hover:bg-[#21D469] transition-all shadow-3d active:scale-95">
+                      Join Network <ArrowUpRight size={14} className="inline ml-4" />
+                    </button>
+                  </div>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
 
-                <div className={`space-y-10 preserve-3d ${isReversed ? 'lg:order-1' : ''}`}>
-                  <div className="flex items-center gap-4 text-flora font-black uppercase tracking-[0.5em] text-xs">
-                    <div className="w-12 h-1 bg-flora rounded-full" />
-                    Strategic Network 0{idx + 1}
-                  </div>
-                  <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-foreground tracking-tighter leading-none text-shadow-3d">
-                    {net.t}
-                  </h2>
-                  {net.st && (
-                    <div className="p-6 rounded-2xl bg-off-white border-l-4 border-flora italic text-xl text-foreground/50 font-bold leading-relaxed">
-                      &ldquo;{net.st}&rdquo;
-                    </div>
-                  )}
-                  <div className="text-lg text-foreground/60 font-medium leading-relaxed whitespace-pre-wrap">
-                    {net.d}
-                  </div>
-                  <div className="flex flex-wrap gap-6 pt-6">
-                    {net.b1t && (
-                      <Button variant="primary" size="xl" className="rounded-2xl bg-primary text-white font-black uppercase tracking-widest px-10 hover:scale-105 active:scale-95 shadow-3d">
-                        {net.b1t} <CheckCircle2 className="ml-3" size={20} />
-                      </Button>
-                    )}
-                    {net.b2t && (
-                      <Button variant="outline" size="xl" className="rounded-2xl border-2 border-primary/10 text-primary font-black uppercase tracking-widest px-10 hover:bg-primary/5 transition-all">
-                        {net.b2t}
-                      </Button>
-                    )}
-                  </div>
+      {/* Global Collaboration Section */}
+      <section className="py-40 px-8 lg:px-16 bg-[#0F172A] text-white overflow-hidden relative">
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[800px] h-[800px] bg-[#21D469]/5 blur-[150px] rounded-full pointer-events-none" />
+        <div className="max-w-[1800px] mx-auto">
+           <div className="grid lg:grid-cols-12 gap-24 items-center">
+              <div className="lg:col-span-5 space-y-12">
+                <SectionLabel text="THE BRIDGE" color={COLORS.sage} />
+                <h2 className="text-6xl md:text-9xl leading-[0.8] font-display font-black uppercase tracking-tighter">
+                  {cmsData?.impact_title?.split(' ')[0] || 'Global'} <br />
+                  <span className="text-[#FACC15]">{cmsData?.impact_title?.split(' ').slice(1).join(' ') || 'Collective'}</span> IQ.
+                </h2>
+                <p className="text-2xl font-serif italic opacity-60 leading-relaxed">
+                  {cmsData?.impact_description || 'Our networks are more than just directories; they are strategic bridges for knowledge transfer and nature-inspired research across two continents.'}
+                </p>
+                <div className="flex gap-12">
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-[#21D469]">
+                         <Share2 size={24} />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Flow</span>
+                   </div>
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-[#FACC15]">
+                         <Globe2 size={24} />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Sync</span>
+                   </div>
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-[#21D469]">
+                         <Zap size={24} />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Sync</span>
+                   </div>
                 </div>
               </div>
-            );
-          })}
-        </Container>
-      </Section>
 
-      {/* 3. WHY JOIN + IMPACT */}
-      {(page.why_title || page.impact_title) && (
-        <Section background="off-white" className="perspective-2000">
-          <Container className="preserve-3d">
-            <div className="grid lg:grid-cols-2 gap-12">
-              {page.why_title && (
-                <motion.div 
-                  whileHover={{ y: -20, rotateX: 2 }}
-                  className="p-16 rounded-[4rem] bg-white shadow-premium space-y-10 depth-card floating-vibrant"
-                >
-                  <div className="w-20 h-20 rounded-3xl bg-flora/10 flex items-center justify-center text-flora shadow-xl">
-                    <Target size={40} />
-                  </div>
-                  <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter text-shadow-3d">{page.why_title}</h2>
-                  <div className="text-lg text-foreground/50 font-medium leading-relaxed whitespace-pre-wrap">
-                    {page.why_description}
-                  </div>
-                </motion.div>
-              )}
-              {page.impact_title && (
-                <motion.div 
-                  whileHover={{ y: -20, rotateX: -2 }}
-                  className="p-16 rounded-[4rem] bg-white shadow-premium space-y-10 depth-card floating-subtle animation-delay-2000"
-                >
-                  <div className="w-20 h-20 rounded-3xl bg-water/10 flex items-center justify-center text-water shadow-xl">
-                    <Globe2 size={40} />
-                  </div>
-                  <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter text-shadow-3d">{page.impact_title}</h2>
-                  <div className="text-lg text-foreground/50 font-medium leading-relaxed whitespace-pre-wrap">
-                    {page.impact_description}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 4. PROCESS STEPS */}
-      {steps.length > 0 && (
-        <Section background="dark" className="bg-[#061B14] perspective-2000">
-          <Container className="text-center preserve-3d">
-            <h2 className="text-5xl md:text-7xl font-black text-white mb-24 tracking-tighter text-shadow-3d">{page.process_title || 'Joining Protocol'}</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-              {steps.map((st, i) => {
-                const Icon = iconMap[st.iconName] || Network;
-                return (
-                  <motion.div 
-                    key={i} 
-                    whileHover={{ y: -15, scale: 1.02 }}
-                    className="glass-dark p-12 rounded-[3.5rem] border-white/5 relative overflow-hidden group"
-                  >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-flora to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-flora mb-10 shadow-inner group-hover:bg-flora group-hover:text-primary transition-all duration-500">
-                      <Icon size={32} />
+              <div className="lg:col-span-7">
+                 <div className="aspect-[4/3] bg-white/5 border border-white/10 rounded-[4rem] flex flex-col justify-center items-center text-center p-24 relative overflow-hidden group">
+                    <Globe size={300} strokeWidth={0.5} className="text-white/[0.03]" />
+                    <div className="absolute inset-0 flex flex-col justify-center items-center p-24">
+                       <h3 className="text-4xl lg:text-6xl font-display font-black uppercase tracking-tighter italic leading-none mb-8">Indo-American <br /> Synergy</h3>
+                       <p className="text-xl font-serif italic opacity-40 max-w-sm">Building the infrastructure of hope across the globe.</p>
                     </div>
-                    <div className="text-white/5 font-black text-8xl absolute -bottom-4 -right-4 leading-none tabular-nums group-hover:text-white/10 transition-colors">0{i + 1}</div>
-                    <h3 className="text-2xl font-black text-white text-left relative z-10 leading-tight">{st.title}</h3>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 5. CTA */}
-      <Section background="nature" className="text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5" />
-        <Container className="max-w-5xl space-y-12 relative z-10">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
-            <Sparkles className="w-20 h-20 text-flora mx-auto opacity-50" />
-          </motion.div>
-          <h2 className="text-5xl md:text-8xl font-black text-foreground tracking-tighter text-shadow-3d leading-none">
-            {page.cta_title || 'Become a Global Partner'}
-          </h2>
-          {page.cta_description && (
-            <p className="text-2xl md:text-3xl text-foreground/60 font-medium max-w-3xl mx-auto">
-              {page.cta_description}
-            </p>
-          )}
-          {page.button_text && (
-            <Button variant="primary" size="xl" className="rounded-[2rem] bg-primary text-white font-black uppercase tracking-widest py-10 px-16 hover:scale-110 active:scale-95 shadow-[0_20px_50px_rgba(6,78,59,0.3)] border-none">
-              {page.button_text} <ArrowRight className="ml-4" size={24} />
-            </Button>
-          )}
-        </Container>
-      </Section>
-
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
     </div>
   );
 }

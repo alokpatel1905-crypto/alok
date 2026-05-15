@@ -1,228 +1,267 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Target, User, ArrowRight, Globe, ShieldCheck, Star, ExternalLink, ChevronRight, Leaf } from 'lucide-react';
+import { 
+  ShieldCheck, Award, Globe, Leaf, Users, CheckCircle2, 
+  ArrowRight, MapPin, Building, Target, Compass, 
+  ArrowUpRight, Droplets, Wind, Zap, Landmark 
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
-import { NatureIcon, Icons } from '@/components/ui/NatureIcon';
+import Link from 'next/link';
 
-const springTrans = { type: "spring" as const, stiffness: 300, damping: 30 };
+const COLORS = {
+  ink: '#0F172A',
+  sage: '#21D469',
+  gold: '#FACC15',
+  parchment: '#FFFFFF',
+};
 
-export default function AboutClient({ page }: { page: any }) {
+const SectionLabel = ({ text, color = COLORS.sage }: any) => (
+  <div className="flex items-center gap-4 mb-8">
+    <div className="h-[1px] w-12 bg-black/10" />
+    <span className="text-[10px] font-bold tracking-[0.5em] uppercase" style={{ color }}>
+      {text}
+    </span>
+  </div>
+);
+
+import { getAboutPage } from '@/lib/api';
+
+export default function AboutClient() {
+  const [cmsData, setCmsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAboutPage().then(data => {
+      if (data) setCmsData(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-12 h-12 border-4 border-[#21D469]/20 border-t-[#21D469] rounded-full animate-spin" />
+    </div>
+  );
+
+  const values = [
+    { title: cmsData?.vision_title || 'Global Impact', desc: cmsData?.vision_description || 'Operating across 40+ countries with verified institutional frameworks.', icon: Globe },
+    { title: cmsData?.approach_title || 'Nature Inspired', desc: cmsData?.approach_description || 'Mimicking natural systems to create circular educational environments.', icon: Leaf },
+    { title: 'UN Certified', desc: 'Special Consultative Status with United Nations ECOSOC since 2021.', icon: ShieldCheck },
+  ];
+
   const elements = [
-    { title: page.soil_title || 'Soil', description: page.soil_description, icon: 'Sprout', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { title: page.water_title || 'Water', description: page.water_description, icon: 'Water', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { title: page.air_title || 'Air', description: page.air_description, icon: 'Air', color: 'text-cyan-600', bg: 'bg-cyan-50' },
-    { title: page.energy_title || 'Energy', description: page.energy_description, icon: 'Energy', color: 'text-amber-500', bg: 'bg-amber-50' },
-    { title: page.spaces_title || 'Spaces', description: page.spaces_description, icon: 'Globe', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  ].filter(e => e.description);
+    { id: '01', title: cmsData?.soil_title || 'Soil', desc: cmsData?.soil_description, icon: Landmark, bg: 'bg-amber-50/50', border: 'border-amber-200/40', text: 'text-amber-600' },
+    { id: '02', title: cmsData?.water_title || 'Water', desc: cmsData?.water_description, icon: Droplets, bg: 'bg-blue-50/50', border: 'border-blue-200/40', text: 'text-blue-600' },
+    { id: '03', title: cmsData?.air_title || 'Air', desc: cmsData?.air_description, icon: Wind, bg: 'bg-cyan-50/50', border: 'border-cyan-200/40', text: 'text-cyan-600' },
+    { id: '04', title: cmsData?.energy_title || 'Energy', desc: cmsData?.energy_description, icon: Zap, bg: 'bg-yellow-50/50', border: 'border-yellow-200/40', text: 'text-yellow-600' },
+    { id: '05', title: cmsData?.spaces_title || 'Spaces', desc: cmsData?.spaces_description, icon: Building, bg: 'bg-green-50/50', border: 'border-green-200/40', text: 'text-green-600' },
+  ].filter(e => e.desc);
+
+  const partners = [
+    { name: cmsData?.partner_1_name, link: cmsData?.partner_1_link },
+    { name: cmsData?.partner_2_name, link: cmsData?.partner_2_link },
+    { name: cmsData?.partner_3_name, link: cmsData?.partner_3_link },
+  ].filter(p => p.name);
 
   return (
-    <div className="overflow-x-hidden bg-slate-50">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[80vh] flex items-center pt-32 pb-20 overflow-hidden bg-white border-b border-slate-200">
-        <Container className="relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={springTrans}
-              className="space-y-8"
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold tracking-wide uppercase">
-                <Leaf className="w-3 h-3 text-emerald-600" /> {page.short_subtitle || 'Rooted in Purpose'}
+    <div className="bg-white text-[#0F172A] selection:bg-[#FACC15] selection:text-[#0F172A]">
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-32 px-8 lg:px-16 overflow-hidden">
+        <div className="absolute top-20 right-20 w-[600px] h-[600px] bg-[#21D469]/5 blur-[120px] rounded-full pointer-events-none" />
+        
+        <div className="max-w-[1800px] mx-auto">
+          <SectionLabel text={cmsData?.section_name || "OUR EVOLUTION"} />
+          <h1 className="text-[clamp(50px,8vw,120px)] leading-[0.85] font-display font-black uppercase mb-16">
+            {cmsData?.page_title?.split(' ')[0] || 'Architecting'} <br />
+            <span className="font-serif italic lowercase font-normal text-[#21D469]">{cmsData?.page_title?.split(' ').slice(1, -1).join(' ') || 'the future of'}</span> <br />
+            {cmsData?.page_title?.split(' ').slice(-1)[0] || 'Responsibility.'}
+          </h1>
+          
+          <div className="grid lg:grid-cols-2 gap-20 items-end">
+            <div className="space-y-8">
+               <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-[#0F172A]/80 max-w-2xl">
+                {cmsData?.main_description || 'From a conceptual framework in 2010 to a UN-certified global organization in 2021, we have spent a decade redefining the intersection of pedagogy and planetary health.'}
+               </p>
+               {cmsData?.short_subtitle && (
+                 <p className="text-lg font-medium opacity-40 uppercase tracking-widest">{cmsData.short_subtitle}</p>
+               )}
+            </div>
+            <div className="flex gap-12">
+              <div className="space-y-2">
+                <div className="text-5xl font-display font-black tracking-tighter text-[#21D469]">{cmsData?.founded_year || '10'}+</div>
+                <div className="text-[10px] font-black uppercase tracking-widest opacity-40">Years of R&D</div>
               </div>
-              
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1]">
-                {page.page_title || 'Building'} <br/>
-                <span className="text-emerald-600">Nature.</span>
-              </h1>
-              
-              {page.main_description && (
-                <p className="text-lg md:text-xl text-slate-500 leading-relaxed font-medium max-w-xl">
-                  {page.main_description}
-                </p>
-              )}
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...springTrans, delay: 0.1 }}
-              className="relative"
-            >
-              <div className="relative z-10 rounded-2xl overflow-hidden border border-slate-200 shadow-2xl bg-white aspect-[4/3]">
-                {page.about_image ? (
-                  <img src={page.about_image} alt={page.image_alt || 'About Us'} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                    <Globe className="w-24 h-24 text-slate-300" />
-                  </div>
-                )}
-                
-                <div className="absolute bottom-6 right-6 bg-white border border-slate-200 shadow-lg rounded-xl p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
-                    <ShieldCheck size={24} />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 tracking-tight">EST. 2010</div>
-                    <div className="text-xs text-slate-500 font-medium">Sustainability Pioneers</div>
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <div className="text-5xl font-display font-black tracking-tighter text-[#21D469]">{cmsData?.countries_count || '40'}+</div>
+                <div className="text-[10px] font-black uppercase tracking-widest opacity-40">Global Nodes</div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* 2. VISION & MISSION */}
-      {(page.vision_title || page.vision_description) && (
-        <Section background="off-white" className="border-b border-slate-200">
-          <Container>
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="relative order-2 lg:order-1">
-                <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-square lg:aspect-auto lg:h-[600px] bg-white">
-                  <img 
-                    src={page.about_image || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80"} 
-                    className="w-full h-full object-cover" 
-                    alt="Vision"
-                  />
+      {/* Main Image Section */}
+      {cmsData?.about_image && (
+        <section className="px-8 lg:px-16 pb-40">
+           <div className="max-w-[1800px] mx-auto aspect-[21/9] rounded-[4rem] overflow-hidden shadow-premium">
+              <img 
+                src={cmsData.about_image} 
+                alt={cmsData.image_alt || "Institutional Mission"} 
+                className="w-full h-full object-cover"
+              />
+              {cmsData.image_caption && (
+                <div className="absolute bottom-10 left-10 bg-white/90 backdrop-blur-md px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl">
+                  {cmsData.image_caption}
                 </div>
-              </div>
-
-              <div className="space-y-10 order-1 lg:order-2">
-                <div>
-                  <div className="text-sm font-bold text-emerald-600 tracking-wide uppercase mb-3">The Strategic Path</div>
-                  <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
-                    {page.vision_title || 'Visionary Impact.'}
-                  </h2>
-                </div>
-                
-                <div className="text-lg text-slate-600 leading-relaxed font-medium">
-                  {page.vision_description}
-                </div>
-                
-                <div className="grid grid-cols-2 gap-6 pt-6">
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="text-4xl font-bold text-slate-900 tracking-tight mb-2">2021</div>
-                    <div className="text-sm font-semibold text-slate-500">ECOSOC Status</div>
-                  </div>
-                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="text-4xl font-bold text-slate-900 tracking-tight mb-2">Net 0</div>
-                    <div className="text-sm font-semibold text-slate-500">Global Pledge</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </Section>
+              )}
+           </div>
+        </section>
       )}
 
-      {/* 3. ELEMENTS FRAMEWORK */}
-      {elements.length > 0 && (
-        <Section background="white" className="border-b border-slate-200">
-          <Container>
-            <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">The 5 Elements.</h2>
-              <p className="text-lg text-slate-500 font-medium leading-relaxed">
-                Our holistic blueprint for designing regenerative education ecosystems across the globe.
+      {/* Philosophy Section */}
+      <section className="bg-[#0F172A] text-white py-40 px-8 lg:px-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-20 text-[300px] font-black text-white/[0.02] leading-none select-none pointer-events-none font-display">
+          ECO
+        </div>
+        
+        <div className="max-w-[1800px] mx-auto relative z-10">
+          <div className="grid lg:grid-cols-12 gap-24 items-start">
+            <div className="lg:col-span-5 space-y-12">
+              <SectionLabel text="THE PHILOSOPHY" />
+              <h2 className="text-6xl md:text-8xl leading-[0.9] font-display font-black uppercase">
+                Nature is the <br />
+                <span className="text-[#21D469]">Primary</span> <br />
+                Pedagogue.
+              </h2>
+              <p className="text-xl font-medium italic opacity-60 leading-relaxed max-w-md">
+                We believe that the classroom is not a box, but a living ecosystem. Our mission is to strip away the industrial layers of education and return to the wisdom of biological efficiency.
               </p>
+              <button className="group flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] hover:text-[#21D469] transition-all">
+                LEARN MORE <ArrowUpRight className="group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
+              </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-              {elements.map((el, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col items-start gap-4 group"
+            <div className="lg:col-span-7 grid md:grid-cols-2 gap-8">
+              {values.map((v, i) => (
+                <div 
+                  key={i} 
+                  className="p-12 border border-white/5 bg-white/[0.02] rounded-[3rem] hover:bg-[#21D469] hover:text-[#0F172A] transition-all duration-700 group cursor-pointer"
                 >
-                  <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center transition-colors", el.bg, el.color)}>
-                    <NatureIcon name={el.icon as any} size={28} />
-                  </div>
-                  <div className="space-y-2 mt-2">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Element 0{i + 1}</div>
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                      {el.title}
-                    </h3>
-                  </div>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed mt-2 flex-grow">
-                    {el.description}
-                  </p>
+                  <v.icon size={48} className="mb-8 text-[#21D469] group-hover:text-[#0F172A] transition-colors" />
+                  <h3 className="text-2xl font-display font-black uppercase mb-4 tracking-tighter">{v.title}</h3>
+                  <p className="text-sm font-medium italic opacity-60 group-hover:opacity-100">{v.desc}</p>
                 </div>
               ))}
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 4. FOUNDER / LEADERSHIP */}
-      {(page.founder_name || page.leadership_title) && (
-        <Section background="off-white" className="border-b border-slate-200">
-          <Container>
-            <div className="text-center mb-16">
-               <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900">
-                 {page.leadership_title || 'Global Leadership'}
-               </h2>
-            </div>
-
-            <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
-              <div className="md:w-2/5 relative h-80 md:h-auto bg-slate-100 border-b md:border-b-0 md:border-r border-slate-200">
-                 {page.founder_image ? (
-                   <img src={page.founder_image} alt={page.founder_name} className="absolute inset-0 w-full h-full object-cover" />
-                 ) : (
-                   <div className="absolute inset-0 flex items-center justify-center">
-                     <User className="w-24 h-24 text-slate-300" />
-                   </div>
-                 )}
-              </div>
-              
-              <div className="md:w-3/5 p-10 md:p-16 flex flex-col justify-center space-y-8">
-                 <div>
-                   <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-2">{page.founder_name}</h3>
-                   <div className="inline-flex items-center text-emerald-700 font-semibold text-sm bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                     {page.founder_designation}
-                   </div>
-                 </div>
-                 
-                 <div className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-200 pl-6">
-                   "{page.founder_description}"
-                 </div>
-                 
-                 {page.founder_profile_link && (
-                   <div className="pt-4">
-                     <Button variant="outline" size="lg" className="rounded-xl border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold">
-                       Meet the Founder <ExternalLink className="ml-2 w-4 h-4" />
-                     </Button>
-                   </div>
-                 )}
+              <div className="p-12 bg-[#21D469] text-[#0F172A] rounded-[3rem] flex flex-col justify-between">
+                <Target size={48} />
+                <div>
+                  <h3 className="text-3xl font-display font-black uppercase tracking-tighter leading-none mb-4">Zero Carbon <br /> Campus.</h3>
+                  <p className="text-sm font-bold uppercase tracking-widest opacity-60">2030 Global Target</p>
+                </div>
               </div>
             </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 5. FINAL CTA */}
-      <Section className="bg-[#0A0A0A] border-b border-slate-800 text-white py-24">
-        <Container className="text-center space-y-12 max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
-            Let's Redesign <br/> <span className="text-emerald-500">The Future</span>.
-          </h2>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button variant="primary" size="lg" className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold border-none px-8">
-              Start Your Journey <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="lg" className="rounded-xl border-white/20 hover:bg-white/10 text-white font-semibold px-8">
-              Explore Programs
-            </Button>
           </div>
-        </Container>
-      </Section>
-      
+        </div>
+      </section>
+
+      {/* Five Elements Section */}
+      {elements.length > 0 && (
+        <section className="py-40 px-8 lg:px-16">
+          <div className="max-w-[1800px] mx-auto">
+             <SectionLabel text="THE FIVE ELEMENTS FRAMEWORK" />
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                {elements.map((el) => (
+                  <div key={el.id} className={cn("p-12 rounded-[3rem] border space-y-8", el.bg, el.border)}>
+                     <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm", el.text)}>
+                        <el.icon size={24} />
+                     </div>
+                     <div>
+                        <span className={cn("text-[10px] font-black uppercase tracking-widest block mb-2", el.text)}>Element {el.id}</span>
+                        <h4 className="text-2xl font-display font-black uppercase tracking-tighter mb-4">{el.title}</h4>
+                        <p className="text-sm font-medium italic opacity-60 leading-relaxed">{el.desc}</p>
+                     </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Leadership Section */}
+      <section className="py-40 px-8 lg:px-16 bg-[#F8FAFC]">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
+            <div className="relative">
+              <div className="aspect-[4/5] rounded-[4rem] overflow-hidden shadow-premium">
+                <img 
+                  src={cmsData?.founder_image || "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80"} 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+              <div className="absolute -bottom-10 -right-10 bg-white p-12 rounded-[3rem] shadow-3d border border-black/5 max-w-xs transition-transform duration-500">
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-[#21D469] mb-4">The Visionary</div>
+                <h4 className="text-3xl font-display font-black uppercase italic tracking-tighter mb-2">{cmsData?.founder_name || 'Virendra Rawat'}</h4>
+                <p className="text-xs font-bold opacity-40 uppercase tracking-widest">{cmsData?.founder_designation || 'UNGA Award Recipient 2019'}</p>
+                {cmsData?.founder_profile_link && (
+                  <Link href={cmsData.founder_profile_link} className="inline-flex items-center gap-2 mt-6 text-[9px] font-black uppercase tracking-widest text-[#21D469] hover:translate-x-2 transition-transform">
+                    View Network <ArrowRight size={14} />
+                  </Link>
+                )}
+              </div>
+            </div>
+            
+            <div className="space-y-12">
+              <SectionLabel text="LEADERSHIP" />
+              <h2 className="text-6xl md:text-8xl leading-[0.9] font-display font-black uppercase">
+                {cmsData?.leadership_title?.split(' ')[0] || 'Institutional'} <br />
+                <span className="font-serif italic lowercase font-normal text-[#21D469]">{cmsData?.leadership_title?.split(' ').slice(1).join(' ') || 'Responsibility'}</span> <br />
+                First.
+              </h2>
+              <div className="space-y-8 max-w-xl">
+                <p className="text-xl font-medium leading-relaxed italic text-[#0F172A]/70">
+                  {cmsData?.founder_description || 'Supported by co-founders Ambrish Parajiya, Gopal Goswami, and Bhavesh Hakani, Green Mentors has evolved into a global force with a presence in Ahmedabad, NYC, and Brooklyn.'}
+                </p>
+                <div className="h-[1px] w-full bg-black/5" />
+                <p className="text-lg leading-relaxed text-[#0F172A]/50">
+                  {cmsData?.growth_description || 'Our leadership team combines decades of expertise in architecture, pedagogy, and international policy to deliver verified sustainability frameworks that win awards and protect the future.'}
+                </p>
+              </div>
+
+              {partners.length > 0 && (
+                <div className="pt-12 border-t border-black/5">
+                   <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 mb-8 block">Global Strategic Partners</span>
+                   <div className="flex flex-wrap gap-8">
+                      {partners.map((p, i) => (
+                        <div key={i} className="flex items-center gap-4 group cursor-pointer">
+                           <div className="w-2 h-2 rounded-full bg-[#21D469]" />
+                           <span className="text-sm font-black uppercase tracking-widest group-hover:text-[#21D469] transition-colors">{p.name}</span>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Global Status Marquee */}
+      <div className="bg-[#21D469] py-8 overflow-hidden border-y border-black/5">
+        <div className="flex whitespace-nowrap">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex items-center gap-12 px-6">
+              <span className="text-[10px] font-black tracking-[0.4em] uppercase text-[#0F172A]">UN ECOSOC Certified</span>
+              <div className="w-2 h-2 rounded-full bg-[#0F172A]" />
+              <span className="text-[10px] font-black tracking-[0.4em] uppercase text-[#0F172A]">UNESCO GEP Member</span>
+              <div className="w-2 h-2 rounded-full bg-[#0F172A]" />
+              <span className="text-[10px] font-black tracking-[0.4em] uppercase text-[#0F172A]">AASHE Leadership</span>
+              <div className="w-2 h-2 rounded-full bg-[#0F172A]" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
-

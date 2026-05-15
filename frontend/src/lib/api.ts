@@ -1,5 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://127.0.0.1:4000');
+  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://localhost:4000');
 
 /**
  * Core fetch wrapper with auth support
@@ -56,6 +56,110 @@ export async function getHomePage() {
   }
 }
 
+export async function getAboutPage() {
+  try {
+    return await apiFetch('/about-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getImpactPage() {
+  try {
+    return await apiFetch('/impact-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getAccreditationPage() {
+  try {
+    return await apiFetch('/accreditation-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getAwardsPage() {
+  try {
+    return await apiFetch('/awards-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getMilestonesPage() {
+  try {
+    return await apiFetch('/milestones/page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getMilestones() {
+  try {
+    return await apiFetch('/milestones');
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function getNetworksPage() {
+  try {
+    return await apiFetch('/networks-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getRankingsPage() {
+  try {
+    return await apiFetch('/rankings-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getEventsPage() {
+  try {
+    return await apiFetch('/events-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getSupportPage() {
+  try {
+    return await apiFetch('/support-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getContactPage() {
+  try {
+    return await apiFetch('/contact-page');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getMediaPageConfig() {
+  try {
+    return await apiFetch('/api/media-page/config');
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getMediaPosts() {
+  try {
+    return await apiFetch('/api/media-page/posts');
+  } catch (error) {
+    return [];
+  }
+}
+
 export async function getPageData(slug: string) {
   try {
     const res = await fetch(`${API_URL}/pages/public/${slug}`, {
@@ -85,11 +189,6 @@ export async function updatePageContent(id: string, data: any) {
     body: JSON.stringify(data),
   });
 }
-
-export async function getContactPage() {
-  return apiFetch('/api/contact-page');
-}
-
 export async function submitContactForm(data: any) {
   return apiFetch('/api/contact-submit', {
     method: 'POST',

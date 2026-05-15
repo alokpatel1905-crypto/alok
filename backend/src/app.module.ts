@@ -34,6 +34,7 @@ import { ContactPageModule } from './contact-page/contact-page.module';
 import { MediaPageModule } from './media-page/media-page.module';
 import { HomePageModule } from './home-page/home-page.module';
 import { MenuModule } from './menu/menu.module';
+import { AuditSubmissionModule } from './audit-submission/audit-submission.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { MenuModule } from './menu/menu.module';
     MediaPageModule,
     HomePageModule,
     MenuModule,
+    AuditSubmissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

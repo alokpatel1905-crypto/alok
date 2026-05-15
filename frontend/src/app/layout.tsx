@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Playfair_Display, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,10 +8,15 @@ const inter = Inter({
   display: 'swap',
 });
 
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700', '800', '900'],
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-poppins",
+  variable: "--font-playfair",
+  display: 'swap',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
   display: 'swap',
 });
 
@@ -28,10 +33,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable} h-full antialiased`}
+      className={`${inter.variable} ${playfair.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-
-      <body className="min-h-full flex flex-col font-sans bg-[#FDFDFD]">{children}</body>
+      <body className="min-h-full flex flex-col font-sans selection:bg-[#FACC15] selection:text-[#0F172A]">
+        <main className="flex-grow">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

@@ -1,304 +1,238 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowRight, Leaf, Globe, ChevronRight, Quote, Heart, Star, Users, Zap, ShieldCheck, PlayCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Section, Container } from '@/components/ui/Section';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Award,
+  CheckCircle2,
+  Droplets,
+  GraduationCap,
+  Layers,
+  Mountain,
+  School,
+  ShieldCheck,
+  Sun,
+  Users,
+  Wind,
+} from 'lucide-react';
+import { getHomePage } from '@/lib/api';
 import { StatsCounter } from '@/components/ui/StatsCounter';
-import { NatureIcon } from '@/components/ui/NatureIcon';
 
-const springTrans = { type: "spring" as const, stiffness: 300, damping: 30 };
+const heroImage = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80';
+const campusImage = 'https://images.unsplash.com/photo-1542601063-7ac3b052146d?auto=format&fit=crop&q=80';
+const summitImage = 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80';
 
-export default function HomeClient({ page }: { page: any }) {
+type CmsData = Record<string, string | undefined> | null;
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <div className="mb-5 flex items-center gap-3 text-xs font-bold uppercase text-[#2c7c45]">
+    <span className="h-px w-10 bg-[#2c7c45]/35" />
+    {children}
+  </div>
+);
+
+const cleanTitle = (value: string | undefined, fallback: string) => value?.trim() || fallback;
+
+export default function HomeClient() {
+  const [cmsData, setCmsData] = useState<CmsData>(null);
+
+  useEffect(() => {
+    getHomePage().then((data) => {
+      if (data) setCmsData(data);
+    });
+  }, []);
+
+  const stats = useMemo(() => [
+    { label: cmsData?.stat_1_title || 'Green Schools', value: cmsData?.stat_1_value || '2000' },
+    { label: cmsData?.stat_2_title || 'Universities', value: cmsData?.stat_2_value || '200' },
+    { label: cmsData?.stat_3_title || 'Teachers', value: cmsData?.stat_3_value || '50000' },
+    { label: cmsData?.stat_4_title || 'Leaders', value: cmsData?.stat_4_value || '20000' },
+  ], [cmsData]);
+
+  const programs = [
+    { title: cmsData?.program_1_title || 'Green School Program', desc: cmsData?.program_1_desc || 'Campus systems, student leadership, and learning practices aligned to measurable sustainability goals.', icon: School },
+    { title: cmsData?.program_2_title || 'Green University Program', desc: cmsData?.program_2_desc || 'Institution-wide frameworks for responsible operations, research, governance, and climate literacy.', icon: GraduationCap },
+    { title: cmsData?.program_3_title || 'Mentor Network', desc: cmsData?.program_3_desc || 'Training pathways that help educators guide practical sustainability action across communities.', icon: Users },
+    { title: cmsData?.program_4_title || 'Recognition & Awards', desc: cmsData?.program_4_desc || 'Transparent accreditation and recognition for institutions leading the transition.', icon: Award },
+  ];
+
+  const elements = [
+    { title: cmsData?.element_soil_title || 'Soil Care', desc: cmsData?.element_soil_desc || 'Regenerative landscapes and outdoor learning foundations.', icon: Mountain },
+    { title: cmsData?.element_water_title || 'Water Wisdom', desc: cmsData?.element_water_desc || 'Conservation, reuse, and student-led water literacy.', icon: Droplets },
+    { title: cmsData?.element_air_title || 'Air Quality', desc: cmsData?.element_air_desc || 'Healthier classrooms through ventilation and green cover.', icon: Wind },
+    { title: cmsData?.element_energy_title || 'Clean Energy', desc: cmsData?.element_energy_desc || 'Efficiency, renewables, and visible energy accountability.', icon: Sun },
+    { title: cmsData?.element_spaces_title || 'Living Spaces', desc: cmsData?.element_spaces_desc || 'Campus design that makes sustainability part of daily life.', icon: Layers },
+  ];
+
   return (
-    <div className="overflow-x-hidden bg-slate-50">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-24 lg:pt-32 overflow-hidden bg-white border-b border-slate-200">
-        <Container className="relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={springTrans}
-              className="space-y-8"
-            >
-              {page.hero_subtitle && (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold tracking-wide">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  {page.hero_subtitle}
-                </div>
-              )}
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1]">
-                {page.hero_title || 'Nature Tech'} <span className="text-emerald-600">2026</span>.
-              </h1>
-              {page.hero_description && (
-                <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-xl font-medium">
-                  {page.hero_description}
-                </p>
-              )}
-              <div className="flex flex-wrap items-center gap-4 pt-4">
-                <Button variant="primary" size="lg" className="rounded-xl shadow-sm hover:shadow-md transition-all group">
-                  {page.hero_button_1_text || 'Get Started'} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button variant="outline" size="lg" className="rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50 group">
-                  <PlayCircle className="mr-2 w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" /> {page.hero_button_2_text || 'Watch Demo'}
-                </Button>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...springTrans, delay: 0.1 }}
-              className="relative"
-            >
-              <div className="relative z-10 rounded-2xl overflow-hidden border border-slate-200 shadow-2xl bg-white">
-                 {page.hero_image_url ? (
-                  <img src={page.hero_image_url} alt="Platform Dashboard" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="aspect-[4/3] w-full bg-slate-100 flex items-center justify-center border-b border-slate-200">
-                    <div className="text-slate-400 font-medium">Dashboard Preview</div>
-                  </div>
-                )}
-                {/* Flat, SaaS-style badge replacing 3D floating object */}
-                <div className="absolute bottom-4 left-4 lg:-left-6 bg-white border border-slate-200 shadow-lg rounded-xl p-4 flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
-                    <Globe size={20} />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900">ECOSOC Status</div>
-                    <div className="text-xs text-slate-500 font-medium">United Nations Certified</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+    <div className="bg-[#fbfcf8] text-[#132018]">
+      <section className="soft-grid relative overflow-hidden bg-[#f5f8ef] px-5 pb-16 pt-36 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="mx-auto grid max-w-7xl items-end gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
+            <SectionLabel>UN ECOSOC certified</SectionLabel>
+            <h1 className="text-balance max-w-4xl font-display text-5xl font-black leading-none text-[#102117] sm:text-7xl lg:text-8xl">
+              {cleanTitle(cmsData?.hero_title, 'Transforming education for a sustainable future.')}
+            </h1>
+            <p className="mt-8 max-w-2xl text-lg leading-8 text-[#314236] sm:text-xl">
+              {cmsData?.hero_description || 'Green Mentors helps schools, universities, educators, and leaders build practical sustainability systems across learning, operations, culture, and community impact.'}
+            </p>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href={cmsData?.hero_button_1_link || '/accreditation'}
+                className="inline-flex items-center justify-center gap-3 rounded-lg bg-[#132018] px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-[#21D469] hover:text-[#132018]"
+              >
+                {cmsData?.hero_button_1_text || 'Get Accredited'}
+                <ArrowRight size={18} />
+              </Link>
+              <Link
+                href={cmsData?.hero_button_2_link || '/about'}
+                className="inline-flex items-center justify-center gap-3 rounded-lg border border-[#132018]/15 px-7 py-4 text-sm font-bold text-[#132018] transition-colors hover:border-[#21D469] hover:text-[#2c7c45]"
+              >
+                {cmsData?.hero_button_2_text || 'Explore Our Work'}
+                <ArrowUpRight size={18} />
+              </Link>
+            </div>
           </div>
-        </Container>
+
+          <div className="relative">
+            <div className="overflow-hidden rounded-lg border border-black/10 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]">
+              <img
+                src={cmsData?.hero_image_url || heroImage}
+                alt="Students learning in a green outdoor education setting"
+                className="h-[360px] w-full object-cover sm:h-[460px] lg:h-[560px]"
+              />
+            </div>
+            <div className="absolute bottom-6 left-6 right-6 rounded-lg bg-white/92 p-5 shadow-xl backdrop-blur">
+              <div className="flex items-start gap-4">
+                <ShieldCheck className="mt-1 shrink-0 text-[#21D469]" size={24} />
+                <div>
+                  <p className="text-sm font-black uppercase text-[#132018]">Global responsible education network</p>
+                  <p className="mt-1 text-sm leading-6 text-[#526055]">Trusted by institutions working toward measurable climate and sustainability outcomes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 2. ABOUT SUMMARY */}
-      <Section background="off-white" className="border-b border-slate-200">
-        <Container>
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8 order-2 lg:order-1">
-              <div className="text-sm font-bold text-emerald-600 tracking-wide uppercase">The Vision</div>
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-[1.1]">
-                {page.about_title}
+      <section className="border-y border-black/10 bg-white px-5 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="border-l border-black/10 pl-5">
+              <div className="font-display text-4xl font-black text-[#2c7c45] sm:text-5xl">
+                <StatsCounter value={stat.value} />
+              </div>
+              <div className="mt-2 text-sm font-semibold text-[#526055]">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-5 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <div>
+            <SectionLabel>Our genesis</SectionLabel>
+            <h2 className="text-balance font-display text-4xl font-black leading-tight sm:text-5xl">
+              {cleanTitle(cmsData?.about_title, 'Pioneering green education with practical institutional change.')}
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-[#526055]">
+              {cmsData?.about_description || 'Founded by Virendra Rawat, Green Mentors works with education leaders to connect sustainability values with real programs, governance, campuses, and student action.'}
+            </p>
+            <Link
+              href={cmsData?.about_button_link || '/about'}
+              className="mt-8 inline-flex items-center gap-3 text-sm font-bold text-[#2c7c45] hover:text-[#132018]"
+            >
+              {cmsData?.about_button_text || 'Read our story'}
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {programs.map((program) => (
+              <article key={program.title} className="rounded-lg border border-black/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-[#21D469]/70 hover:shadow-xl">
+                <program.icon className="mb-8 text-[#2c7c45]" size={30} />
+                <h3 className="font-display text-2xl font-black leading-tight">{program.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-[#526055]">{program.desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#132018] px-5 py-20 text-white sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_1fr]">
+          <div className="overflow-hidden rounded-lg">
+            <img src={campusImage} alt="Green campus walkway" className="h-[420px] w-full object-cover opacity-90" />
+          </div>
+          <div>
+            <SectionLabel>Five element framework</SectionLabel>
+            <h2 className="text-balance font-display text-4xl font-black leading-tight sm:text-6xl">
+              A campus model people can see, measure, and practice.
+            </h2>
+            <div className="mt-10 grid gap-4">
+              {elements.map((item) => (
+                <div key={item.title} className="flex gap-4 rounded-lg border border-white/10 bg-white/[0.04] p-5">
+                  <item.icon className="mt-1 shrink-0 text-[#21D469]" size={24} />
+                  <div>
+                    <h3 className="font-display text-xl font-black">{item.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-white/60">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div>
+              <SectionLabel>Global summits</SectionLabel>
+              <h2 className="text-balance font-display text-4xl font-black leading-tight sm:text-6xl">
+                {cleanTitle(cmsData?.events_title, 'Events that move institutions from intent to action.')}
               </h2>
-              <div className="text-lg text-slate-600 font-medium leading-relaxed max-w-xl">
-                {page.about_description}
-              </div>
-              <Button variant="outline" size="lg" className="rounded-xl border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all group">
-                {page.about_button_text} <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[#526055]">
+                {cmsData?.events_description || 'Conferences, workshops, and leadership forums connect educators with peers, experts, and practical roadmaps.'}
+              </p>
             </div>
+            <Link
+              href={cmsData?.events_button_link || '/events'}
+              className="inline-flex items-center justify-center gap-3 rounded-lg bg-[#132018] px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-[#21D469] hover:text-[#132018]"
+            >
+              {cmsData?.events_button_text || 'View Events'}
+              <ArrowRight size={18} />
+            </Link>
+          </div>
 
-            <div className="order-1 lg:order-2 grid grid-cols-2 gap-4">
-               {[
-                 { name: 'Leaf', color: 'text-emerald-600', label: 'Soil Care', bg: 'bg-emerald-50' },
-                 { name: 'Globe', color: 'text-blue-600', label: 'Blue Planet', bg: 'bg-blue-50' },
-                 { name: 'Water', color: 'text-cyan-600', label: 'Hydration', bg: 'bg-cyan-50' },
-                 { name: 'Energy', color: 'text-amber-500', label: 'Solar Power', bg: 'bg-amber-50' },
-               ].map((item, i) => (
-                 <div
-                  key={i}
-                  className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start gap-4"
-                 >
-                    <div className={`p-3 rounded-lg ${item.bg} ${item.color}`}>
-                      <NatureIcon name={item.name as any} size={24} />
-                    </div>
-                    <div className="font-semibold text-slate-900">{item.label}</div>
-                 </div>
-               ))}
+          <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+            <article className="relative min-h-[420px] overflow-hidden rounded-lg bg-[#132018]">
+              <img src={summitImage} alt="City skyline for global education summit" className="absolute inset-0 h-full w-full object-cover opacity-65" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#132018] via-[#132018]/50 to-transparent" />
+              <div className="absolute bottom-0 max-w-2xl p-8 text-white">
+                <p className="mb-3 text-sm font-bold text-[#21D469]">Featured summit</p>
+                <h3 className="font-display text-4xl font-black leading-tight">NYC Green School Conference</h3>
+                <Link href="/events" className="mt-6 inline-flex items-center gap-3 text-sm font-bold hover:text-[#21D469]">
+                  Register interest <ArrowUpRight size={18} />
+                </Link>
+              </div>
+            </article>
+
+            <div className="rounded-lg border border-black/10 bg-white p-7 shadow-sm">
+              <CheckCircle2 className="mb-8 text-[#2c7c45]" size={32} />
+              <h3 className="font-display text-3xl font-black leading-tight">Build a greener institution with a clear path.</h3>
+              <p className="mt-5 text-sm leading-7 text-[#526055]">
+                Start with accreditation, program design, or a custom institutional roadmap for your school or university.
+              </p>
+              <Link href="/accreditation" className="mt-8 inline-flex items-center gap-3 text-sm font-bold text-[#2c7c45] hover:text-[#132018]">
+                Request accreditation <ArrowRight size={18} />
+              </Link>
             </div>
           </div>
-        </Container>
-      </Section>
-
-      {/* 3. IMPACT STATS */}
-      <Section background="white" className="border-b border-slate-200 py-16">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
-            {[
-              { t: page.stat_1_title, v: page.stat_1_value },
-              { t: page.stat_2_title, v: page.stat_2_value },
-              { t: page.stat_3_title, v: page.stat_3_value },
-              { t: page.stat_4_title, v: page.stat_4_value }
-            ].map((stat, idx) => {
-              if (!stat.t && !stat.v) return null;
-              return (
-                <div key={idx} className="px-6 text-center lg:text-left">
-                  <div className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-2">
-                    <StatsCounter value={stat.v || '0'} label="" />
-                  </div>
-                  <div className="text-sm font-medium text-slate-500">{stat.t}</div>
-                </div>
-              );
-            })}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 4. PROGRAMS GRID */}
-      <Section background="off-white" className="border-b border-slate-200">
-        <Container>
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-             <div className="text-sm font-bold text-emerald-600 tracking-wide uppercase">Educational Ecosystems</div>
-             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
-                {page.programs_title || 'Global Curriculums'}
-             </h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              { title: page.program_1_title, desc: page.program_1_desc, icon: 'Sprout', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { title: page.program_2_title, desc: page.program_2_desc, icon: 'Forest', color: 'text-teal-600', bg: 'bg-teal-50' },
-              { title: page.program_3_title, desc: page.program_3_desc, icon: 'Sustainability', color: 'text-blue-600', bg: 'bg-blue-50' },
-              { title: page.program_4_title, desc: page.program_4_desc, icon: 'Globe', color: 'text-amber-500', bg: 'bg-amber-50' },
-            ].map((prog, idx) => {
-              if (!prog.title) return null;
-              return (
-                <div key={idx} className="group flex flex-col bg-white border border-slate-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${prog.bg} ${prog.color}`}>
-                     <NatureIcon name={prog.icon as any} size={24} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">{prog.title}</h3>
-                  <p className="text-slate-500 font-medium leading-relaxed mb-8 flex-grow">{prog.desc}</p>
-                  <Link href="/programs" className="inline-flex items-center font-semibold text-emerald-600 text-sm hover:text-emerald-700">
-                     Explore Program <ArrowRight size={16} className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 5. WHY CHOOSE US (Dark Mode Section) */}
-      {(page.why_title || page.why_description) && (
-        <Section background="dark" className="bg-[#0A0A0A] border-b border-slate-800">
-          <Container>
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
-                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80" className="w-full h-full object-cover opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#0A0A0A] to-transparent opacity-60" />
-              </div>
-              <div className="space-y-8">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-                  {page.why_title}
-                </h2>
-                <div className="text-slate-400 font-medium leading-relaxed text-lg">
-                  {page.why_description}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-                  {[
-                    { icon: ShieldCheck, text: 'UN ECOSOC Certified' },
-                    { icon: Zap, text: 'Zero Carbon Ready' },
-                    { icon: Users, text: 'Global Network' },
-                    { icon: Star, text: 'Award Winning' },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-500">
-                        <item.icon size={20} />
-                      </div>
-                      <span className="font-semibold text-slate-300 text-sm">{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 6. FIVE ELEMENTS FRAMEWORK */}
-      <Section background="white" className="border-b border-slate-200">
-        <Container>
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">The Five Elements Framework</h2>
-            <p className="text-slate-500 font-medium">Our holistic approach to sustainable education ecosystems.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { title: page.element_soil_title, desc: page.element_soil_desc, icon: 'Sprout' },
-              { title: page.element_water_title, desc: page.element_water_desc, icon: 'Water' },
-              { title: page.element_air_title, desc: page.element_air_desc, icon: 'Air' },
-              { title: page.element_energy_title, desc: page.element_energy_desc, icon: 'Energy' },
-              { title: page.element_spaces_title, desc: page.element_spaces_desc, icon: 'Globe' },
-            ].map((el, idx) => {
-              if (!el.title) return null;
-              return (
-                <div key={idx} className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 mx-auto rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-4 text-emerald-600">
-                    <NatureIcon name={el.icon as any} size={24} />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 tracking-tight">{el.title}</h3>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed">{el.desc}</p>
-                </div>
-              )
-            })}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 8. TESTIMONIALS */}
-      {(page.testimonial_quote) && (
-        <Section background="off-white" className="border-b border-slate-200">
-          <Container>
-            <div className="max-w-4xl mx-auto bg-white border border-slate-200 shadow-sm p-10 md:p-16 rounded-2xl text-center space-y-8 relative">
-              <Quote className="absolute top-6 left-6 w-12 h-12 text-slate-100" />
-              
-              <div className="flex justify-center gap-1">
-                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={20} className="fill-amber-400 text-amber-400" />)}
-              </div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 leading-snug tracking-tight">
-                "{page.testimonial_quote}"
-              </h3>
-              <div className="flex flex-col items-center gap-1 pt-4">
-                <div className="font-bold text-slate-900">{page.testimonial_author}</div>
-                <div className="text-sm font-medium text-slate-500">{page.testimonial_title}</div>
-              </div>
-            </div>
-          </Container>
-        </Section>
-      )}
-
-      {/* 9. CTA SECTION */}
-      {(page.cta_title || page.cta_description) && (
-        <Section background="white" className="pb-24 pt-24">
-          <Container>
-            <div className="bg-emerald-600 rounded-2xl p-12 md:p-20 text-center text-white shadow-xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-emerald-700/20" />
-              <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
-                <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-                  {page.cta_title}
-                </h2>
-                {page.cta_description && <p className="text-lg md:text-xl text-emerald-50 font-medium">{page.cta_description}</p>}
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                  {page.cta_button_1_text && (
-                    <Button variant="glass" size="lg" className="rounded-xl bg-white text-emerald-600 border-none hover:bg-slate-50 font-semibold shadow-sm">
-                      {page.cta_button_1_text} <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  )}
-                  {page.cta_button_2_text && (
-                    <Button variant="outline" size="lg" className="rounded-xl border-white/30 text-white hover:bg-white/10 font-semibold">
-                      {page.cta_button_2_text}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </Section>
-      )}
-
+        </div>
+      </section>
     </div>
   );
 }
-

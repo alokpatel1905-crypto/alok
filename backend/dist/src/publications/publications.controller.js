@@ -29,6 +29,9 @@ let PublicationsController = class PublicationsController {
     findAllPublications(page = '1', limit = '10', type) {
         return this.publicationsService.findAllPublications(+page, +limit, type);
     }
+    findOnePublication(id) {
+        return this.publicationsService.findOnePublication(id);
+    }
     updatePublication(id, body) {
         return this.publicationsService.updatePublication(id, body);
     }
@@ -40,6 +43,9 @@ let PublicationsController = class PublicationsController {
     }
     findAllPressReleases(page = '1', limit = '10') {
         return this.publicationsService.findAllPressReleases(+page, +limit);
+    }
+    findOnePressRelease(id) {
+        return this.publicationsService.findOnePressRelease(id);
     }
     updatePressRelease(id, body) {
         return this.publicationsService.updatePressRelease(id, body);
@@ -67,6 +73,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], PublicationsController.prototype, "findAllPublications", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PublicationsController.prototype, "findOnePublication", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -103,6 +116,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], PublicationsController.prototype, "findAllPressReleases", null);
+__decorate([
+    (0, common_1.Get)('press-releases/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PublicationsController.prototype, "findOnePressRelease", null);
 __decorate([
     (0, common_1.Patch)('press-releases/:id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

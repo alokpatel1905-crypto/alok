@@ -25,6 +25,11 @@ export class PublicationsController {
     return this.publicationsService.findAllPublications(+page, +limit, type);
   }
 
+  @Get(':id')
+  findOnePublication(@Param('id') id: string) {
+    return this.publicationsService.findOnePublication(id);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_EDITOR')
@@ -53,6 +58,11 @@ export class PublicationsController {
     @Query('limit') limit: string = '10',
   ) {
     return this.publicationsService.findAllPressReleases(+page, +limit);
+  }
+
+  @Get('press-releases/:id')
+  findOnePressRelease(@Param('id') id: string) {
+    return this.publicationsService.findOnePressRelease(id);
   }
 
   @Patch('press-releases/:id')

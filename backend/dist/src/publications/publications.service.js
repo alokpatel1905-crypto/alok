@@ -39,11 +39,23 @@ let PublicationsService = class PublicationsService {
     async updatePublication(id, data) {
         return this.prisma.publication.update({ where: { id }, data });
     }
+    async findOnePublication(id) {
+        const pub = await this.prisma.publication.findUnique({ where: { id } });
+        if (!pub)
+            throw new common_1.NotFoundException('Publication not found');
+        return pub;
+    }
     async removePublication(id) {
         return this.prisma.publication.delete({ where: { id } });
     }
     async createPressRelease(data) {
         return this.prisma.pressRelease.create({ data });
+    }
+    async findOnePressRelease(id) {
+        const pr = await this.prisma.pressRelease.findUnique({ where: { id } });
+        if (!pr)
+            throw new common_1.NotFoundException('Press Release not found');
+        return pr;
     }
     async findAllPressReleases(page = 1, limit = 10) {
         const skip = (page - 1) * limit;

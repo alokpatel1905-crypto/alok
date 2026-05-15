@@ -43,6 +43,7 @@ const contact_page_module_1 = require("./contact-page/contact-page.module");
 const media_page_module_1 = require("./media-page/media-page.module");
 const home_page_module_1 = require("./home-page/home-page.module");
 const menu_module_1 = require("./menu/menu.module");
+const audit_submission_module_1 = require("./audit-submission/audit-submission.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -82,6 +83,7 @@ exports.AppModule = AppModule = __decorate([
             media_page_module_1.MediaPageModule,
             home_page_module_1.HomePageModule,
             menu_module_1.MenuModule,
+            audit_submission_module_1.AuditSubmissionModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

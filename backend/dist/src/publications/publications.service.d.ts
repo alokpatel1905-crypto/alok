@@ -43,6 +43,18 @@ export declare class PublicationsService {
         fileUrl: string | null;
         author: string | null;
     }>;
+    findOnePublication(id: string): Promise<{
+        id: string;
+        type: import("@prisma/client").$Enums.PublicationType;
+        createdAt: Date;
+        updatedAt: Date;
+        title: string;
+        image: string | null;
+        status: string;
+        content: string | null;
+        fileUrl: string | null;
+        author: string | null;
+    }>;
     removePublication(id: string): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PublicationType;
@@ -56,6 +68,16 @@ export declare class PublicationsService {
         author: string | null;
     }>;
     createPressRelease(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        title: string;
+        image: string | null;
+        status: string;
+        content: string;
+        date: Date;
+    }>;
+    findOnePressRelease(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
