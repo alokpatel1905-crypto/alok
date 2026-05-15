@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { AUDIT_SECTIONS, TOTAL_STEPS } from './audit-schema';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface FilePreview { file: File; preview: string; }
-interface SubData { response: string; files: FilePreview[]; }
-type SectionsData = Record<string, Record<string, SubData>>;
+type SectionsData = Record<string, Record<string, { response: string; files: { name: string; url: string; uploading?: boolean; error?: boolean; }[] }>>;
 
 interface SchoolProfile {
   schoolName: string; udise: string; schoolCategory: string;
@@ -43,19 +41,33 @@ function SectionHeader({ icon, title, purpose, color }: { icon:string; title:str
 }
 
 function FileUploadZone({ files, onAdd, onRemove }: {
-  files: FilePreview[];
-  onAdd: (f: FilePreview[]) => void;
+  files: FileItem[];
+  onAdd: (f: FileItem[]) => void;
   onRemove: (i: number) => void;
 }) {
   const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-  const processFiles = (raw: FileList | null) => {
+  const uploadFile = async (file: File): Promise<FileItem> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch(`${API_URL}/upload/audit-attachment`, { method: 'POST', body: fd });
+      if (!res.ok) throw new Error('Upload failed');
+      const data = await res.json();
+      return { name: file.name, url: data.url };
+    } catch {
+      return { name: file.name, url: '', error: true };
+    }
+  };
+
+  const processFiles = async (raw: FileList | null) => {
     if (!raw) return;
-    const previews: FilePreview[] = Array.from(raw).map(file => ({
-      file,
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : '',
-    }));
-    onAdd(previews);
+    const pending: FileItem[] = Array.from(raw).map(f => ({ name: f.name, url: '', uploading: true }));
+    onAdd(pending);
+    const results = await Promise.all(Array.from(raw).map(uploadFile));
+    onAdd(results);
   };
 
   return (
@@ -67,10 +79,16 @@ function FileUploadZone({ files, onAdd, onRemove }: {
         className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all ${
           dragging ? 'border-[#7CB87A] bg-[#7CB87A]/10' : 'border-[#c8d8c6] bg-[#f7faf7] hover:border-[#7CB87A]'
         }`}
-        onClick={() => document.getElementById(`fu-${Math.random()}`)?.click()}
+        onClick={() => inputRef.current?.click()}
       >
-        <input type="file" multiple accept="image/*,.pdf,.doc,.docx" className="hidden"
-          onChange={e => processFiles(e.target.files)} />
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept="image/*,.pdf,.doc,.docx"
+          className="hidden"
+          onChange={e => processFiles(e.target.files)}
+        />
         <p className="text-xs text-[#6b8a69]">📎 Drag & drop or <span className="text-[#3a7a38] font-semibold underline">browse</span> to attach photos/documents</p>
       </div>
 
@@ -78,17 +96,24 @@ function FileUploadZone({ files, onAdd, onRemove }: {
         <div className="flex flex-wrap gap-2 mt-3">
           {files.map((fp, i) => (
             <div key={i} className="relative group">
-              {fp.preview ? (
-                <img src={fp.preview} alt={fp.file.name}
-                  className="w-16 h-16 object-cover rounded-lg border border-[#c8d8c6]" />
+              {fp.uploading ? (
+                <div className="w-16 h-16 flex items-center justify-center bg-[#e8f0e7] rounded-lg border border-[#c8d8c6]">
+                  <span className="w-5 h-5 border-2 border-[#7CB87A]/30 border-t-[#7CB87A] rounded-full animate-spin" />
+                </div>
+              ) : fp.error ? (
+                <div className="w-16 h-16 flex items-center justify-center bg-red-50 rounded-lg border border-red-200 text-xl">⚠️</div>
+              ) : fp.url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || fp.url.includes('image') ? (
+                <img src={fp.url} alt={fp.name} className="w-16 h-16 object-cover rounded-lg border border-[#c8d8c6]" />
               ) : (
                 <div className="w-16 h-16 flex items-center justify-center bg-[#e8f0e7] rounded-lg border border-[#c8d8c6] text-2xl">📄</div>
               )}
-              <button onClick={() => onRemove(i)}
-                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs hidden group-hover:flex items-center justify-center">
-                ×
-              </button>
-              <p className="text-[10px] text-[#6b8a69] truncate w-16 mt-1">{fp.file.name}</p>
+              {!fp.uploading && (
+                <button
+                  onClick={e => { e.stopPropagation(); onRemove(i); }}
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs hidden group-hover:flex items-center justify-center"
+                >×</button>
+              )}
+              <p className="text-[10px] text-[#6b8a69] truncate w-16 mt-1">{fp.name}</p>
             </div>
           ))}
         </div>
@@ -96,6 +121,9 @@ function FileUploadZone({ files, onAdd, onRemove }: {
     </div>
   );
 }
+
+type FileItem = { name: string; url: string; uploading?: boolean; error?: boolean; };
+type SubData = { response: string; files: FileItem[]; };
 
 function SubCriterionCard({ number, title, hint, data, onChange }: {
   number: number; title: string; hint?: string;
@@ -121,12 +149,17 @@ function SubCriterionCard({ number, title, hint, data, onChange }: {
       />
       <FileUploadZone
         files={data.files}
-        onAdd={newFiles => onChange({ ...data, files: [...data.files, ...newFiles] })}
+        onAdd={newFiles => {
+          // Replace uploading placeholders with real results, or append new ones
+          const existing = data.files.filter(f => !f.uploading);
+          onChange({ ...data, files: [...existing, ...newFiles] });
+        }}
         onRemove={i => onChange({ ...data, files: data.files.filter((_, idx) => idx !== i) })}
       />
     </div>
   );
 }
+
 
 // ─── Progress Bar ─────────────────────────────────────────────────────────────
 function ProgressBar({ step }: { step: number }) {
@@ -382,14 +415,17 @@ export default function AuditFormClient() {
     setError('');
     setSubmitting(true);
 
-    // Build plain payload (exclude file blobs from JSON body)
+    // Build payload with Cloudinary URLs for all uploaded files
     const payload = {
       profile,
       sections: Object.fromEntries(
         Object.entries(sectionsData).map(([sid, subs]) => [
           sid,
           Object.fromEntries(
-            Object.entries(subs).map(([subId, d]) => [subId, { response: d.response, fileCount: d.files.length }])
+            Object.entries(subs).map(([subId, d]) => [subId, {
+              response: d.response,
+              files: d.files.filter(f => f.url && !f.uploading && !f.error).map(f => ({ name: f.name, url: f.url })),
+            }])
           ),
         ])
       ),
@@ -399,7 +435,7 @@ export default function AuditFormClient() {
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      await fetch(`${API_URL}/api/audit-submit`, {
+      await fetch(`${API_URL}/audit-submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

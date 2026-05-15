@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseGuards,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
@@ -22,6 +23,7 @@ export class UploadController {
     private readonly cloudinaryService: CloudinaryService
   ) {}
 
+  // ── Protected admin upload ────────────────────────────────────────────────
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -30,6 +32,14 @@ export class UploadController {
     return this.uploadService.create(file, result, req.user.sub);
   }
 
+  // ── Public upload for Audit Form attachments (no login required) ──────────
+  @Post('audit-attachment')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAuditAttachment(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file provided');
+    const result = await this.cloudinaryService.uploadFile(file);
+    return { url: (result as any).secure_url, publicId: (result as any).public_id };
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -43,3 +53,4 @@ export class UploadController {
     return this.uploadService.remove(id);
   }
 }
+
