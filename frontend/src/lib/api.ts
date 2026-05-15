@@ -1,5 +1,7 @@
+// ⚠️  Set NEXT_PUBLIC_API_URL in Vercel Environment Variables to your backend URL
+//     e.g.  https://your-backend.railway.app   or   https://your-backend.onrender.com
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://localhost:4000');
+  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:4000');
 
 /**
  * Core fetch wrapper with auth support
