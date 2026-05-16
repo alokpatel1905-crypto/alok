@@ -16,6 +16,10 @@ export declare class UploadController {
         updatedAt: Date;
         uploadedById: string | null;
     }>;
+    uploadAuditAttachment(file: Express.Multer.File): Promise<{
+        url: any;
+        publicId: any;
+    }>;
     findAll(page?: string, limit?: string): Promise<{
         data: ({
             uploadedBy: {

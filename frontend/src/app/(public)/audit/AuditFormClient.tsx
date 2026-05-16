@@ -49,57 +49,79 @@ function Sidebar({ step, maxStep, onJump, savedAt }: {
   step: number; maxStep: number; onJump: (n: number) => void; savedAt: number | null;
 }) {
   return (
-    <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-60 bg-[#0b1a0a] z-20">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center text-sm">🌿</div>
-          <div>
-            <p className="text-white font-bold text-sm leading-none">Green Mentors</p>
-            <p className="text-green-500 text-[9px] mt-0.5 uppercase tracking-wider">School Audit</p>
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-[68px] h-[calc(100vh-68px)] w-64 z-20"
+        style={{ background: 'linear-gradient(180deg,#0a1f09 0%,#0d2610 100%)', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-white/8">
+          <p className="text-[9px] font-bold text-green-500/70 uppercase tracking-[0.18em] mb-0.5">Green School Audit</p>
+          <p className="text-white/80 text-xs font-medium">Framework 2024–25</p>
+        </div>
+
+        {/* Steps */}
+        <nav className="flex-1 overflow-y-auto py-3 px-3">
+          {STEP_LABELS.map((label, i) => {
+            const isActive = i === step;
+            const isDone = i < step;
+            const canGo = i <= maxStep;
+            const icon = i === 0 ? '🏫' : i === REVIEW_STEP ? '📋' : AUDIT_SECTIONS[i - 1]?.icon;
+            return (
+              <button
+                key={i}
+                onClick={() => canGo && onJump(i)}
+                disabled={!canGo}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all mb-0.5 ${
+                  isActive
+                    ? 'bg-green-600/25 border border-green-500/25'
+                    : isDone ? 'hover:bg-white/6'
+                    : canGo ? 'hover:bg-white/4'
+                    : ''
+                }`}
+              >
+                {/* Step number / icon */}
+                <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition-all ${
+                  isActive ? 'bg-green-500 border-green-400 text-white'
+                  : isDone ? 'bg-green-700/50 border-green-600/40 text-green-300'
+                  : 'bg-white/5 border-white/10 text-white/25'
+                }`}>
+                  {isDone ? '✓' : i === 0 ? '0' : i === REVIEW_STEP ? '★' : String(i)}
+                </span>
+                <span className={`text-[11px] font-medium leading-tight truncate flex-1 ${
+                  isActive ? 'text-green-300'
+                  : isDone ? 'text-green-500/80'
+                  : canGo ? 'text-white/35'
+                  : 'text-white/15'
+                }`}>{label}</span>
+                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0 animate-pulse" />}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-4 py-3 border-t border-white/8">
+          <div className="flex items-center gap-2">
+            <div className={`w-1.5 h-1.5 rounded-full ${savedAt ? 'bg-green-400' : 'bg-white/15'}`} />
+            <p className={`text-[10px] font-medium ${savedAt ? 'text-green-400/80' : 'text-white/20'}`}>
+              {savedAt ? 'Draft saved automatically' : 'No draft saved'}
+            </p>
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* Steps */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-        {STEP_LABELS.map((label, i) => {
-          const isActive = i === step;
-          const isDone = i < step;
-          const canGo = i <= maxStep;
-          const icon = i === 0 ? '🏫' : i === REVIEW_STEP ? '📋' : AUDIT_SECTIONS[i - 1]?.icon;
-          return (
-            <button
-              key={i}
-              onClick={() => canGo && onJump(i)}
-              disabled={!canGo}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all ${isActive
-                ? 'bg-green-700/40 text-green-300 border border-green-600/30'
-                : isDone ? 'text-green-500 hover:bg-white/5 cursor-pointer'
-                : canGo ? 'text-white/40 hover:bg-white/5 cursor-pointer'
-                : 'text-white/15 cursor-not-allowed'
-                }`}
-            >
-              <span className="text-sm w-5 text-center flex-shrink-0">{isDone && !isActive ? '✓' : icon}</span>
-              <span className="text-[11px] font-medium leading-tight truncate flex-1">{label}</span>
-              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0" />}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Save status */}
-      <div className="px-4 py-3 border-t border-white/10">
-        {savedAt ? (
-          <p className="text-[10px] text-green-500 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-            Draft auto-saved
-          </p>
-        ) : (
-          <p className="text-[10px] text-white/20">No draft saved</p>
-        )}
+      {/* Mobile bottom step bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#0a1f09]/95 backdrop-blur-md border-t border-white/10 px-4 py-2">
+        <div className="flex items-center justify-between">
+          <span className="text-green-400 text-xs font-semibold">{STEP_LABELS[step]}</span>
+          <span className="text-white/40 text-[10px]">{step + 1} / {TOTAL_STEPS}</span>
+        </div>
+        <div className="mt-1.5 h-1 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-green-500 rounded-full transition-all duration-500" style={{ width: `${Math.round((step / (TOTAL_STEPS - 1)) * 100)}%` }} />
+        </div>
       </div>
-    </aside>
+    </>
   );
 }
 
@@ -107,26 +129,28 @@ function Sidebar({ step, maxStep, onJump, savedAt }: {
 function ProgressBar({ step, savedAt }: { step: number; savedAt: number | null }) {
   const pct = Math.round((step / (TOTAL_STEPS - 1)) * 100);
   return (
-    <div className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
-      <div className="px-5 py-3">
+    <div className="sticky top-[68px] z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+      <div className="px-6 py-3">
         <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Step {step + 1} / {TOTAL_STEPS}</p>
-            <p className="text-sm font-bold text-gray-800">{STEP_LABELS[step]}</p>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-green-50 border border-green-100 flex items-center justify-center text-sm font-bold text-green-700">{step + 1}</div>
+            <div>
+              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Step {step + 1} of {TOTAL_STEPS}</p>
+              <p className="text-sm font-bold text-gray-800 leading-none mt-0.5">{STEP_LABELS[step]}</p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            {savedAt && <p className="text-[10px] text-green-600 font-medium">● Saved</p>}
-            <span className="text-lg font-bold text-green-700">{pct}%</span>
+            {savedAt && (
+              <span className="hidden sm:flex items-center gap-1.5 text-[10px] text-green-600 font-semibold bg-green-50 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />Saved
+              </span>
+            )}
+            <span className="text-base font-bold text-green-700 tabular-nums">{pct}%</span>
           </div>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-green-800 to-green-400 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
-        </div>
-        {/* Mini step dots */}
-        <div className="flex gap-1 mt-2 justify-center">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div key={i} className={`rounded-full transition-all duration-300 ${i < step ? 'bg-green-500 w-3 h-1.5' : i === step ? 'bg-green-800 w-5 h-1.5' : 'bg-gray-200 w-3 h-1.5'}`} />
-          ))}
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-full rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#14532d,#22c55e)' }} />
         </div>
       </div>
     </div>
@@ -230,37 +254,59 @@ function SubCriterionCard({ number, title, hint, data, onChange }: {
   );
 }
 
-// ── Profile Step ──────────────────────────────────────────────────────────────
-function ProfileStep({ data, onChange }: { data: SchoolProfile; onChange: (d: SchoolProfile) => void }) {
-  const set = (k: keyof SchoolProfile, v: string) => onChange({ ...data, [k]: v });
-  const toggleGrade = (g: string) => {
-    const arr = data.gradeLevels.includes(g) ? data.gradeLevels.filter(x => x !== g) : [...data.gradeLevels, g];
-    onChange({ ...data, gradeLevels: arr });
-  };
-
-  const Field = ({ label, k, placeholder = '' }: { label: string; k: keyof SchoolProfile; placeholder?: string }) => (
+// ── Profile form helpers (MUST be outside ProfileStep to avoid remount on every keystroke) ──
+function ProfileField({ label, fieldKey, value, placeholder = '', onChange }: {
+  label: string; fieldKey: string; value: string; placeholder?: string;
+  onChange: (k: string, v: string) => void;
+}) {
+  return (
     <div>
       <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
-      <input type="text" placeholder={placeholder} value={data[k] as string} onChange={e => set(k, e.target.value)}
-        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all" />
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={e => onChange(fieldKey, e.target.value)}
+        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
+      />
     </div>
   );
+}
 
-  const Radio = ({ label, k, opts }: { label: string; k: keyof SchoolProfile; opts: string[] }) => (
+function ProfileRadio({ label, fieldKey, value, opts, onChange }: {
+  label: string; fieldKey: string; value: string; opts: string[];
+  onChange: (k: string, v: string) => void;
+}) {
+  return (
     <div>
       <label className="block text-xs font-semibold text-gray-600 mb-2">{label}</label>
       <div className="flex flex-wrap gap-2">
         {opts.map(opt => (
-          <label key={opt} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${data[k] === opt ? 'bg-green-800 text-white border-green-800' : 'bg-white border-gray-200 text-gray-600 hover:border-green-400'}`}>
-            <input type="radio" className="hidden" checked={data[k] === opt} onChange={() => set(k, opt)} />{opt}
+          <label
+            key={opt}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${
+              value === opt ? 'bg-green-800 text-white border-green-800' : 'bg-white border-gray-200 text-gray-600 hover:border-green-400'
+            }`}
+          >
+            <input type="radio" className="hidden" checked={value === opt} onChange={() => onChange(fieldKey, opt)} />
+            {opt}
           </label>
         ))}
       </div>
     </div>
   );
+}
 
-  const cardCls = 'bg-white rounded-2xl border border-gray-100 p-5 space-y-4 shadow-sm';
-  const h3cls = 'font-bold text-gray-800 text-xs uppercase tracking-wider border-b border-gray-100 pb-2';
+// ── Profile Step ──────────────────────────────────────────────────────────────
+function ProfileStep({ data, onChange }: { data: SchoolProfile; onChange: (d: SchoolProfile) => void }) {
+  const set = (k: string, v: string) => onChange({ ...data, [k as keyof SchoolProfile]: v } as SchoolProfile);
+  const toggleGrade = (g: string) => {
+    const arr = data.gradeLevels.includes(g) ? data.gradeLevels.filter(x => x !== g) : [...data.gradeLevels, g];
+    onChange({ ...data, gradeLevels: arr });
+  };
+
+  const card = 'bg-white rounded-2xl border border-gray-100 p-5 space-y-4 shadow-sm';
+  const h3 = 'font-bold text-gray-800 text-xs uppercase tracking-wider border-b border-gray-100 pb-2';
 
   return (
     <div>
@@ -269,13 +315,13 @@ function ProfileStep({ data, onChange }: { data: SchoolProfile; onChange: (d: Sc
         <p className="text-green-200 text-sm">Basic information about your institution to begin the Green School Audit.</p>
       </div>
       <div className="space-y-4">
-        <div className={cardCls}>
-          <h3 className={h3cls}>School Identification</h3>
+        <div className={card}>
+          <h3 className={h3}>School Identification</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="School Name *" k="schoolName" placeholder="Full school name" />
-            <Field label="UDISE Code" k="udise" placeholder="e.g. 24051234567" />
+            <ProfileField label="School Name *" fieldKey="schoolName" value={data.schoolName} placeholder="Full school name" onChange={set} />
+            <ProfileField label="UDISE Code" fieldKey="udise" value={data.udise} placeholder="e.g. 24051234567" onChange={set} />
           </div>
-          <Radio label="School Category" k="schoolCategory" opts={['Government Rural', 'Government Urban', 'Private Rural', 'Private Urban']} />
+          <ProfileRadio label="School Category" fieldKey="schoolCategory" value={data.schoolCategory} opts={['Government Rural', 'Government Urban', 'Private Rural', 'Private Urban']} onChange={set} />
           <div>
             <label className="block text-xs font-semibold text-gray-600 mb-2">Grade Levels Offered</label>
             <div className="flex flex-wrap gap-2">
@@ -286,38 +332,41 @@ function ProfileStep({ data, onChange }: { data: SchoolProfile; onChange: (d: Sc
               ))}
             </div>
           </div>
-          <Radio label="Medium of Instruction" k="medium" opts={['Gujarati', 'English', 'Hindi']} />
-          <Radio label="Board / Affiliation" k="board" opts={['Gujarat State Board', 'CBSE', 'ICSE']} />
+          <ProfileRadio label="Medium of Instruction" fieldKey="medium" value={data.medium} opts={['Gujarati', 'English', 'Hindi']} onChange={set} />
+          <ProfileRadio label="Board / Affiliation" fieldKey="board" value={data.board} opts={['Gujarat State Board', 'CBSE', 'ICSE']} onChange={set} />
         </div>
-        <div className={cardCls}>
-          <h3 className={h3cls}>Location & Contact</h3>
-          <Field label="Full School Address" k="address" placeholder="Street address, area" />
+        <div className={card}>
+          <h3 className={h3}>Location &amp; Contact</h3>
+          <ProfileField label="Full School Address" fieldKey="address" value={data.address} placeholder="Street address, area" onChange={set} />
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Village / Ward" k="village" /><Field label="District" k="district" />
-            <Field label="Taluka" k="taluka" /><Field label="PIN Code" k="pinCode" placeholder="3XXXXX" />
+            <ProfileField label="Village / Ward" fieldKey="village" value={data.village} onChange={set} />
+            <ProfileField label="District" fieldKey="district" value={data.district} onChange={set} />
+            <ProfileField label="Taluka" fieldKey="taluka" value={data.taluka} onChange={set} />
+            <ProfileField label="PIN Code" fieldKey="pinCode" value={data.pinCode} placeholder="3XXXXX" onChange={set} />
           </div>
         </div>
-        <div className={cardCls}>
-          <h3 className={h3cls}>Leadership</h3>
-          <Field label="Principal Name" k="principalName" />
+        <div className={card}>
+          <h3 className={h3}>Leadership</h3>
+          <ProfileField label="Principal Name" fieldKey="principalName" value={data.principalName} onChange={set} />
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Mobile No." k="mobile" placeholder="+91 XXXXX XXXXX" />
-            <Field label="Email" k="email" placeholder="principal@school.edu" />
+            <ProfileField label="Mobile No." fieldKey="mobile" value={data.mobile} placeholder="+91 XXXXX XXXXX" onChange={set} />
+            <ProfileField label="Email" fieldKey="email" value={data.email} placeholder="principal@school.edu" onChange={set} />
           </div>
         </div>
-        <div className={cardCls}>
-          <h3 className={h3cls}>School Snapshot</h3>
+        <div className={card}>
+          <h3 className={h3}>School Snapshot</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Year of Establishment" k="yearEstablished" placeholder="e.g. 1995" />
-            <Field label="Total Students" k="totalStudents" placeholder="e.g. 450" />
-            <Field label="Teaching Staff" k="totalTeachingStaff" placeholder="e.g. 18" />
-            <Field label="Non-Teaching Staff" k="nonTeachingStaff" placeholder="e.g. 5" />
+            <ProfileField label="Year of Establishment" fieldKey="yearEstablished" value={data.yearEstablished} placeholder="e.g. 1995" onChange={set} />
+            <ProfileField label="Total Students" fieldKey="totalStudents" value={data.totalStudents} placeholder="e.g. 450" onChange={set} />
+            <ProfileField label="Teaching Staff" fieldKey="totalTeachingStaff" value={data.totalTeachingStaff} placeholder="e.g. 18" onChange={set} />
+            <ProfileField label="Non-Teaching Staff" fieldKey="nonTeachingStaff" value={data.nonTeachingStaff} placeholder="e.g. 5" onChange={set} />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ── Section Step ──────────────────────────────────────────────────────────────
 function SectionStep({ sectionIndex, sectionsData, onChange }: {
@@ -417,15 +466,14 @@ export default function AuditFormClient() {
   const isReviewStep = step === REVIEW_STEP;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f4f6f4]">
       <Sidebar step={step} maxStep={maxStep} onJump={goTo} savedAt={savedAt} />
 
-      {/* Main content offset for sidebar */}
-      <div className="lg:ml-60">
+      {/* Main content — pushed right of sidebar and below navbar */}
+      <div className="lg:ml-64 pt-[68px] pb-20 lg:pb-0">
         <ProgressBar step={step} savedAt={savedAt} />
 
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          {/* Step content */}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
           {step === 0 && <ProfileStep data={profile} onChange={setProfile} />}
           {isSectionStep && <SectionStep sectionIndex={step - 1} sectionsData={sectionsData} onChange={handleSubChange} />}
           {isReviewStep && (
@@ -443,17 +491,26 @@ export default function AuditFormClient() {
 
           {/* Navigation */}
           {!isReviewStep && (
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+            <div className="flex items-center justify-between mt-10 pt-6 border-t border-gray-200">
               <button
-                onClick={prev} disabled={step === 0}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >← Previous</button>
+                onClick={prev}
+                disabled={step === 0}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-gray-200 text-gray-500 text-sm font-bold hover:border-gray-300 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Previous
+              </button>
 
-              <div className="text-xs text-gray-400 font-medium">{step + 1} / {TOTAL_STEPS}</div>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-xs font-bold text-gray-400">{step + 1} / {TOTAL_STEPS}</span>
+              </div>
 
               <button
                 onClick={next}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-green-800 text-white text-sm font-semibold hover:bg-green-700 transition-all shadow-md shadow-green-900/20 active:scale-95"
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg ${
+                  step === REVIEW_STEP - 1
+                    ? 'bg-gradient-to-r from-green-700 to-green-500 text-white shadow-green-800/25 hover:from-green-600 hover:to-green-400'
+                    : 'bg-gray-900 text-white shadow-gray-900/20 hover:bg-gray-800'
+                }`}
               >
                 {step === REVIEW_STEP - 1 ? '📋 Review & Submit' : 'Next →'}
               </button>

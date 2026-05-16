@@ -31,9 +31,12 @@ function ReviewSection({ title, icon, color, stepIndex, onEdit, children }: {
   const [open, setOpen] = useState(false);
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
-      <button
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+      <div
+        role="button"
+        tabIndex={0}
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors cursor-pointer select-none"
         onClick={() => setOpen(!open)}
+        onKeyDown={e => e.key === 'Enter' && setOpen(!open)}
       >
         <div className="flex items-center gap-3">
           <span className="text-xl">{icon}</span>
@@ -46,7 +49,7 @@ function ReviewSection({ title, icon, color, stepIndex, onEdit, children }: {
           >✏️ Edit</button>
           <span className="text-gray-400 text-sm">{open ? '▲' : '▼'}</span>
         </div>
-      </button>
+      </div>
       {open && <div className="px-5 pb-4 border-t border-gray-50">{children}</div>}
     </div>
   );

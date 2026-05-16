@@ -29,6 +29,12 @@ let UploadController = class UploadController {
         const result = await this.cloudinaryService.uploadFile(file);
         return this.uploadService.create(file, result, req.user.sub);
     }
+    async uploadAuditAttachment(file) {
+        if (!file)
+            throw new common_1.BadRequestException('No file provided');
+        const result = await this.cloudinaryService.uploadFile(file);
+        return { url: result.secure_url, publicId: result.public_id };
+    }
     findAll(page = '1', limit = '20') {
         return this.uploadService.findAll(+page, +limit);
     }
@@ -47,6 +53,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UploadController.prototype, "uploadFile", null);
+__decorate([
+    (0, common_1.Post)('audit-attachment'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UploadController.prototype, "uploadAuditAttachment", null);
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
