@@ -1,7 +1,5 @@
-// ⚠️  Set NEXT_PUBLIC_API_URL in Vercel Environment Variables to your backend URL
-//     e.g.  https://your-backend.railway.app   or   https://your-backend.onrender.com
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:4000');
+const API_URL = process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === 'production' ? 'https://alok-o4t4.vercel.app' : 'http://localhost:4000');
 
 /**
  * Core fetch wrapper with auth support
@@ -12,7 +10,7 @@ type ApiFetchOptions = RequestInit & {
 
 export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) {
   const token = typeof window !== 'undefined' && !options?.skipToken ? localStorage.getItem('token') : null;
-  
+
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
@@ -28,7 +26,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
   } catch (error: any) {
     console.warn(`[apiFetch NETWORK ERROR] url: ${API_URL}${endpoint}, message:`, error.message);
     // Return a graceful dummy failure object to prevent SSG compiler crashes
-    return null; 
+    return null;
   }
 
   if (!res.ok) {
